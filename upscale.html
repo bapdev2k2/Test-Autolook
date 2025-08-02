@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autolook - AI Gen Image</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <base target="_self">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <style>
+        * {
+            font-family: "Montserrat", sans-serif;
+            font-optical-sizing: auto;
+        }
+
+        @layer utilities {
+            .bg-grid {
+                background-image:
+                    repeating-linear-gradient(to right, transparent 0 20px, rgb(197, 195, 195) 20px 21px),
+                    repeating-linear-gradient(to bottom, transparent 0 20px, rgb(197, 195, 195) 20px 21px);
+                background: linear-gradient(to_right, #d63384, #0dcaf0);
+            }
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            /* max-height: 300px; */
+            margin-top: 20px;
+            display: none;
+        }
+
+        .image-upload-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 300px;
+        }
+
+        .image-upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            height: 96px;
+        }
+
+        .image-upload-box input {
+            display: none;
+        }
+
+        .image-upload-box img {
+            width: 40px;
+            height: 40px;
+            opacity: 0.6;
+        }
+
+
+        .transition-fade {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .transition-fade.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .sidebar-active {
+            background-color: #30475e;
+            /* xanh nhạt */
+
+        }
+
+        .sidebar-active i,
+        .sidebar-active span {
+            color: white !important;
+            /* chữ và icon màu xanh */
+        }
+        .fullscreen-style {
+    height: 100vh !important;
+    width: auto !important;
+    object-fit: contain !important;
+    background-color: #000; /* Nếu muốn nền đen khi fullscreen */
+}
+
+
+        .dark body {
+            background-color: #1e1e1e !important;
+            color: #f5f5f5;
+        }
+
+        .dark .bg-white {
+            background-color: #2c2c2c !important;
+        }
+
+        .dark .bg-\[\#F05454\] {
+            background-color: #610c05 !important;
+        }
+
+
+
+
+        .dark .text-gray-700,
+        .dark .text-gray-800 {
+            color: #ddd !important;
+        }
+
+        .dark .bg-\[\#F5F5F5\] {
+            background-color: #1e1e1e !important;
+        }
+
+
+        .dark .sidebar-active {
+            background-color: #444 !important;
+        }
+
+        .dark .group-hover\\:text-white:hover {
+            color: #fff !important;
+        }
+
+        input#darkModeToggle:checked+label span {
+            transform: translateX(180%);
+        }
+    </style>
+</head>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                screens: {
+
+                    'xs': '375px',
+                    'sm': '768px',
+                    'md': '1024px',
+                    'lg': '1440px',
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const toggle = document.getElementById("darkModeToggle");
+        const html = document.documentElement;
+
+        // Khởi tạo
+        if (localStorage.getItem("theme") === "dark") {
+            html.classList.add("dark");
+            toggle.checked = true;
+        }
+
+        toggle.addEventListener("change", () => {
+            html.classList.toggle("dark");
+            localStorage.setItem("theme", html.classList.contains("dark") ? "dark" : "light");
+        });
+    });
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const icon = document.getElementById("currentLangIcon");
+        const label = document.getElementById("currentLangLabel");
+        const dropdown = document.getElementById("langDropdown");
+        const wrapper = document.getElementById("langDropdownWrapper");
+        const currentUrl = window.location.pathname;
+        const isEnglish = currentUrl.includes("-en");
+
+        // Cập nhật giao diện ngôn ngữ hiện tại
+        icon.src = isEnglish ? "./images/En.svg" : "./images/Vi.svg";
+        label.textContent = isEnglish ? "English" : "Vietnamese";
+
+        // Toggle dropdown
+        window.toggleLangDropdown = () => {
+            dropdown.classList.toggle("hidden");
+        };
+
+        // Thay đổi ngôn ngữ
+        window.changeLang = (lang) => {
+            icon.src = lang === "vi" ? "./images/Vi.svg" : "./images/En.svg";
+            label.textContent = lang === "vi" ? "Vietnamese" : "English";
+            dropdown.classList.add("hidden");
+
+            if (lang === "en" && !currentUrl.includes("-en")) {
+                const newUrl = currentUrl.replace(".html", "") + "-en.html";
+                window.location.href = newUrl;
+            } else if (lang === "vi" && currentUrl.includes("-en")) {
+                const newUrl = currentUrl.replace("-en", "") || "./index.html";
+                window.location.href = newUrl;
+            }
+        };
+
+        // Ẩn dropdown khi click ra ngoài
+        document.addEventListener("click", (e) => {
+            if (!wrapper.contains(e.target)) {
+                dropdown.classList.add("hidden");
+            }
+        });
+    });
+</script>
+
+
+
+
+<body class="min-h-screen !bg-[#F5F5F5] bg-grid">
+    <header class="bg-white shadow-md">
+        <nav style="z-index: 10;" class="container !w-full !max-w-full md:hidden mx-auto px-4 bg-white shadow-md fixed">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <a href="index.php" class="text-2xl font-bold text-primary" onclickx="event.preventDefault()">
+                    <span class="text-secondary whitespace-nowrap">
+                        <img alt="logo"
+                            src="https://w.ladicdn.com/668665e58fb7e80020232e3b/rbg/logo-1-20250711021846-tbevw.png"
+                            style=" width: 60px;display: inline-block;; ">
+                        <span>Autolook</span>
+
+                    </span>
+                </a>
+                <!-- Mobile menu button -->
+                <button class="md:hidden text-gray-700 focus:outline-none " id="mobile-menu-button">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </nav>
+        <div class="flex">
+            <!-- Desltop-sidebar -->
+            <nav
+                class="fixed hidden md:flex w-[18rem] shadow-[5px_5px_rgba(128,128,128,0.4),10px_10px_rgba(128,128,128,0.3),15px_15px_rgba(128,128,128,0.2),20px_20px_rgba(128,128,128,0.1),25px_25px_rgba(128,128,128,0.05)] h-screen bg-[#F5F5F5] border-r border-gray-300 flex-col justify-start  overflow-y-auto z-50">
+                <div class="p-4 border-b border-b-gray-300 flex justify-center items-center">
+                    <a href="index.php" class="text-2xl font-bold text-primary">
+                        <span class="text-secondary">
+                            <img alt="logo"
+                                src="https://w.ladicdn.com/668665e58fb7e80020232e3b/rbg/logo-1-20250711021846-tbevw.png"
+                                style=" width: 60px; " class="mx-auto">
+                            <span class="text-[30px] mt-[14px]">Autolook</span>
+                            <div class="absolute top-3 right-4 md:right-8">
+
+                            </div>
+
+                        </span>
+                    </a>
+                    <!-- Toggle Dark Mode -->
+                </div>
+
+                <!-- Menu chính-Desltop -->
+                <div class="space-y-4 px-2 mt-4">
+
+                    <!-- 1.tạo ảnh -->
+                    <a href="tao-anh.html" class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent 
+          hover:bg-[#54687c]  active:bg-[#30475e] transition duration-100">
+                        <i
+                            class="fa-solid fa-wand-magic-sparkles opacity-[90%] text-xl text-gray-700 group-hover:text-white"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-white">Tạo ảnh</span>
+                    </a>
+
+                    <!-- 1.ghép ảnh -->
+                    <a href="ghep-anh.html" class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent 
+          hover:bg-[#54687c]  active:bg-[#30475e] transition duration-100">
+                        <i class="bi bi-images text-xl text-gray-700 group-hover:text-white"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600 group-hover:text-white">Ghép
+                            ảnh</span>
+                    </a>
+                    <a href="upscale.html"
+                        class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent  hover:bg-gray-100 transition">
+                        <i class="fa-solid fa-hand-sparkles opacity-[90%] text-gray-700 group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600 group-hover:text-blue-600">Làm
+                            nét 4k</span>
+                    </a>
+                    <!-- 2.Lịch sử -->
+                    <a href="client-history.php" class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent 
+          hover:bg-[#54687c]  active:bg-[#30475e] transition duration-100">
+                        <i class="bi bi-clock-history text-gray-700 text-xl group-hover:text-white"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600 group-hover:text-white">Lịch
+                            sử</span>
+                    </a>
+
+                    <!-- 3.Yêu thích -->
+                    <a href="#" class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent 
+          hover:bg-[#54687c]  active:bg-[#30475e] transition duration-100">
+                        <i class="bi bi-heart text-gray-700 text-xl group-hover:text-white"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-white">Yêu thích</span>
+                    </a>
+
+                    <!-- 5. Hướng dẫn -->
+                    <a href="client-huong-dan.php" class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent 
+          hover:bg-[#54687c]  active:bg-[#30475e] transition duration-100">
+                        <i class="fa-solid fa-book opacity-[90%] text-gray-700 text-xl group-hover:text-white"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-white">Hướng dẫn</span>
+                    </a>
+
+                    <!-- menu -->
+                    <a href="client-contact.php" class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent 
+          hover:bg-[#54687c]  active:bg-[#30475e] transition duration-100">
+                        <i class="bi bi-mailbox text-gray-700 text-xl group-hover:text-white"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-white">Liên hệ</span>
+                    </a>
+                    <!-- menu admin -->
+                    <a href="admin-tk.php" class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent 
+          hover:bg-[#54687c]  active:bg-[#30475e] transition duration-100">
+                        <i class="bi bi-people text-gray-700 text-xl group-hover:text-white"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-white">QLTK</span>
+                    </a>
+                    <a href="admin-key-list.php" class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent 
+          hover:bg-[#54687c]  active:bg-[#30475e] transition duration-100">
+                        <i class="bi bi-key text-gray-700 text-xl group-hover:text-white"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-white">Quản lý Key</span>
+                    </a>
+
+                    <!-- 6. Chatgbt -->
+                    <a href="chatgbt.php" class="group hidden flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent 
+          hover:bg-[#54687c]  active:bg-[#30475e] transition duration-100">
+                        <i class="bi bi-question-circle text-gray-700 text-xl group-hover:text-white"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-white">ChatGpt</span>
+                    </a>
+                </div>
+
+
+                <div class="w-full flex flex-col justify-between mt-auto items-center gap-2 py-3">
+                    <div class="w-full mt-auto px-4">
+                        <div class="flex justify-between gap-1.5 items-center mb-2">
+                            <div
+                                class="popover-credit-info-v2_labelCurrentCredit___oz19 popover-credit-info-v2_labelCurrentCreditSidebar__2zC9z ">
+                                <div class="bg-[#e1e1e1] px-2 border-none rounded text-gray-600 flex items-center">
+                                    <!-- <i class="fa-solid fa-coins pr-1"></i> -->
+                                    <svg width="18px" height="18px" viewBox="0 0 16 16" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="opacity-[90%] relative">
+                                        <rect width="16" height="16" rx="8" fill="url(#paint0_linear_1_1999)"></rect>
+                                        <path
+                                            d="M8.66725 4.80043C8.66725 4.30571 8.02563 4.11145 7.75121 4.52307L5.0626 8.55599C4.84108 8.88827 5.07928 9.33335 5.47863 9.33335H7.3339V11.1996C7.3339 11.6943 7.97552 11.8886 8.24994 11.4769L10.9385 7.44401C11.1601 7.11173 10.9219 6.66665 10.5225 6.66665H8.66725V4.80043Z"
+                                            fill="white"></path>
+                                        <defs>
+                                            <linearGradient id="paint0_linear_1_1999" x1="8" y1="0" x2="8" y2="16"
+                                                gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#6B7280"></stop>
+                                                <stop offset="1"></stop>
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                    <!-- <svg xmlns="http://www.w3.org/2000/svg"  preserveAspectRatio="none" viewBox="0 0 24 24" class="opacity-[70%]"> <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M11,17V16H9V14H13V13H10A1,1 0 0,1 9,12V9A1,1 0 0,1 10,8H11V7H13V8H15V10H11V11H14A1,1 0 0,1 15,12V15A1,1 0 0,1 14,16H13V17H11Z"></path> </svg> -->
+                                    <span class=" ml-[5px]">418</span>
+                                </div>
+                            </div>
+
+                            <button type="button" class="bg-[#F05454] pl-2 pr-2 rounded hover:bg-[#30475E]">
+                                <a href="/buy-credit.php">
+                                    <span class="text-white">Mua Credit</span>
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hidden w-full flex gap-2 px-4 relative border-t border-t-gray-300 pt-2">
+                        <div
+                            class="flex items-center px-3 py-2 rounded-md border text-xs font-semibold uppercase cursor-pointer h-8">
+                            Free</div>
+                    </div>
+                    <div class="w-full">
+                        <div class="px-4 flex flex-col gap-0.5">
+                            <div class="flex justify-between text-xs font-medium text-gray-500">Không gian làm việc
+                            </div>
+                            <div class="relative w-full h-full" data-headlessui-state="">
+                                <button
+                                    class="flex items-center px-1 py-1.5 h-11 cursor-pointer w-full group hover:bg-gray-50 cursor-pointer false rounded-lg relative">
+                                    <div
+                                        class="shrink-0 mr-2 flex items-center justify-center w-6 h-6 bg-[#EFF4FF] rounded-md text-xs font-medium text-primary-600">
+                                        A</div>
+                                    <div class="grow mr-2 text-xs text-gray-700 text-left truncate">
+                                        autoinbox.canvapro@gmail.com</div>
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="shrink-0 w-[14px] h-[14px] text-gray-500" data-icon="ChevronRight"
+                                        aria-hidden="true">
+                                        <g id="chevron-right">
+                                            <path id="Icon" d="M5.25 10.5L8.75 7L5.25 3.5" stroke="currentColor"
+                                                stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                                            </path>
+                                        </g>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class=" relative px-4 mt-5 border-t boder-t-gray-300" x-data="{ open: false }">
+                            <div class="relative inline-block text-left w-full" data-headlessui-state="">
+                                <div class="w-full">
+                                    <button @click="open = !open"
+                                        class="flex items-center py-1 px-2 pr-2.5 pl-1 text-xs text-gray-700 mobile:px-1 bg-transparent w-full">
+                                        <!-- <div class="shrink-0 flex items-center rounded-full bg-primary-600 sm:mr-2 mr-0" style="width: 32px; height: 32px; font-size: 32px; line-height: 32px;">
+                                    <div class="text-center text-white scale-[0.4]" style="width: 32px; height: 32px; font-size: 32px; line-height: 32px;">H</div>
+                                </div> -->
+                                        <div class="w-[100%] flex flex-col text-left truncate ml-2"><span
+                                                class="text-paragraph text-sm">A</span><span
+                                                class="text-gray-400 text-xs">autoinbox.canvapro@gmail.com</span></div>
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 ml-2 text-gray-700"
+                                            data-icon="ChevronDown" aria-hidden="true">
+                                            <g id="chevron-down">
+                                                <path id="Icon" d="M3 4.5L6 7.5L9 4.5" stroke="currentColor"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                </path>
+                                            </g>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div x-show="open" @click.outside="open = false"
+                                class="absolute -right-[12px] -top-[10px] mt-1.5 w-60 max-w-56 -translate-y-full divide-y divide-gray-300 origin-top-right rounded-lg bg-white border border-gray-300 shadow-lg">
+                                <div class="px-1 py-1" role="none">
+                                    <a
+                                        class="flex items-center w-full h-9 px-3 text-gray-700 text-[14px] rounded-lg font-normal hover:bg-gray-200 cursor-pointer group justify-between">
+                                        <div>Trợ giúp</div>
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="hidden w-[14px] h-[14px] text-gray-500 group-hover:flex"
+                                            data-icon="ArrowUpRight" aria-hidden="true">
+                                            <g id="arrow-up-right">
+                                                <path id="Icon"
+                                                    d="M4.08325 9.91665L9.91659 4.08331M9.91659 4.08331H4.08325M9.91659 4.08331V9.91665"
+                                                    stroke="currentColor" stroke-width="1.25" stroke-linecap="round"
+                                                    stroke-linejoin="round"></path>
+                                            </g>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div class="p-1" id="headlessui-menu-item-:r20:" role="menuitem" tabindex="-1"
+                                    data-headlessui-state="">
+                                    <div
+                                        class="flex items-center w-full h-9 px-3 text-gray-700 text-[14px] rounded-lg font-normal hover:bg-gray-200 cursor-pointer group justify-between">
+                                        <a href="logout.php"
+                                            class="flex items-center w-full h-9 px-3 text-gray-700 text-[14px] rounded-lg font-normal hover:bg-gray-200 cursor-pointer group justify-between">
+                                            <div class="font-normal text-[14px] text-gray-700">Đăng xuất</div>
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="hidden w-[14px] h-[14px] text-gray-500 group-hover:flex"
+                                                data-icon="ArrowUpRight" aria-hidden="true">
+                                                <g id="arrow-up-right">
+                                                    <path id="Icon"
+                                                        d="M4.08325 9.91665L9.91659 4.08331M9.91659 4.08331H4.08325M9.91659 4.08331V9.91665"
+                                                        stroke="currentColor" stroke-width="1.25" stroke-linecap="round"
+                                                        stroke-linejoin="round"></path>
+                                                </g>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- Mobile-sidebar -->
+            <nav id="mobile-menu"
+                class="fixed top-0 left-0 w-64 h-full bg-white border-r border-gray-300 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0  md:transform-none hidden z-50 overflow-auto">
+                <div class="p-4 border-b border-b-gray-300">
+                    <h1 class="text-2xl font-bold text-center text-gray-800 "><img alt="logo"
+                            src="https://w.ladicdn.com/668665e58fb7e80020232e3b/rbg/logo-1-20250711021846-tbevw.png"
+                            style=" width: 60px;display: inline-block;; "> Autolook</h1>
+                </div>
+
+                <!-- Menu chính -->
+                <div class="space-y-4 px-2 mt-4">
+
+                    <!-- 1.tạo ảnh -->
+                    <a href="tao-anh.html"
+                        class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent  hover:bg-gray-100 transition">
+                        <i
+                            class="fa-solid fa-wand-magic-sparkles opacity-[90%] text-gray-700 group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600 group-hover:text-blue-600">Tạo
+                            ảnh</span>
+                    </a>
+                    <!--2.ghép ảnh-->
+                    <a href="ghep-anh.html"
+                        class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent  hover:bg-gray-100 transition">
+                        <i class="bi bi-images opacity-[90%] text-gray-700 group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600 group-hover:text-blue-600">Ghép
+                            ảnh</span>
+                    </a>
+                    <a href="upscale.html"
+                        class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent  hover:bg-gray-100 transition">
+                        <i class="bi bi-images opacity-[90%] text-gray-700 group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600 group-hover:text-blue-600">Làm
+                            nét</span>
+                    </a>
+
+                    <!-- 2.Lịch sử -->
+                    <a href="client-history.php"
+                        class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent  hover:bg-gray-100 transition">
+                        <i class="bi bi-clock-history text-gray-700 text-xl group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600 group-hover:text-blue-600">Lịch
+                            sử</span>
+                    </a>
+
+                    <!-- 3.Yêu thích -->
+                    <a href="#"
+                        class="block group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent  hover:bg-gray-100 transition">
+                        <i class="bi bi-heart text-gray-700 text-xl group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600">Yêu thích</span>
+                    </a>
+
+                    <!-- 4. Mẹo -->
+                    <a href="#"
+                        class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent  hover:bg-gray-100 transition">
+                        <i class="bi bi-lightbulb text-gray-700 text-xl group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600">Mẹo</span>
+                    </a>
+
+                    <!-- 5. Hướng dẫn -->
+                    <a href="client-huong-dan.php"
+                        class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent hover:bg-gray-100 transition">
+                        <i class="fa-solid fa-book opacity-[90%] text-gray-700 text-xl group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600">Hướng dẫn</span>
+                    </a>
+                    <!-- menu -->
+                    <a href="client-contact.php"
+                        class="group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent hover:bg-gray-100 transition">
+                        <i class="bi bi-question-circle text-gray-700 text-xl group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600">Liên hệ</span>
+                    </a>
+
+                    <!-- 6. Chatgbt -->
+                    <a href="chatgbt.php"
+                        class="hidden group flex items-center space-x-3 px-4 py-3 rounded-xl border border-transparent hover:bg-gray-100 transition">
+                        <i class="bi bi-question-circle text-gray-700 text-xl group-hover:text-blue-600"></i>
+                        <span class="font-medium text-gray-800 group-hover:text-blue-600">ChatGpt</span>
+                    </a>
+                </div>
+
+                <!--  Phần quản lý tài khoản -->
+                <div class="w-full flex flex-col justify-between mt-auto items-center gap-2 py-3">
+                    <div class="w-full mt-auto px-4">
+                        <div class="flex gap-1.5 items-center mb-2">
+                            <div
+                                class=" popover-credit-info-v2_labelCurrentCredit___oz19 popover-credit-info-v2_labelCurrentCreditSidebar__2zC9z ">
+                                <div class="bg-[#e1e1e1] px-2 border-none rounded text-gray-600 flex items-center">
+                                    <!-- <i class="fa-solid fa-coins pr-1"></i> -->
+                                    <svg width="18px" height="18px" viewBox="0 0 16 16" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="opacity-[90%] relative">
+                                        <rect width="16" height="16" rx="8" fill="url(#paint0_linear_1_1999)"></rect>
+                                        <path
+                                            d="M8.66725 4.80043C8.66725 4.30571 8.02563 4.11145 7.75121 4.52307L5.0626 8.55599C4.84108 8.88827 5.07928 9.33335 5.47863 9.33335H7.3339V11.1996C7.3339 11.6943 7.97552 11.8886 8.24994 11.4769L10.9385 7.44401C11.1601 7.11173 10.9219 6.66665 10.5225 6.66665H8.66725V4.80043Z"
+                                            fill="white"></path>
+                                        <defs>
+                                            <linearGradient id="paint0_linear_1_1999" x1="8" y1="0" x2="8" y2="16"
+                                                gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#6B7280"></stop>
+                                                <stop offset="1"></stop>
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                    <!-- <svg xmlns="http://www.w3.org/2000/svg"  preserveAspectRatio="none" viewBox="0 0 24 24" class="opacity-[70%]"> <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M11,17V16H9V14H13V13H10A1,1 0 0,1 9,12V9A1,1 0 0,1 10,8H11V7H13V8H15V10H11V11H14A1,1 0 0,1 15,12V15A1,1 0 0,1 14,16H13V17H11Z"></path> </svg> -->
+                                    <span class=" ml-[5px]">418</span>
+                                </div>
+                            </div>
+
+                            <button type="button" class="bg-[#f05454] pl-2 pr-2 rounded hover:bg-blue-700">
+                                <a href="/buy-credit.php">
+                                    <span class="text-white">Mua Credit</span>
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="w-full flex gap-2 px-4 relative border-t border-t-gray-300 pt-2">
+                        <div
+                            class="flex items-center px-3 py-2 rounded-md border text-xs font-semibold uppercase cursor-pointer h-8">
+                            Free</div>
+                    </div>
+                    <div class="w-full">
+                        <div class="px-4 flex flex-col gap-0.5">
+                            <div class="flex justify-between text-xs font-medium text-gray-500">Không gian làm việc
+                            </div>
+                            <div class="relative w-full h-full" data-headlessui-state="">
+                                <button
+                                    class="flex items-center px-1 py-1.5 h-11 cursor-pointer w-full group hover:bg-gray-50 cursor-pointer false rounded-lg relative">
+                                    <div
+                                        class="shrink-0 mr-2 flex items-center justify-center w-6 h-6 bg-[#EFF4FF] rounded-md text-xs font-medium text-primary-600">
+                                        L</div>
+                                    <div class="grow mr-2 text-xs text-gray-700 text-left truncate">
+                                        autoinbox.canvapro@gmail.com</div>
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="shrink-0 w-[14px] h-[14px] text-gray-500" data-icon="ChevronRight"
+                                        aria-hidden="true">
+                                        <g id="chevron-right">
+                                            <path id="Icon" d="M5.25 10.5L8.75 7L5.25 3.5" stroke="currentColor"
+                                                stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                                            </path>
+                                        </g>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class=" relative px-4 mt-5 border-t boder-t-gray-300" x-data="{ open: false }">
+                            <div class="relative inline-block text-left w-full" data-headlessui-state="">
+                                <div class="w-full">
+                                    <button @click="open = !open"
+                                        class="flex items-center py-1 px-2 pr-2.5 pl-1 text-xs text-gray-700 mobile:px-1 bg-transparent w-full">
+                                        <!-- <div class="shrink-0 flex items-center rounded-full bg-primary-600 sm:mr-2 mr-0" style="width: 32px; height: 32px; font-size: 32px; line-height: 32px;">
+                                    <div class="text-center text-white scale-[0.4]" style="width: 32px; height: 32px; font-size: 32px; line-height: 32px;">H</div>
+                                </div> -->
+                                        <div class="w-[100%] flex flex-col text-left truncate ml-2"><span
+                                                class="text-paragraph text-sm">A</span><span
+                                                class="text-gray-400 text-xs">autoinbox.canvapro@gmail.com</span></div>
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 ml-2 text-gray-700"
+                                            data-icon="ChevronDown" aria-hidden="true">
+                                            <g id="chevron-down">
+                                                <path id="Icon" d="M3 4.5L6 7.5L9 4.5" stroke="currentColor"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                </path>
+                                            </g>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div x-show="open" @click.outside="open = false"
+                                class="absolute -right-[12px] -top-[10px] mt-1.5 w-60 max-w-56 -translate-y-full divide-y divide-gray-300 origin-top-right rounded-lg bg-white border border-gray-300 shadow-lg">
+                                <div class="px-1 py-1" role="none">
+                                    <a
+                                        class="flex items-center w-full h-9 px-3 text-gray-700 text-[14px] rounded-lg font-normal hover:bg-gray-200 cursor-pointer group justify-between">
+                                        <div>Trợ giúp</div>
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="hidden w-[14px] h-[14px] text-gray-500 group-hover:flex"
+                                            data-icon="ArrowUpRight" aria-hidden="true">
+                                            <g id="arrow-up-right">
+                                                <path id="Icon"
+                                                    d="M4.08325 9.91665L9.91659 4.08331M9.91659 4.08331H4.08325M9.91659 4.08331V9.91665"
+                                                    stroke="currentColor" stroke-width="1.25" stroke-linecap="round"
+                                                    stroke-linejoin="round"></path>
+                                            </g>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div class="p-1" id="headlessui-menu-item-:r20:" role="menuitem" tabindex="-1"
+                                    data-headlessui-state="">
+                                    <div
+                                        class="flex items-center w-full h-9 px-3 text-gray-700 text-[14px] rounded-lg font-normal hover:bg-gray-200 cursor-pointer group justify-between">
+                                        <a href="logout.php"
+                                            class="flex items-center w-full h-9 px-3 text-gray-700 text-[14px] rounded-lg font-normal hover:bg-gray-200 cursor-pointer group justify-between">
+                                            <div class="font-normal text-[14px] text-gray-700">Đăng xuất</div>
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="hidden w-[14px] h-[14px] text-gray-500 group-hover:flex"
+                                                data-icon="ArrowUpRight" aria-hidden="true">
+                                                <g id="arrow-up-right">
+                                                    <path id="Icon"
+                                                        d="M4.08325 9.91665L9.91659 4.08331M9.91659 4.08331H4.08325M9.91659 4.08331V9.91665"
+                                                        stroke="currentColor" stroke-width="1.25" stroke-linecap="round"
+                                                        stroke-linejoin="round"></path>
+                                                </g>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+    </header>
+    <main class="container mx-auto px-4 py-8 md:pl-64 md:mt-0 sm:mt-[60px] xs:mt-16">
+        <div class="absolute md:top-8 md:right-7 flex items-center gap-2 xs:right-[45px] xs:top-3">
+
+            <!-- Desltop languege -->
+            <div style="z-index: 49;"
+                class="flex flex-col justify-center items-center gap-3 xs:fixed md:top-8 md:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
+                <!-- Toggle Switch Dark/Light -->
+                <div class="flex items-center gap-2">
+                    <b class="sm:block xs:hidden">Dark</b>
+                    <input type="checkbox" id="darkModeToggle" class="sr-only">
+                    <label for="darkModeToggle"
+                        class="flex items-center cursor-pointer relative w-16 h-7 rounded-full bg-[#30475e] dark:bg-gray-700 transition">
+                        <span
+                            class="absolute left-1 top-1 w-5 h-5 z-10 rounded-full bg-white shadow-md transform transition peer-checked:translate-x-8"
+                            id="toggleBall"></span>
+                        <i
+                            class="fas fa-moon text-gray-400 sm:text-xl xs:text-base absolute left-2 top-0.4 pointer-events-none z-9 dark:text-gray-200"></i>
+                        <i
+                            class="fas fa-sun text-yellow-400 sm:text-base xs:text-sm absolute sm:right-[6px] xs:right-2 xs:top-1 sm:top-0.5 pointer-events-none z-9"></i>
+                    </label>
+                    <b class="sm:block xs:hidden">Light</b>
+                </div>
+                <div class="relative inline-block text-left md:w-[150px] xs:w-[100px]" id="langDropdownWrapper">
+                    <button onclick="toggleLangDropdown()"
+                        class="inline-flex justify-center items-center w-full px-4 md:py-2 xs:py-1 bg-white rounded-xl text-sm xs:border md:border-none xs:shadow-none md:shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)]">
+                        <img id="currentLangIcon" src="./images/Vi.svg" alt="" class="w-5 h-5 mr-2">
+                        <span id="currentLangLabel" class="md:block xs:hidden">Vietnamese</span>
+                        <span id="currentLangLabel" class="md:hidden xs:block">VN</span>
+                        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div id="langDropdown"
+                        class="hidden absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow">
+                        <div onclick="changeLang('vi')"
+                            class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
+                            <img src="./images/Vi.svg" class="w-5 h-5 mr-2">
+                            <span class="md:block xs:hidden">Vietnamese</span>
+                            <span class="md:hidden xs:block">VN</span>
+                        </div>
+                        <div onclick="changeLang('en')"
+                            class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
+                            <img src="./images/En.svg" class="w-5 h-5 mr-2">
+                            <span class="md:block xs:hidden">English</span>
+                            <span class="md:hidden xs:block">EN</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- <main class="container mx-auto w-full md:ml-64 px-4 py-8  inline-flex md:pt-24 md:pl-4 md:pr-4"> -->
+        <div class=" md:grid">
+            <div class="flex gap-3 mt-[20px] h-full">
+                <div
+                    class="bg-[#F5F5F5] md:rounded-3xl shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)] p-6 sm:w-full xs:w-[375px] xs:rounded-2xl max-w-mdx text-center break-after-column">
+                    <h1
+                        class="sm:text-2xl xs:text-lg font-bold text-gray-800 mb-6 bg-[#30475E] text-white p-2 text-center sm:rounded-full xs:rounded-xl">
+                        Tăng nét & cải thiện <br class="xs:block sm:hidden"> chi tiết ảnh 4k <br
+                            class="xs:block sm:hidden"> ( dung lượng ảnh &#8776 10Mb )</h1>
+                    <!-- 1. KHỐI UPLOAD BAN ĐẦU -->
+                    <div id="uploadSection" class="space-y-4 max-w-md mx-auto bg-white p-6 rounded-xl shadow">
+                        <h2 class="text-xl font-bold mb-4 text-center">Tải ảnh lên để xử lý</h2>
+                        <i class="text-[#fe2020]">(*Lưu ý: Vui lòng không reset trang trong khi đang upscale ảnh, thời
+                            gian chờ từ 90-150s).</i>
+                        <!-- Box chứa input và ảnh -->
+                        <label for="imageInput"
+                            class="relative w-full h-[55vh] border-2 border-dashed border-gray-300 rounded-md cursor-pointer flex items-center justify-center overflow-hidden group">
+                            <!-- Ảnh xem trước -->
+                            <img id="previewImage"
+                                class="absolute top-0 left-0 w-full h-full object-contain hidden z-10">
+
+                            <!-- Icon + Text nếu chưa có ảnh -->
+                            <div id="placeholderContent"
+                                class="text-center text-gray-500 flex flex-col items-center justify-center z-0 group-hover:text-gray-700">
+                                <i class="fas fa-cloud-upload-alt text-4xl mb-2"></i>
+                                <span>Nhấn hoặc kéo ảnh vào đây</span>
+                            </div>
+
+                            <!-- Input ẩn -->
+                            <input type="file" id="imageInput" accept="image/*"
+                                class="absolute inset-0 opacity-0 cursor-pointer z-20">
+                        </label>
+
+                        <div class="flex justify-center mt-5">
+                            <button onclick="handleUpload()"
+                                class="bg-[#F05454] text-white py-2 px-6 rounded-full shadow-sm text-sm font-medium">
+                                Thực hiện
+                            </button>
+                        </div>
+
+                        <!-- Loading icon -->
+                        <div id="loading" class="text-center py-4">
+                            <div class="relative">
+                                <i class="fas fa-spinner fa-spin text-blue-500 text-[70px]"></i>
+                                <span class="text-blue-500 absolute top-6 left-0 right-0 text-sm">100s</span>
+                            </div>
+                            <p class="mt-2 text-gray-600">Đang xử lý...</p>
+                        </div>
+                    </div>
+
+
+                    <!-- 2. KHỐI HIỆN SAU KHI CLICK -->
+                    <div id="resultSection" class="hidden mt-8">
+                        <form id="uploadFormx" class="space-y-4">
+                            <div id="resultContainer" class="mt-4">
+                                <div class="preview-image sm:flex xs:grid justify-center gap-4 xs:h-auto">
+                                    <div class="object-cover w-[35vh]">
+                                        <b>Ảnh gốc</b>
+                                        <img class="object-cover rounded-lg cursor-pointer" id="originalImage"
+                                            src="https://i.pinimg.com/736x/05/2c/cd/052ccd66002a159e8b24dc54bf47dd5e.jpg"
+                                            alt="Uploaded image">
+                                    </div>
+                                    <span
+                                        class="sm:flex xs:hidden fa-solid fa-arrow-right text-3xl items-center mx-5"></span>
+                                    <span
+                                        class="sm:hidden xs:block fa-solid fa-arrow-down text-3xl flex items-center justify-center mx-5"></span>
+
+                                    <div id="imagePreview" class="w-[35vh]">
+                                        <b>Ảnh đã xử lý</b>
+                                        <div class="flex flex-col justify-center items-center gap-3">
+                                            <img class="object-cover rounded-lg cursor-pointer" id="processedImage"
+                                                src="https://i.pinimg.com/736x/05/2c/cd/052ccd66002a159e8b24dc54bf47dd5e.jpg"
+                                                alt="Uploaded image">
+                                            <a id="downloadImage" href="#" download
+                                                class="bg-[#F05454] w-fit text-white px-4 py-1 text-base rounded hover:bg-gray-400">Tải
+                                                xuống</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <p id="resultText" class="mt-2 text-sm text-gray-600"><span></span></p>
+                            </div>
+
+
+                        </form>
+                    </div>
+
+
+                    <!-- 5. Kết quả hình ảnh -->
+
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+        <script>
+            document.getElementById("imageInput").addEventListener("change", function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const img = document.getElementById("previewImage");
+                        img.src = event.target.result;
+                        img.classList.remove("hidden");
+
+                        // Ẩn dòng chữ "nhấn hoặc kéo ảnh"
+                        document.getElementById("placeholderContent").classList.add("hidden");
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        </script>
+
+        <script>
+            function handleUpload() {
+                const input = document.getElementById("imageInput");
+                const file = input.files[0];
+
+                if (!file) {
+                    alert("Vui lòng chọn một ảnh!");
+                    return;
+                }
+
+                // Hiển thị loading ngay lập tức
+                document.getElementById("loading").classList.remove("hidden");
+
+                // Hiện khối kết quả
+                document.getElementById("resultSection").classList.remove("hidden");
+
+                // Ẩn upload ban đầu
+                document.getElementById("uploadSection").classList.add("hidden");
+
+                // Hiển thị ảnh gốc người dùng upload (nếu cần thay ảnh demo)
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("originalImage").src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                // Giả lập xử lý sau 2s → ẩn loading
+                setTimeout(() => {
+                    document.getElementById("loading").classList.add("hidden");
+                    document.getElementById("processedImage").src = "https://i.pinimg.com/736x/05/2c/cd/052ccd66002a159e8b24dc54bf47dd5e.jpg"; // (Thay bằng ảnh thật nếu cần)
+                }, 2000);
+            }
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                function func_get_image_result() {
+
+                }
+                $('#imageInput').change(function (event) {
+                    var file = event.target.files[0];
+                    if (file) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('#previewImage').attr('src', e.target.result).show();
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+                // Xử lý sự kiện submit form
+                $('#uploadForm').on('submit', function (e) {
+                    e.preventDefault();
+
+                    // Hiển thị loading
+                    $('#loading').show();
+                    $('#submitBtn').prop('disabled', true);
+                    $('#resultContainer').addClass('hidden');
+                    $('#resultText').text('');
+
+                    // Lấy dữ liệu từ form
+                    const imageFile = $('#imageInput')[0].files[0];
+                    const content = $('#content').val();
+                    const aspect_ratio = $('#aspect_ratio').val();
+
+                    // Tạo FormData để gửi file
+                    const formData = new FormData();
+                    formData.append('image', imageFile);
+                    formData.append('content', content);
+                    formData.append('aspect_ratio', aspect_ratio);
+
+                    // Gửi AJAX request
+                    $.ajax({
+                        url: 'upload.php', // Thay đổi thành endpoint của bạn
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            // Xử lý kết quả thành công
+                            try {
+                                // const data = JSON.parse(response);
+                                const data = (response);
+                                if (data.result && data.result.saved_file) {
+                                    if (data.result.check_image_ready_data.sample != "") {
+                                        var image_url = window.location.origin + '/' + data.result.saved_file;
+                                        $('#resultText').html(`<span>Upload thành công! <a target="_blank" href="${image_url}" class="inline-text text-inline w-fullx flexx justify-center py-0 px-4 border border-transparent
+                        rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700
+                        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" style=" display: inline-block; ">Tải về</a></span>`);
+                                        $('#imagePreview').html(`<img src="${image_url}" alt="Uploaded image" class="rounded-md">`);
+                                        $('#imagePreview').show();
+                                    } else {
+                                        $('#resultText').text('Có lỗi xảy ra, vui lòng thử lại!');
+                                    }
+                                    $('#resultContainer').removeClass('hidden');
+                                } else {
+                                    if (data.url) {
+                                        // $('#imagePreview').html(`<img src="${data.url}" alt="Uploaded image" class="rounded-md">`);
+                                        $('#resultText').text('Có lỗi xảy ra, vui lòng thử lại!');
+                                        $('#resultContainer').removeClass('hidden');
+                                    } else {
+                                        // $('#resultText').text('Có lỗi xảy ra: ' + (data.error || 'Vui lòng thử lại!'));
+                                        $('#resultText').html('Có lỗi xảy ra: ' + (data.error || 'Vui lòng thử lại!'));
+
+                                        $('#resultContainer').removeClass('hidden');
+                                    }
+                                }
+                            } catch (e) {
+                                $('#resultText').text('Lỗi phân tích phản hồi từ server');
+                                $('#resultContainer').removeClass('hidden');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            $('#resultText').text('Lỗi: ' + error);
+                            $('#resultContainer').removeClass('hidden');
+                        },
+                        complete: function () {
+                            $('#loading').hide();
+                            $('#submitBtn').prop('disabled', false);
+                        }
+                    });
+                });
+
+                // Xử lý tất cả các thẻ a để ngăn chặn hành vi mặc định
+                $(document).on('click', 'a', function (e) {
+                    // e.preventDefault();
+                    // Có thể thêm logic điều hướng tại đây nếu cần
+                });
+            });
+        </script>
+        <style>
+            .vitri3 {
+                bottom: 50px;
+                right: 0;
+            }
+
+            .tienichcuocgoi {
+                position: fixed;
+                z-index: 999;
+            }
+
+            .tienichcuocgoi ul {
+                padding: 10px 10px;
+                width: 60px;
+            }
+
+            .tienichcuocgoi ul li {
+                margin-bottom: 10px;
+                position: relative;
+                display: flex;
+            }
+
+            .tienichcuocgoi ul li .icimg,
+            .tienichcuocgoi ul li .tienichname {
+                float: right;
+                position: absolute;
+                display: flex;
+            }
+
+            .tienichcuocgoi ul li img {
+                width: 40px;
+                height: 40px;
+
+                border-radius: 50%;
+            }
+
+            .tienichcuocgoi ul li a {
+                line-height: 40px;
+                height: 40px;
+                min-width: 40px;
+            }
+
+            .tienich_lenh {
+                width: 40px;
+                height: 40px;
+                background-color: var(--ws-bg-title);
+                color: var(--ws-color-title);
+                border-radius: 50%;
+                text-align: center;
+                line-height: 40px;
+                margin: 5px 10px;
+                cursor: pointer;
+                display: none;
+            }
+
+            .tienich_lenh i {
+                font-size: 25px;
+            }
+
+            .tienichcuocgoi ul li .icimg {
+                z-index: 9;
+                float: right;
+                right: 0;
+            }
+
+            .tienichcuocgoi ul li a:hover .icimg {
+                -webkit-animation: phonering-alo-circle-img-anim 1s infinite ease-in-out;
+                animation: phonering-alo-circle-img-anim 1s infinite ease-in-out;
+                -webkit-transform-origin: 50% 50%;
+                -ms-transform-origin: 50% 50%;
+                transform-origin: 50% 50%;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .tienichcuocgoi ul li .tienichname {
+                display: none;
+                width: 0px;
+                position: absolute;
+                white-space: nowrap;
+                box-shadow: 0px 0px 2px #00000057;
+                transition: min-width 1s;
+                z-index: 8;
+                right: 0;
+            }
+
+            .tienichcuocgoi ul li a:hover .tienichname {
+                width: auto;
+                display: block;
+                right: 0px;
+                background-color: #FFF;
+                box-shadow: 0px 0px 2px #00000057;
+                border-radius: 40px;
+                padding: 0px 45px 0px 15px;
+            }
+
+            .tienichcuocgoi ul li.sodienthoai a {
+                padding-right: 13px;
+                color: #F00;
+                font-size: 20px;
+                text-transform: uppercase;
+                font-weight: bold;
+                font-family: 'ws-font-title', Arial, sans-serif;
+            }
+
+            .autolook-alo-phone {
+                background-color: transparent;
+                cursor: pointer;
+                height: 40px;
+                width: 40px;
+                position: fixed;
+                transition: visibility 0.5s ease 0s;
+                z-index: 200000;
+            }
+
+            .autolook-alo-phone.autolook-alo-green .autolook-alo-ph-circle {
+                border-color: #005c91;
+                opacity: 1;
+            }
+
+            .autolook-alo-ph-circle {
+                animation: 2s ease-in-out 0s normal none infinite running autolook-alo-circle-anim;
+                background-color: #ff8383;
+                border: 2px solid #fc2020;
+                border-radius: 100%;
+                width: 40px;
+                height: 40px;
+                left: 0px;
+                opacity: 0.1;
+                position: absolute;
+                top: 2px;
+                transform-origin: 50% 50% 0;
+                transition: all 0.5s ease 0s;
+            }
+
+            .autolook-alo-phone.autolook-alo-green .autolook-alo-ph-circle-fill {
+                background-color: #f072724d;
+            }
+
+            .autolook-alo-ph-circle-fill {
+                animation: 2.3s ease-in-out 0s normal none infinite running autolook-alo-circle-fill-anim;
+                border: 2px solid transparent;
+                border-radius: 100%;
+                height: 40px;
+                width: 40px;
+
+                position: absolute;
+                transform-origin: 50% 50% 0;
+                transition: all 0.5s ease 0s;
+            }
+
+            .autolook-alo-phone.autolook-alo-green .autolook-alo-ph-img-circle {
+                background-color: #ff3434;
+            }
+
+            .autolook-alo-ph-img-circle {
+                border: 2px solid transparent;
+                border-radius: 100%;
+                width: 40px;
+
+                height: 40px;
+                opacity: 1;
+                transform-origin: 50% 50% 0;
+            }
+
+            img.lac {
+                -webkit-animation: phonering-alo-circle-img-anim 1s infinite ease-in-out;
+                animation: phonering-alo-circle-img-anim 1s infinite ease-in-out;
+                -webkit-transform-origin: 50% 50%;
+                -ms-transform-origin: 50% 50%;
+                transform-origin: 50% 50%;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .tienichcuocgoi.themes4 ul li a .icimg {
+                -webkit-animation: phonering-alo-circle-img-anim 1s infinite ease-in-out;
+                animation: phonering-alo-circle-img-anim 1s infinite ease-in-out;
+                -webkit-transform-origin: 50% 50%;
+                -ms-transform-origin: 50% 50%;
+                transform-origin: 50% 50%;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .tienichcuocgoi.themes4.vitri3 ul li.sodienthoai a .tienichname {
+                left: unset;
+                width: auto;
+                background-color: #FFF;
+                box-shadow: 0px 0px 2px #00000057;
+                border-radius: 40px;
+                font-size: 18px
+            }
+
+            a:where(:not(.wp-element-button)) {
+                text-decoration: none;
+            }
+
+            /*! autolook keyframes */
+            @keyframes phonering-alo-circle-img-anim {
+                0% {
+                    -webkit-transform: rotate(0) scale(1) skew(1deg);
+                }
+
+                10% {
+                    -webkit-transform: rotate(-25deg) scale(1) skew(1deg);
+                }
+
+                20% {
+                    -webkit-transform: rotate(25deg) scale(1) skew(1deg);
+                }
+
+                30% {
+                    -webkit-transform: rotate(-25deg) scale(1) skew(1deg);
+                }
+
+                40% {
+                    -webkit-transform: rotate(25deg) scale(1) skew(1deg);
+                }
+
+                50% {
+                    -webkit-transform: rotate(0) scale(1) skew(1deg);
+                }
+
+                100% {
+                    -webkit-transform: rotate(0) scale(1) skew(1deg);
+                }
+            }
+        </style>
+        <div class="tienichcuocgoi vitri3 themes4">
+            <ul id="ultienichcuocgoi">
+                <li class="sodienthoaizalo">
+                    <a rel="noopener nofflow" target="_blank" href="https://zalo.me/0898485555"
+                        data-original-title="Nhắn tin cho chúng tôi qua Zalo" data-placement="top"
+                        data-toggle="tooltip">
+                        <span class="icimg">
+                            <img width="40" height="40" alt="sodienthoaizalo" src="images/sodienthoaizalo.svg">
+                        </span>
+                        <span class="tienichname">0898485555</span>
+                    </a>
+                </li>
+                <li class="facebook">
+                    <a rel="noopener nofflow" target="_blank" href="https://www.facebook.com/HieuLeAI.Agency"
+                        data-original-title="Nhắn tin cho chúng tôi qua Facebook" data-placement="top"
+                        data-toggle="tooltip">
+                        <span class="icimg">
+                            <img alt="facebook" src="images/facebook.svg">
+                        </span>
+                        <span class="tienichname">HieuLeAI.Agency</span>
+                    </a>
+                </li>
+                <li class="sodienthoai">
+                    <a rel="noopener nofflow" href="tel:0898485555" data-original-title="Nhấn để gọi ngay"
+                        data-placement="top" data-toggle="tooltip">
+                        <span class="icimg">
+                            <img width="40" height="40" class="lac" alt="sodienthoai" src="images/phone-call.svg">
+                            <div class="autolook-alo-ph-circle"></div>
+                            <div class="autolook-alo-ph-circle-fill"></div>
+                        </span>
+                        <span class="tienichname">0898485555</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <script>
+            if (true || window.innerWidth < 768) {
+                // Mobile menu toggle
+                const mobileMenuButton = document.getElementById('mobile-menu-button');
+                const mobileMenu = document.getElementById('mobile-menu');
+
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    mobileMenu.classList.toggle('-translate-x-full');
+                });
+
+                // Đóng menu khi click ra ngoài
+                document.addEventListener('click', function (e) {
+                    const isClickInsideMenu = mobileMenu.contains(e.target);
+                    const isClickOnButton = mobileMenuButton.contains(e.target);
+
+                    if (!isClickInsideMenu && !isClickOnButton && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenu.classList.add('-translate-x-full');
+                    }
+                });
+
+                // Mobile lịch sử chat
+                const mobileChatButton = document.getElementById('tongle-chat-history');
+                const mobileChatHistory = document.getElementById('slidebar-chat');
+
+                mobileChatButton.addEventListener('click', () => {
+                    mobileChatHistory.classList.toggle('hidden');
+                    mobileChatHistory.classList.toggle('-translate-x-full');
+                });
+
+
+                // Đóng menu khi click ra ngoài
+                document.addEventListener('click', function (e) {
+                    const isClickInsideMenu = mobileChatHistory.contains(e.target);
+                    const isClickOnButton = mobileChatButton.contains(e.target);
+
+                    if (!isClickInsideMenu && !isClickOnButton && !mobileChatHistory.classList.contains('hidden')) {
+                        mobileChatHistory.classList.add('hidden');
+                        mobileChatHistory.classList.add('-translate-x-full');
+                    }
+                });
+                // Mobile products menu toggle
+                const mobileProductsButton = document.getElementById('mobile-products-button');
+                const mobileProductsMenu = document.getElementById('mobile-products-menu');
+
+                mobileProductsButton.addEventListener('click', () => {
+                    mobileProductsMenu.classList.toggle('hidden');
+                    const icon = mobileProductsButton.querySelector('i');
+                    icon.classList.toggle('fa-chevron-down');
+                    icon.classList.toggle('fa-chevron-up');
+                });
+
+                // Prevent default for all anchor tags
+                document.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        if (link.getAttribute('href') === '#') {
+                            e.preventDefault();
+                        }
+                    });
+                });
+            }
+            function toggleTooltip() {
+                const tooltip = document.getElementById('tooltip');
+                tooltip.classList.toggle('hidden');
+            }
+
+            // Optional: ẩn khi click ngoài
+            document.addEventListener('click', function (e) {
+                const tooltip = document.getElementById('tooltip');
+                const trigger = tooltip.previousElementSibling;
+                if (!tooltip.contains(e.target) && !trigger.contains(e.target)) {
+                    tooltip.classList.add('hidden');
+                }
+            });
+            function toggleDropdown() {
+                document.getElementById("customDropdown").classList.toggle("hidden");
+            }
+
+            function selectRatio(ratio) {
+                document.getElementById("selectedRatio").innerText = ratio + " ▼";
+                document.getElementById("customDropdown").classList.add("hidden");
+
+                // Bạn có thể xử lý giá trị ratio ở đây
+                console.log("Đã chọn tỉ lệ:", ratio);
+            }
+            function toggleDropdown2() {
+                document.getElementById("customDropdown2").classList.toggle("hidden");
+            }
+
+            function selectRatio2(ratio) {
+                document.getElementById("selectedRatio2").innerText = ratio + " ▼";
+                document.getElementById("customDropdown2").classList.add("hidden");
+
+                // Bạn có thể xử lý giá trị ratio ở đây
+                console.log("Đã số lượng ảnh:", ratio);
+            }
+
+            // Đóng dropdown khi click ra ngoài
+            document.addEventListener("click", function (e) {
+                // Dropdown tỷ lệ ảnh
+                const dropdown1 = document.getElementById("customDropdown");
+                const button1 = document.getElementById("selectedRatio");
+                if (!dropdown1.contains(e.target) && !button1.contains(e.target)) {
+                    dropdown1.classList.add("hidden");
+                }
+
+                // Dropdown số lượng ảnh
+                const dropdown2 = document.getElementById("customDropdown2");
+                const button2 = document.getElementById("selectedRatio2");
+                if (!dropdown2.contains(e.target) && !button2.contains(e.target)) {
+                    dropdown2.classList.add("hidden");
+                }
+            });
+
+
+        </script>
+
+        <!-- POPUP -->
+        <div id="popupContainer"
+            class="bg-[url('https://w.ladicdn.com/668665e58fb7e80020232e3b/bg-20250724100845-bkivz.png')] bg-cover bg-center bg-no-repeat  hidden fixed inset-0 !bg-[#F5F5F5] z-[9999] flex items-center justify-center">
+            <div class="absolute inset-0 bg-black/30 z-0"></div>
+            <div
+                class="w-full h-full rounded-none p-4 overflow-auto relative text-center shadow-lg flex flex-col justify-center items-center">
+
+
+                <!-- Action Buttons -->
+                <div class="absolute top-3 left-0 right-0 flex justify-center gap-5 text-white text-lg z-50">
+
+                    <!-- <button onclick="toggleCompareImage()" title="Compare image" class="hover:scale-110 duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-columns2 size-5 font-bold">
+                            <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                            <path d="M12 3v18"></path>
+                        </svg>
+                    </button> -->
+                    <button onclick="copyImageLink()" title="Copy link" class="hover:scale-110 duration-200">
+                        <i class="fas fa-link"></i>
+                    </button>
+                    <button onclick="toggleFullscreen()" title="Full screen" class="hover:scale-110 duration-200">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button onclick="likeImage()" title="Like" class="hover:scale-110 duration-200">
+                        <i class="far fa-heart" id="likeIcon"></i>
+                    </button>
+
+                    <a id="downloadImage" href="#" download
+                        class="bg-[#2e2e2e] text-white px-4 py-1 text-base rounded hover:bg-gray-400">Tải xuống</a>
+                </div>
+                <!-- Đóng -->
+                <button style="z-index: 60;" onclick="closePopup()"
+                    class="absolute top-2 right-4 text-white text-3xl font-bold">&times;</button>
+
+
+
+                <!-- Ảnh -->
+                <div id="compareWrapper" class="flex justify-center items-start gap-0 sm:gap-6">
+                    <!-- <div class="relative hidden transition-fade" id="originalWrapper">
+                        <div id="originalGrid" class="grid grid-cols-2 gap-4">
+                            <img class="original-image rounded-md shadow-lg" alt="Ảnh gốc 1">
+                            <img class="original-image rounded-md shadow-lg" alt="Ảnh gốc 2">
+                            <img class="original-image rounded-md shadow-lg" alt="Ảnh gốc 3">
+                            <img class="original-image rounded-md shadow-lg" alt="Ảnh gốc 4">
+                        </div>
+                        <div class="absolute top-2 left-2 bg-black/70 text-white text-sm px-2 py-1 rounded ">Ảnh gốc
+                        </div>
+                    </div> -->
+
+
+
+
+                    <!-- <div class="relative">
+                        <img id="popupImage" src="" class="w-auto h-[75vh] rounded-md shadow-lg mx-auto" alt="Phóng to">
+                        <div id="processedLabel"
+                            class="hidden absolute top-2 left-2 bg-black/70 text-white text-sm px-2 py-1 rounded sm:ml-0 xs:ml-5">
+                            Ảnh đã
+                            xử lý</div>
+                    </div> -->
+                    <div id="popupImage" class="select-none">
+                        <div id="compareBox"
+                            class="popupImage relative md:w-[600px] md:h-[800px] sm:w-[500px] sm:h-[700px] xs:w-[350px] xs:h-[550px] overflow-hidden rounded-2xl shadow-lg">
+                            <img src="https://i.imghippo.com/files/tPjm9279QE.png" alt="Upscaled" id="imgBottom"
+                                class="absolute top-0 left-0 w-full h-full object-cover pointer-events-none">
+                            <img src="https://i.imghippo.com/files/nSi9406oH.jpeg" alt="Original" id="imgTop"
+                                class="absolute top-0 left-0 w-full h-full object-cover pointer-events-none z-20"
+                                style="clip-path: inset(0 50% 0 0);">
+                            <div id="sliderBar"
+                                class="absolute top-0 h-full w-[3px] bg-gray-400 z-30 translate-x-[-50%] left-1/2 cursor-ew-resize">
+                            </div>
+                            <div id="sliderHandle"
+                                class="absolute top-1/2 left-1/2 w-5 h-5 bg-gray-600 border-4 border-white rounded-full z-40 translate-x-[-50%] translate-y-[-50%] shadow-md cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- <div
+                    class="sm:flex xs:grid w-full xs:justify-center sm:justify-between items-center gap-4 absolute xs:bottom-4 sm:bottom-6 px-5"> -->
+                <!-- <div class="xs:flex sm:hidden justify-center">
+                        <button
+                            class=" bg-[#2e2e2e] text-white px-4 py-1 rounded hover:bg-gray-400 flex items-center gap-2"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-wand-sparkles size-4 w-3.5 h-3.5">
+                                <path
+                                    d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72">
+                                </path>
+                                <path d="m14 7 3 3"></path>
+                                <path d="M5 6v4"></path>
+                                <path d="M19 14v4"></path>
+                                <path d="M10 2v2"></path>
+                                <path d="M7 8H3"></path>
+                                <path d="M21 16h-4"></path>
+                                <path d="M11 3H9"></path>
+                            </svg>Edit</button>
+                    </div> -->
+                <!-- <div class="bg-[#2e2e2e] text-white px-4 py-1 rounded flex relative sm:text-start xs:text-center">
+                        <span>Generate: </span>
+                        <span id="promptSummary" onclick="togglePromptPopup()"
+                            class="select-none cursor-pointer block max-w-[300px] truncate whitespace-nowrap overflow-hidden ml-1 hover:underline">Prompt
+                            sử dụng lên ảnh này</span>
+                    </div> -->
+
+                <!-- Popup -->
+                <!-- <div id="promptPopup" class="hidden  inset-0 z-[9999]  absolute select-none">
+                        <div
+                            class="bg-white w-[80%] max-w-[400px] rounded-lg shadow-lg p-2  absolute bottom-[40px] sm:left-[1.2rem] xs:left-[2.6rem] "> -->
+                <!-- Close -->
+                <!-- Prompt Title -->
+                <!-- <div class="flex justify-between ">
+                                <h2 class="text-base font-semibold text-[#999999] mb-3 text-start">Prompt</h2>
+                                <button onclick="togglePromptPopup()"
+                                    class=" text-2xl font-bold text-gray-600 hover:text-black flex items-start">
+                                    &times;
+                                </button>
+                            </div>
+
+                            <div> -->
+
+
+                <!-- Prompt Text -->
+                <!-- <textarea id="promptText" class="w-full rounded-lg text-sm text-gray-700 resize-none"
+                                    readonly></textarea> -->
+
+                <!-- Copy Button -->
+                <!-- <div class="flex justify-end">
+                                    <button id="copyPromptButton" onclick="copyPromptText()"
+                                        class="flex items-center justify-center bg-[#2e2e2e] text-white px-4 py-2 rounded hover:bg-gray-700 text-sm w-full">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                                            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                                        </svg>
+                                        Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                <!-- 
+                    <div class="sm:block xs:hidden">
+                        <button
+                            class=" bg-[#2e2e2e] text-white px-4 py-1 rounded hover:bg-gray-400 flex items-center gap-2"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-wand-sparkles size-4 w-3.5 h-3.5">
+                                <path
+                                    d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72">
+                                </path>
+                                <path d="m14 7 3 3"></path>
+                                <path d="M5 6v4"></path>
+                                <path d="M19 14v4"></path>
+                                <path d="M10 2v2"></path>
+                                <path d="M7 8H3"></path>
+                                <path d="M21 16h-4"></path>
+                                <path d="M11 3H9"></path>
+                            </svg>Edit</button>
+                    </div>
+                </div>-->
+            </div>
+            </div>
+            <script>
+                const container = document.getElementById("compareBox");
+                const imgTop = document.getElementById("imgTop");
+                const imgBottom = document.getElementById("imgBottom");
+                const sliderBar = document.getElementById("sliderBar");
+                const sliderHandle = document.getElementById("sliderHandle");
+
+                let isDraggingSlider = false;
+                let isDraggingImage = false;
+                let zoomLevel = 1;
+                let imgOffsetX = 0;
+                let imgOffsetY = 0;
+                let dragStartX = 0;
+                let dragStartY = 0;
+
+                function setSlider(x) {
+                    const rect = container.getBoundingClientRect();
+                    let offset = x - rect.left;
+                    offset = Math.max(0, Math.min(offset, rect.width));
+                    const percent = offset / rect.width * 100;
+
+                    imgTop.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+                    sliderBar.style.left = `${percent}%`;
+                    sliderHandle.style.left = `${percent}%`;
+                }
+
+                function clampOffsets() {
+                    const containerRect = container.getBoundingClientRect();
+                    const scaledWidth = containerRect.width * zoomLevel;
+                    const scaledHeight = containerRect.height * zoomLevel;
+
+                    const maxOffsetX = (scaledWidth - containerRect.width) / 2;
+                    const maxOffsetY = (scaledHeight - containerRect.height) / 2;
+
+                    imgOffsetX = Math.max(-maxOffsetX, Math.min(imgOffsetX, maxOffsetX));
+                    imgOffsetY = Math.max(-maxOffsetY, Math.min(imgOffsetY, maxOffsetY));
+                }
+
+                function updateImageTransform() {
+                    clampOffsets();
+                    const transform = `scale(${zoomLevel}) translate(${imgOffsetX / zoomLevel}px, ${imgOffsetY / zoomLevel}px)`;
+                    imgTop.style.transform = transform;
+                    imgBottom.style.transform = transform;
+                }
+
+                // Kéo slider
+                sliderHandle.addEventListener("mousedown", (e) => {
+                    e.preventDefault();
+                    isDraggingSlider = true;
+                });
+
+                window.addEventListener("mousemove", (e) => {
+                    if (isDraggingSlider) {
+                        setSlider(e.clientX);
+                    } else if (isDraggingImage && zoomLevel > 1) {
+                        const deltaX = e.clientX - dragStartX;
+                        const deltaY = e.clientY - dragStartY;
+                        imgOffsetX += deltaX;
+                        imgOffsetY += deltaY;
+                        updateImageTransform();
+                        dragStartX = e.clientX;
+                        dragStartY = e.clientY;
+                    }
+                });
+
+                window.addEventListener("mouseup", () => {
+                    isDraggingSlider = false;
+                    isDraggingImage = false;
+                });
+
+                // Mobile touch
+                sliderHandle.addEventListener("touchstart", (e) => {
+                    e.preventDefault();
+                    isDraggingSlider = true;
+                });
+
+                window.addEventListener("touchmove", (e) => {
+                    if (isDraggingSlider) {
+                        setSlider(e.touches[0].clientX);
+                    } else if (isDraggingImage && zoomLevel > 1) {
+                        const deltaX = e.touches[0].clientX - dragStartX;
+                        const deltaY = e.touches[0].clientY - dragStartY;
+                        imgOffsetX += deltaX;
+                        imgOffsetY += deltaY;
+                        updateImageTransform();
+                        dragStartX = e.touches[0].clientX;
+                        dragStartY = e.touches[0].clientY;
+                    }
+                });
+
+                window.addEventListener("touchend", () => {
+                    isDraggingSlider = false;
+                    isDraggingImage = false;
+                });
+
+                // Kéo ảnh khi zoom
+                container.addEventListener("mousedown", (e) => {
+                    if (e.target !== sliderHandle && zoomLevel > 1) {
+                        isDraggingImage = true;
+                        dragStartX = e.clientX;
+                        dragStartY = e.clientY;
+                    }
+                });
+
+                container.addEventListener("touchstart", (e) => {
+                    if (e.target !== sliderHandle && zoomLevel > 1) {
+                        isDraggingImage = true;
+                        dragStartX = e.touches[0].clientX;
+                        dragStartY = e.touches[0].clientY;
+                    }
+                });
+
+                // Zoom bằng lăn chuột
+                container.addEventListener("wheel", (e) => {
+                    e.preventDefault();
+                    const delta = -e.deltaY || e.wheelDelta;
+                    const zoomFactor = delta > 0 ? 1.05 : 0.95;
+
+                    const prevZoom = zoomLevel;
+                    zoomLevel = Math.max(1, Math.min(zoomLevel * zoomFactor, 5)); // Giới hạn zoom 1x-5x
+
+                    // Giữ vị trí zoom tại điểm chuột
+                    const rect = container.getBoundingClientRect();
+                    const offsetX = e.clientX - rect.left - rect.width / 2;
+                    const offsetY = e.clientY - rect.top - rect.height / 2;
+
+                    imgOffsetX = imgOffsetX * (zoomLevel / prevZoom) + offsetX * (1 - zoomFactor);
+                    imgOffsetY = imgOffsetY * (zoomLevel / prevZoom) + offsetY * (1 - zoomFactor);
+
+                    updateImageTransform();
+                });
+            </script>
+            <script>
+
+                function togglePromptPopup() {
+                    const popup = document.getElementById("promptPopup");
+                    const promptText = document.getElementById("promptText");
+                    const promptSummary = document.getElementById("promptSummary");
+
+                    promptText.value = promptSummary ? promptSummary.innerText : '';
+                    popup.classList.toggle("hidden");
+                }
+
+                function copyPromptText() {
+                    const promptText = document.getElementById("promptText");
+                    navigator.clipboard.writeText(promptText.value)
+                        .then(() => {
+                            const btn = document.getElementById("copyPromptButton");
+                            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 mr-2"><path d="M20 6 9 17l-5-5"></path></svg> Copied`;
+                            setTimeout(() => {
+                                btn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                    </svg>
+                    Copy`;
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            alert("Copy failed: " + err);
+                        });
+                }
+
+
+
+
+
+                function toggleCompareImage() {
+                    const originalWrapper = document.getElementById('originalWrapper');
+                    const originalGrid = document.getElementById('originalGrid');
+                    const originalImages = document.querySelectorAll('.original-image');
+                    const popupImage = document.getElementById('popupImage');
+                    const processedLabel = document.getElementById('processedLabel');
+
+                    // Lấy kích thước ảnh đã xử lý
+                    const processedWidth = popupImage.clientWidth;
+                    const processedHeight = popupImage.clientHeight;
+
+                    // Cập nhật chiều rộng/lưới cho container 4 ảnh
+                    originalGrid.style.width = processedWidth + 'px';
+                    originalGrid.style.height = processedHeight + 'px';
+
+                    // Gán ảnh xử lý vào cả 4 ảnh gốc
+                    originalImages.forEach((img) => {
+                        img.src = popupImage.src;
+                        img.style.width = (processedWidth / 2 - 8) + 'px'; // 8 = nửa khoảng cách gap-4
+                        img.style.height = (processedHeight / 2 - 8) + 'px';
+                        img.style.objectFit = 'cover';
+                    });
+
+                    // Hiển thị/ẩn
+                    if (originalWrapper.classList.contains('show')) {
+                        originalWrapper.classList.remove('show');
+                        processedLabel.classList.remove('show');
+                        setTimeout(() => {
+                            originalWrapper.classList.add('hidden');
+                            processedLabel.classList.add('hidden');
+                        }, 400);
+                    } else {
+                        originalWrapper.classList.remove('hidden');
+                        processedLabel.classList.remove('hidden');
+                        setTimeout(() => {
+                            originalWrapper.classList.add('show');
+                            processedLabel.classList.add('show');
+                        }, 10);
+                    }
+                }
+
+
+            </script>
+
+
+            <script>
+                function closePopup() {
+                    document.getElementById('popupContainer').classList.add('hidden');
+                }
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    const previewContainer = document.getElementById('imagePreview');
+                    const popupContainer = document.getElementById('popupContainer');
+                    const popupImage = document.getElementById('popupImage');
+                    const downloadLink = document.getElementById('downloadImage');
+
+                    if (previewContainer) {
+                        previewContainer.addEventListener('click', function (event) {
+                            const target = event.target;
+                            if (target.tagName === 'IMG') {
+                                const src = target.getAttribute('src');
+                                popupImage.setAttribute('src', src);
+                                downloadLink.setAttribute('href', src);
+                                popupContainer.classList.remove('hidden');
+
+                                // ✳️ Reset phần so sánh về mặc định: ẩn ảnh gốc và label
+                                const originalWrapper = document.getElementById('originalWrapper');
+                                const processedLabel = document.getElementById('processedLabel');
+
+                                originalWrapper.classList.add('hidden');
+                                processedLabel.classList.add('hidden');
+                                originalWrapper.classList.remove('show');
+                                processedLabel.classList.remove('show');
+                            }
+                        });
+                    }
+                });
+            </script>
+
+
+            <script>
+                function copyImageLink() {
+                    const link = document.getElementById('popupImage').src;
+                    navigator.clipboard.writeText(link).then(() => {
+                        alert("Đã sao chép liên kết ảnh!");
+                    });
+                }
+
+        function toggleFullscreen() {
+    const popupImage = document.getElementById('popupImage');
+    const img = popupImage.querySelector('#imgBottom');
+
+    if (img.requestFullscreen) {
+        img.requestFullscreen();
+    } else if (img.webkitRequestFullscreen) {
+        img.webkitRequestFullscreen();
+    } else if (img.msRequestFullscreen) {
+        img.msRequestFullscreen();
+    }
+
+    // Add class fullscreen-style để chỉ tác động khi fullscreen
+    img.classList.add('fullscreen-style');
+}
+
+// Khi thoát fullscreen → remove class ngay
+document.addEventListener('fullscreenchange', () => {
+    const img = document.querySelector('#imgBottom');
+    if (!document.fullscreenElement) {
+        img.classList.remove('fullscreen-style');
+    }
+});
+
+
+
+                function likeImage() {
+                    const icon = document.getElementById('likeIcon');
+                    icon.classList.toggle('fas');
+                    icon.classList.toggle('far');
+                    icon.classList.toggle('text-red-500');
+                }
+            </script>
+
+
+            <script>
+                function showImageInfo() {
+                    document.getElementById('infoModal').classList.remove('hidden');
+                }
+                function closeImageInfo() {
+                    document.getElementById('infoModal').classList.add('hidden');
+                }
+            </script>
+
+            <script>
+                //Button Menu
+                document.addEventListener('DOMContentLoaded', () => {
+                    const sidebarLinks = document.querySelectorAll(
+                        '.space-y-4.px-2.mt-4 a'
+                    );
+
+                    // Xác định đường dẫn hiện tại để highlight
+                    const currentUrl = window.location.pathname;
+
+                    sidebarLinks.forEach(link => {
+                        // Nếu URL khớp -> thêm active
+                        if (link.getAttribute('href') && currentUrl.includes(link.getAttribute('href'))) {
+                            link.classList.add('sidebar-active');
+                        }
+
+                        // Gắn sự kiện click
+                        link.addEventListener('click', function () {
+                            // Bỏ class ở tất cả
+                            sidebarLinks.forEach(l => l.classList.remove('sidebar-active'));
+
+                            // Thêm class vào phần tử vừa click
+                            this.classList.add('sidebar-active');
+                        });
+                    });
+                });
+            </script>
+
+
+</body>
+
+</html>
