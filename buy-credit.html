@@ -735,7 +735,7 @@
     <!-- Card: Thông tin & chọn gói -->
     <div class="grid gap-4">
         <section class="grid gap-4 rounded-2xl border border-gray-200 bg-white shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)] p-5">
-      <div class="md:flex lg:grid xs:grid-cols-1 gap-5">
+      <div class="md:flex md:justify-between lg:grid xs:grid-cols-1 gap-5">
         <div>
         <label class="text-3xl font-semibold">Credit theo tháng</label>
       
@@ -743,50 +743,59 @@
       <!-- BOX CHỌN GÓI -->
       <div class="grid gap-4 md:grid-cols-1 lg:grid-cols-3 mt-4">
         <!-- Gói 1 -->
-        <div class="rounded-xl border-2 border-gray-200  p-4 shadow-sm bg-[url('./images/bg-box.jpg')] bg-cover flex flex-col gap-2">
+        <div class="rounded-xl md:w-[300px] lg:w-[320px] border-2 border-gray-200  pt-4 pl-4 pr-1 pb-1 shadow-sm bg-[url('./images/bg-box.jpg')] bg-cover flex flex-col gap-2">
           <h3 class="text-lg  text-white font-semibold">Tiêu chuẩn</h3>
           <p class="text-sm text-white flex items-center gap-1"><i class="fa-solid fa-bolt"></i><span>100 credit / tháng</span></p>
-          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">150.000đ</span><span class="text-white font-normal line-through">195.000đ</span></div><span class="font-normal text-[#f05454]">-30%</span></div>
+          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">150.000đ</span><span class="text-white font-normal line-through">215.000đ</span></div></div>
          
-          <button
-            class="btn-buy mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
+          <div class="flex justify-between items-end">
+            <button
+            class="btn-buy mb-2 mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
             data-amount="150000" data-pack="1">
             Thực hiện
           </button>
+          <i class="font-bold text-[#f05454] text-6xl">-30%</i>
+          </div>
         </div>
 
         <!-- Gói 2 -->
-        <div class="rounded-xl border-2 border-gray-200 p-4 bg-[url('./images/bg-box.jpg')] bg-cover shadow-sm flex flex-col gap-2 ">
+        <div class="rounded-xl md:w-[300px] lg:w-[320px] border-2 border-gray-200 pt-4 pl-4 pr-1 pb-1 bg-[url('./images/bg-box.jpg')] bg-cover shadow-sm flex flex-col gap-2 ">
          
   
           <h3 class="text-lg text-white font-semibold">Pro</h3>
           <p class="text-sm text-white flex items-center gap-1"><i class="fa-solid fa-bolt"></i><span>350 credit / tháng</span></p>
-          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">450.000đ</span><span class="text-white font-normal line-through">585.000đ</span></div><span class="font-normal text-[#f05454]">-30%</span></div>
+          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">450.000đ</span><span class="text-white font-normal line-through">643.000đ</span></div></div>
          
-          <button
-            class="btn-buy mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
-            data-amount="450000" data-pack="2">
+          <div class="flex justify-between items-end">
+            <button
+            class="btn-buy mb-2 mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
+            data-amount="150000" data-pack="1">
             Thực hiện
           </button>
+          <i class="font-bold text-[#f05454] text-6xl">-30%</i>
+          </div>
           
         </div>
 
         <!-- Gói 3 -->
-        <div class="rounded-xl border-2 border-gray-200 bg-[url('./images/bg-box.jpg')] bg-cover p-4 shadow-sm flex flex-col gap-2">
+        <div class="rounded-xl md:w-[300px] lg:w-[320px] border-2 border-gray-200 bg-[url('./images/bg-box.jpg')] bg-cover pt-4 pl-4 pr-1 pb-1 shadow-sm flex flex-col gap-2">
           <h3 class="text-lg text-white font-semibold">Doanh nghiệp</h3>
           <p class="text-sm text-white flex items-center gap-1"><i class="fa-solid fa-bolt"></i><span>1000 credit / tháng</span></p>
-          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">1.300.000đ</span><span class="text-white font-normal line-through">1.690.000đ</span></div><span class="font-normal text-[#f05454]">-30%</span></div>
+          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">1.300.000đ</span><span class="text-white font-normal line-through">1.857.000đ</span></div></div>
          
-          <button
-            class="btn-buy mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
-            data-amount="165000" data-pack="3">
+         <div class="flex justify-between items-end">
+            <button
+            class="btn-buy mb-2 mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
+            data-amount="150000" data-pack="1">
             Thực hiện
           </button>
+          <i class="font-bold text-[#f05454] text-6xl">-30%</i>
+          </div>
         </div>
       </div>
       </div>
 
-    <div>
+    <div class="xs:mt-5 md:mt-0">
         
       <label class="text-3xl font-semibold">Credit vĩnh viễn</label>
       
@@ -794,42 +803,51 @@
       <!-- BOX CHỌN GÓI -->
       <div class="grid gap-4 md:grid-cols-1 lg:grid-cols-3 mt-4 ">
         <!-- Gói 1 -->
-        <div class="rounded-xl border-2 border-gray-200 bg-[url('./images/bg-box.jpg')] bg-cover bg-no-repeat p-4 shadow-sm flex flex-col gap-2">
+        <div class="rounded-xl md:w-[300px] lg:w-[320px] border-2 border-gray-200 bg-[url('./images/bg-box.jpg')] bg-cover bg-no-repeat pt-4 pl-4 pr-1 pb-1 shadow-sm flex flex-col gap-2">
           <h3 class="text-lg text-white font-semibold">Tiêu chuẩn</h3>
           <p class="text-sm text-white flex items-center gap-1"><i class="fa-solid fa-bolt"></i><span>100 credit</span></p>
-          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center "><span class="text-3xl text-white">180.000đ</span><span class="text-white font-normal line-through">234.000đ</span></div><span class="font-normal text-[#f05454]">-30%</span></div>
+          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center "><span class="text-3xl text-white">180.000đ</span><span class="text-white font-normal line-through">257.000đ</span></div></div>
          
-          <button
-            class="btn-buy w-24 mt-4 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
+          <div class="flex justify-between items-end">
+            <button
+            class="btn-buy mb-2 mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
             data-amount="150000" data-pack="1">
             Thực hiện
           </button>
+          <i class="font-bold text-[#f05454] text-6xl">-30%</i>
+          </div>
         </div>
   
         <!-- Gói 2 -->
-        <div class="rounded-xl border-2 border-gray-200 bg-[url('./images/bg-box.jpg')] bg-cover p-4 shadow-sm flex flex-col gap-2">
+        <div class="rounded-xl md:w-[300px] lg:w-[320px] border-2 border-gray-200 bg-[url('./images/bg-box.jpg')] bg-cover pt-4 pl-4 pr-1 pb-1 shadow-sm flex flex-col gap-2">
           <h3 class="text-lg text-white font-semibold">Pro</h3>
           <p class="text-sm text-white flex items-center gap-1"><i class="fa-solid fa-bolt"></i><span>350 credit</span></p>
-          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">495.000đ</span><span class="text-white font-normal line-through">804.000đ</span></div><span class="font-normal text-[#f05454]">-30%</span></div>
+          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">495.000đ</span><span class="text-white font-normal line-through">707.000đ</span></div></div>
          
-          <button
-            class="btn-buy mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
-            data-amount="450000" data-pack="2">
+         <div class="flex justify-between items-end">
+            <button
+            class="btn-buy mb-2 mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
+            data-amount="150000" data-pack="1">
             Thực hiện
           </button>
+          <i class="font-bold text-[#f05454] text-6xl">-30%</i>
+          </div>
         </div>
   
         <!-- Gói 3 -->
-        <div class="rounded-xl border-2 border-gray-200 bg-[url('./images/bg-box.jpg')] bg-cover p-4 shadow-sm flex flex-col gap-2">
+        <div class="rounded-xl md:w-[300px] lg:w-[320px] border-2 border-gray-200 bg-[url('./images/bg-box.jpg')] bg-cover pt-4 pl-4 pr-1 pb-1 shadow-sm flex flex-col gap-2">
           <h3 class="text-lg text-white font-semibold">Doanh nghiệp</h3>
           <p class="text-sm text-white flex items-center gap-1"><i class="fa-solid fa-bolt"></i><span>1000 credit</span></p>
-          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">1.500.000đ</span><span class="text-white font-normal line-through">1.950.000đ</span></div><span class="font-normal text-[#f05454]">-30%</span></div>
+          <div class="flex sm:flex-row xs:flex-col sm:items-center xs:items-start w-fit h-full gap-2 text-2xl font-bold"><div class="xs:flex md:grid xl:flex gap-2 items-center"><span class="text-3xl text-white">1.500.000đ</span><span class="text-white font-normal line-through">2.143.000đ</span></div></div>
          
-          <button
-            class="btn-buy mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
-            data-amount="165000" data-pack="3">
+          <div class="flex justify-between items-end">
+            <button
+            class="btn-buy mb-2 mt-4 w-24 rounded-md bg-[#F05454] text-white py-2 hover:bg-[#30475E]"
+            data-amount="150000" data-pack="1">
             Thực hiện
           </button>
+          <i class="font-bold text-[#f05454] text-6xl">-30%</i>
+          </div>
         </div>
       </div>
     </div>
