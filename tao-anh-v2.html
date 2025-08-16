@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autolook - AI Fashion Image Generator</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <base target="_self">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+        
+        * {
+            font-family: "Montserrat", sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .bg-fashion-gradient {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .bg-fashion-accent {
+            background: linear-gradient(to right, #ff4e50, #f9d423);
+        }
+        
+        .sidebar-shadow {
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .fashion-input {
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .fashion-input:focus {
+            border-color: #ff4e50;
+            box-shadow: 0 0 0 2px rgba(255, 78, 80, 0.2);
+        }
+        
+        .image-upload-box {
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+        
+        .image-upload-box:hover {
+            border-color: #ff4e50;
+            background-color: #fff5f5;
+        }
+        
+        .fashion-btn {
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .fashion-btn-primary {
+            background: linear-gradient(to right, #ff4e50, #f9d423);
+            color: white;
+        }
+        
+        .fashion-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 78, 80, 0.3);
+        }
+        
+        .fashion-btn-secondary {
+            background-color: #2d3748;
+            color: white;
+        }
+        
+        .fashion-btn-secondary:hover {
+            background-color: #1a202c;
+            transform: translateY(-2px);
+        }
+        
+        .result-image {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading-spinner {
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .fashion-tag {
+            background-color: #fff5f5;
+            color: #ff4e50;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .dark .fashion-tag {
+            background-color: rgba(255, 78, 80, 0.2);
+            color: #ff7b7d;
+        }
+        
+        .dark .image-upload-box {
+            border-color: #4a5568;
+            background-color: #2d3748;
+        }
+        
+        .dark .image-upload-box:hover {
+            border-color: #ff4e50;
+            background-color: rgba(255, 78, 80, 0.1);
+        }
+        
+        .dark .fashion-input {
+            background-color: #2d3748;
+            border-color: #4a5568;
+            color: #f7fafc;
+        }
+        
+        .dark .fashion-input:focus {
+            border-color: #ff4e50;
+            box-shadow: 0 0 0 2px rgba(255, 78, 80, 0.3);
+        }
+        
+        .dark .bg-fashion-gradient {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+        }
+        
+        .dark .card-shadow {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark .result-image {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark .result-image:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .transition-fade {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        .transition-fade.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .fullscreen-style {
+            height: 100vh !important;
+            width: auto !important;
+            object-fit: contain !important;
+            background-color: #000;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-fashion-gradient">
+    <!-- Mobile Header -->
+    <header class="bg-white shadow-sm md:hidden fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="https://w.ladicdn.com/668665e58fb7e80020232e3b/rbg/logo-1-20250711021846-tbevw.png" 
+                     alt="Autolook Logo" class="h-10 w-10">
+                <span class="ml-2 text-xl font-display font-bold text-gray-800">Autolook</span>
+            </div>
+            <button id="mobile-menu-button" class="text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Desktop Sidebar -->
+    <div class="hidden md:flex fixed inset-y-0 left-0 z-40">
+        <nav class="w-64 h-full bg-white sidebar-shadow flex flex-col">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-200 flex flex-col items-center">
+                <img src="https://w.ladicdn.com/668665e58fb7e80020232e3b/rbg/logo-1-20250711021846-tbevw.png" 
+                     alt="Autolook Logo" class="h-16 w-16">
+                <span class="mt-3 text-2xl font-display font-bold text-gray-800">Autolook</span>
+            </div>
+            
+            <!-- Main Menu -->
+            <div class="flex-1 overflow-y-auto px-4 py-6 space-y-2">
+                <a href="tao-anh.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-wand-magic-sparkles text-gray-600"></i>
+                    <span class="font-medium text-gray-700">Create Image</span>
+                </a>
+                
+                <a href="ghep-anh.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                    <i class="bi bi-images text-gray-600"></i>
+                    <span class="font-medium text-gray-700">Merge Images</span>
+                </a>
+                
+                <a href="upscale.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-hand-sparkles text-gray-600"></i>
+                    <span class="font-medium text-gray-700">4K Upscale</span>
+                </a>
+                
+                <a href="client-history.php" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                    <i class="bi bi-clock-history text-gray-600"></i>
+                    <span class="font-medium text-gray-700">History</span>
+                </a>
+                
+                <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                    <i class="bi bi-heart text-gray-600"></i>
+                    <span class="font-medium text-gray-700">Favorites</span>
+                </a>
+                
+                <a href="client-huong-dan.php" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-book text-gray-600"></i>
+                    <span class="font-medium text-gray-700">Guide</span>
+                </a>
+                
+                <a href="client-contact.php" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                    <i class="bi bi-mailbox text-gray-600"></i>
+                    <span class="font-medium text-gray-700">Contact</span>
+                </a>
+            </div>
+            
+            <!-- User & Credits -->
+            <div class="px-4 py-6 border-t border-gray-200">
+                <div class="flex items-center justify-between mb-4 gap-2">
+                    <div class="flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded-full">
+                        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" class="text-gray-600">
+                            <rect width="16" height="16" rx="8" fill="currentColor"></rect>
+                            <path d="M8.66725 4.80043C8.66725 4.30571 8.02563 4.11145 7.75121 4.52307L5.0626 8.55599C4.84108 8.88827 5.07928 9.33335 5.47863 9.33335H7.3339V11.1996C7.3339 11.6943 7.97552 11.8886 8.24994 11.4769L10.9385 7.44401C11.1601 7.11173 10.9219 6.66665 10.5225 6.66665H8.66725V4.80043Z" fill="white"></path>
+                        </svg>
+                        <span class="text-sm font-medium">418 Credits</span>
+                    </div>
+                    <a href="/buy-credit.php" class="fashion-btn fashion-btn-primary px-4 py-1 text-sm rounded-full">
+                        Buy Credits
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="!h-10 !w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium">
+                        A
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[11px] font-medium">autoinbox.canvapro@gmail.com</p>
+                        <p class="text-xs text-gray-500">Free Plan</p>
+                    </div>
+                    <button class="text-gray-500">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Mobile Sidebar -->
+    <nav id="mobile-menu" class="fixed top-0 left-0 w-64 h-full bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-50 md:hidden">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="https://w.ladicdn.com/668665e58fb7e80020232e3b/rbg/logo-1-20250711021846-tbevw.png" 
+                     alt="Autolook Logo" class="h-10 w-10">
+                <span class="ml-2 text-xl font-display font-bold text-gray-800">Autolook</span>
+            </div>
+            <button onclick="closeMobileMenu()" class="text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="overflow-y-auto h-full py-4 space-y-2">
+            <a href="tao-anh.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                <i class="fa-solid fa-wand-magic-sparkles text-gray-600"></i>
+                <span class="font-medium text-gray-700">Create Image</span>
+            </a>
+            
+            <a href="ghep-anh.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                <i class="bi bi-images text-gray-600"></i>
+                <span class="font-medium text-gray-700">Merge Images</span>
+            </a>
+            
+            <a href="upscale.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                <i class="fa-solid fa-hand-sparkles text-gray-600"></i>
+                <span class="font-medium text-gray-700">4K Upscale</span>
+            </a>
+            
+            <a href="client-history.php" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                <i class="bi bi-clock-history text-gray-600"></i>
+                <span class="font-medium text-gray-700">History</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                <i class="bi bi-heart text-gray-600"></i>
+                <span class="font-medium text-gray-700">Favorites</span>
+            </a>
+            
+            <a href="client-huong-dan.php" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                <i class="fa-solid fa-book text-gray-600"></i>
+                <span class="font-medium text-gray-700">Guide</span>
+            </a>
+            
+            <a href="client-contact.php" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 transition">
+                <i class="bi bi-mailbox text-gray-600"></i>
+                <span class="font-medium text-gray-700">Contact</span>
+            </a>
+            
+            <div class="px-4 py-6 border-t border-gray-200 mt-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded-full">
+                        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" class="text-gray-600">
+                            <rect width="16" height="16" rx="8" fill="currentColor"></rect>
+                            <path d="M8.66725 4.80043C8.66725 4.30571 8.02563 4.11145 7.75121 4.52307L5.0626 8.55599C4.84108 8.88827 5.07928 9.33335 5.47863 9.33335H7.3339V11.1996C7.3339 11.6943 7.97552 11.8886 8.24994 11.4769L10.9385 7.44401C11.1601 7.11173 10.9219 6.66665 10.5225 6.66665H8.66725V4.80043Z" fill="white"></path>
+                        </svg>
+                        <span class="text-sm font-medium">418 Credits</span>
+                    </div>
+                    <a href="/buy-credit.php" class="fashion-btn fashion-btn-primary px-4 py-1 text-sm rounded-full">
+                        Buy Credits
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium">
+                        A
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium">autoinbox.canvapro@gmail.com</p>
+                        <p class="text-xs text-gray-500">Free Plan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="md:ml-64 pt-16 md:pt-0">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Header Controls -->
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-display font-bold text-gray-800">Fashion AI Generator</h1>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Dark Mode Toggle -->
+                    <div class="flex items-center">
+                        <span class="mr-2 text-sm font-medium text-gray-600 hidden sm:block">Dark</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="darkModeToggle" class="sr-only peer">
+                            <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gray-800"></div>
+                            <span class="ml-2 text-sm font-medium text-gray-600 hidden sm:block">Light</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Language Selector -->
+                    <div class="relative">
+                        <button onclick="toggleLangDropdown()" class="flex items-center space-x-2 bg-white px-3 py-2 rounded-lg shadow-sm">
+                            <img id="currentLangIcon" src="./images/Vi.svg" alt="Language" class="w-5 h-5">
+                            <span id="currentLangLabel" class="text-sm font-medium hidden md:block">Vietnamese</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        
+                        <div id="langDropdown" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-10">
+                            <div onclick="changeLang('vi')" class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                <img src="./images/Vi.svg" class="w-5 h-5 mr-2">
+                                <span class="text-sm">Vietnamese</span>
+                            </div>
+                            <div onclick="changeLang('en')" class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                <img src="./images/En.svg" class="w-5 h-5 mr-2">
+                                <span class="text-sm">English</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Info Banner -->
+            <div class="bg-white rounded-2xl card-shadow p-6 mb-8">
+                <div class="space-y-2 text-sm text-gray-700">
+                    <p>- Create fashion model images wearing your product's clothing and accessories.</p>
+                    <p>- Generate 3D mockup images with multiple angles and models.</p>
+                    <p>- Create images from text (no upload needed) or edit images using prompts.</p>
+                    <p>- Achieve near-perfect product representation.</p>
+                    <p class="pt-2">
+                        <a href="https://hd.autolook.vn/meo-huong-dan-autolook-full" class="text-blue-500 hover:underline font-medium">
+                            Click here for full feature guide
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Generator Section -->
+            <div class="grid md:grid-cols-1 gap-8">
+                <!-- Input Section -->
+                <div class="bg-white rounded-2xl card-shadow p-6">
+                    <h2 class="text-xl font-display font-bold text-gray-800 mb-6">Input Settings</h2>
+                    
+                    <form id="uploadForm" class="space-y-6">
+                        <!-- Image Upload -->
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="block text-sm font-medium text-gray-700">Upload your product images</label>
+                                <button type="button" class="fashion-tag flex items-center text-xs">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Tips
+                                </button>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <label class="image-upload-box flex flex-col items-center justify-center p-4 cursor-pointer">
+                                    <input type="file" accept="image/*" required class="hidden">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                    <span class="text-sm text-gray-500">Click to upload</span>
+                                </label>
+                                
+                                <label class="image-upload-box flex flex-col items-center justify-center p-4 cursor-pointer">
+                                    <input type="file" accept="image/*" class="hidden">
+                                    <i class="fas fa-plus text-3xl text-gray-400 mb-2"></i>
+                                    <span class="text-sm text-gray-500">Optional</span>
+                                </label>
+                            </div>
+                            
+                            <p class="text-xs text-gray-500 mt-3">*Note: Upload 2-3 products for best results</p>
+                        </div>
+                        
+                        <!-- Prompt Input -->
+                        <div class="bg-gray-50 rounded-xl p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <a href="https://chatgpt.com/g/g-6871cf1ece4881918e7c0147c2b3990b-chuyen-gia-tao-promt-autolook" 
+                                       target="_blank" class="fashion-btn fashion-btn-secondary px-3 py-1 text-xs rounded-full">
+                                        AI Prompt Assistant
+                                    </a>
+                                    <span class="text-sm font-medium hidden sm:inline">← Click to generate prompt</span>
+                                </div>
+                                <button type="button" class="fashion-tag flex items-center text-xs">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Tips
+                                </button>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Enter your prompt</label>
+                                <textarea placeholder="Describe the fashion image you want to generate..." required id="content" rows="5"
+                                    class="fashion-input w-full rounded-xl p-3 text-sm"></textarea>
+                            </div>
+                            
+                            <div class="flex flex-wrap items-center justify-between gap-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="relative">
+                                        <button onclick="toggleTooltip()" class="fashion-tag flex items-center text-xs">
+                                            Prompt Upsampling
+                                            <i class="fas fa-info-circle ml-1"></i>
+                                        </button>
+                                        
+                                        <div id="tooltip" class="hidden absolute z-10 mt-2 w-64 bg-white p-3 rounded-lg shadow-lg text-xs">
+                                            <p class="font-bold mb-1">Prompt Enhancement:</p>
+                                            <p>- Turn off when using English prompts from Autolook chatbot</p>
+                                            <p>- Turn on when using Vietnamese prompts</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input id="switch-component" type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-800"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center space-x-3">
+                                    <div class="relative">
+                                        <button onclick="toggleDropdown2()" id="selectedRatio2" 
+                                            class="fashion-btn fashion-btn-secondary px-3 py-1 text-sm rounded-full">
+                                            1 image ▼
+                                        </button>
+                                        
+                                        <ul id="customDropdown2" class="hidden absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg text-sm">
+                                            <li onclick="selectRatio2('1 image')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">1 image</li>
+                                            <li onclick="selectRatio2('2 images')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">2 images</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="relative">
+                                        <button onclick="toggleDropdown()" id="selectedRatio" 
+                                            class="fashion-btn fashion-btn-secondary px-3 py-1 text-sm rounded-full">
+                                            9:16 ▼
+                                        </button>
+                                        
+                                        <ul id="customDropdown" class="hidden absolute z-10 mt-1 w-40 bg-white rounded-md shadow-lg text-sm">
+                                            <li onclick="selectRatio('9:16')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center">
+                                                9:16 <img src="./images/1.svg" class="w-5 h-5">
+                                            </li>
+                                            <li onclick="selectRatio('3:4')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center">
+                                                3:4 <img src="./images/3.svg" class="w-5 h-5">
+                                            </li>
+                                            <li onclick="selectRatio('2:3')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center">
+                                                2:3 <img src="./images/2.svg" class="w-5 h-5">
+                                            </li>
+                                            <li onclick="selectRatio('1:1')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center">
+                                                1:1 <img src="./images/8.svg" class="w-5 h-5">
+                                            </li>
+                                            <li onclick="selectRatio('4:3')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center">
+                                                4:3 <img src="./images/6.svg" class="w-5 h-5">
+                                            </li>
+                                            <li onclick="selectRatio('3:2')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center">
+                                                3:2 <img src="./images/5.svg" class="w-5 h-5">
+                                            </li>
+                                            <li onclick="selectRatio('16:9')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center">
+                                                16:9 <img src="./images/7.svg" class="w-5 h-5">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" id="submitBtn" class="fashion-btn fashion-btn-primary w-full py-3 rounded-xl mt-4">
+                                Generate Images
+                            </button>
+                            
+                            <p class="text-xs text-gray-500 mt-3">
+                                <b>Note:</b> If the system reports an error or the results aren't satisfactory, 
+                                try generating again (2-3 times) for best results.
+                            </p>
+                        </div>
+                        
+                        <!-- Loading -->
+                        <div id="loading" class="hidden flex flex-col items-center justify-center py-8">
+                            <div class="loading-spinner rounded-full h-12 w-12 border-4 border-t-blue-500 border-r-blue-500 border-b-blue-500 border-l-gray-200 mb-3"></div>
+                            <p class="text-sm text-gray-600">Processing your fashion images...</p>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Results Section -->
+                <div class="bg-white rounded-2xl card-shadow p-6">
+                    <h2 class="text-xl font-display font-bold text-gray-800 mb-6">Generated Results</h2>
+                    
+                    <div id="resultContainer" class="space-y-4">
+                        <div id="imagePreview" class="grid grid-cols-2 gap-4 px-10 py-10">
+                            <img class="result-image w-full h-auto rounded-xl" 
+                                 src="https://i.pinimg.com/736x/05/2c/cd/052ccd66002a159e8b24dc54bf47dd5e.jpg" 
+                                 alt="Fashion model wearing your product">
+                            <img class="result-image w-full h-auto rounded-xl" 
+                                 src="https://i.pinimg.com/736x/df/7c/6c/df7c6c6452e5948b61f03e64cd76bd4f.jpg" 
+                                 alt="Fashion model wearing your product">
+                        </div>
+                        
+                        <div class="flex justify-center">
+                            <button onclick="downloadAllImages()" class="fashion-btn fashion-btn-secondary px-6 py-2 rounded-full">
+                                <i class="fas fa-download mr-2"></i> Download All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Contact Buttons -->
+    <div class="fixed bottom-6 right-6 z-40 space-y-3">
+        <a href="https://zalo.me/0898485555" target="_blank" 
+           class="block w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition">
+            <img src="images/sodienthoaizalo.svg" alt="Zalo" class="w-6 h-6">
+        </a>
+        
+        <a href="https://www.facebook.com/HieuLeAI.Agency" target="_blank" 
+           class="block w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        
+        <a href="tel:0898485555" 
+           class="block w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition relative">
+            <i class="fas fa-phone"></i>
+            <span class="absolute animate-ping inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+        </a>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div id="popupContainer" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-4xl w-full max-h-screen overflow-auto">
+            <div class="sticky top-0 bg-white p-4 flex justify-between items-center border-b">
+                <h3 class="text-lg font-medium">Image Preview</h3>
+                <button onclick="closePopup()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-6 mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <img src="https://i.imghippo.com/files/nSi9406oH.jpeg" 
+                                 class="w-52 h-full object-cover rounded-lg shadow" alt="Product">
+                            <span class="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">Product</span>
+                        </div>
+                        <span class="text-2xl text-gray-400">+</span>
+                        <div class="relative">
+                            <img src="https://i.imghippo.com/files/nSi9406oH.jpeg" 
+                                 class="w-52 h-full object-cover rounded-lg shadow" alt="Product">
+                            <span class="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">Product</span>
+                        </div>
+                        <span class="text-2xl text-gray-400 hidden md:inline">=</span>
+                    </div>
+                    
+                    <span class="text-2xl text-gray-400 md:hidden">=</span>
+                    
+                    <div class="relative">
+                        <img id="popupImage" src="https://i.imghippo.com/files/tPjm9279QE.png" 
+                             class="w-full md:w-80 h-full object-cover rounded-lg shadow" alt="Result">
+                        <span class="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">Generated</span>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <h4 class="text-sm font-medium text-gray-700 mb-2">Prompt Used:</h4>
+                    <p id="promptText" class="text-sm text-gray-600">
+                        Fashion model wearing a summer dress, standing in a sunny park, natural lighting, 
+                        full body shot, photorealistic style, high detail, 8k resolution
+                    </p>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="copyPrompt()" class="fashion-btn fashion-btn-secondary px-4 py-2 rounded-full text-sm">
+                        <i class="fas fa-copy mr-2"></i> Copy Prompt
+                    </button>
+                    <button onclick="downloadImage()" class="fashion-btn fashion-btn-primary px-4 py-2 rounded-full text-sm">
+                        <i class="fas fa-download mr-2"></i> Download Image
+                    </button>
+                    <button onclick="regenerateImage()" class="fashion-btn bg-white border border-gray-300 px-4 py-2 rounded-full text-sm">
+                        <i class="fas fa-sync-alt mr-2"></i> Regenerate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('-translate-x-full');
+        });
+        
+        function closeMobileMenu() {
+            mobileMenu.classList.add('-translate-x-full');
+        }
+        
+        // Dark mode toggle
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggle = document.getElementById("darkModeToggle");
+            const html = document.documentElement;
+            
+            if (localStorage.getItem("theme") === "dark") {
+                html.classList.add("dark");
+                toggle.checked = true;
+            }
+            
+            toggle.addEventListener("change", () => {
+                html.classList.toggle("dark");
+                localStorage.setItem("theme", html.classList.contains("dark") ? "dark" : "light");
+            });
+        });
+        
+        // Language dropdown
+        document.addEventListener("DOMContentLoaded", () => {
+            const icon = document.getElementById("currentLangIcon");
+            const label = document.getElementById("currentLangLabel");
+            const dropdown = document.getElementById("langDropdown");
+            const wrapper = document.getElementById("langDropdownWrapper");
+            const currentUrl = window.location.pathname;
+            const isEnglish = currentUrl.includes("-en");
+            
+            icon.src = isEnglish ? "./images/En.svg" : "./images/Vi.svg";
+            label.textContent = isEnglish ? "English" : "Vietnamese";
+            
+            window.toggleLangDropdown = () => {
+                dropdown.classList.toggle("hidden");
+            };
+            
+            window.changeLang = (lang) => {
+                icon.src = lang === "vi" ? "./images/Vi.svg" : "./images/En.svg";
+                label.textContent = lang === "vi" ? "Vietnamese" : "English";
+                dropdown.classList.add("hidden");
+                
+                if (lang === "en" && !currentUrl.includes("-en")) {
+                    const newUrl = currentUrl.replace(".html", "") + "-en.html";
+                    window.location.href = newUrl;
+                } else if (lang === "vi" && currentUrl.includes("-en")) {
+                    const newUrl = currentUrl.replace("-en", "") || "./index.html";
+                    window.location.href = newUrl;
+                }
+            };
+            
+            document.addEventListener("click", (e) => {
+                if (!wrapper.contains(e.target)) {
+                    dropdown.classList.add("hidden");
+                }
+            });
+        });
+        
+        // Image upload preview
+        document.querySelectorAll('.image-upload-box input[type="file"]').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    const box = this.closest('.image-upload-box');
+                    
+                    reader.onload = function(e) {
+                        box.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'w-full h-full object-cover rounded-lg';
+                        box.appendChild(img);
+                    }
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+        
+        // Tooltip toggle
+        function toggleTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.toggle('hidden');
+        }
+        
+        // Dropdown functions
+        function toggleDropdown() {
+            document.getElementById("customDropdown").classList.toggle("hidden");
+        }
+        
+        function selectRatio(ratio) {
+            document.getElementById("selectedRatio").innerText = ratio + " ▼";
+            document.getElementById("customDropdown").classList.add("hidden");
+        }
+        
+        function toggleDropdown2() {
+            document.getElementById("customDropdown2").classList.toggle("hidden");
+        }
+        
+        function selectRatio2(ratio) {
+            document.getElementById("selectedRatio2").innerText = ratio + " ▼";
+            document.getElementById("customDropdown2").classList.add("hidden");
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function(e) {
+            if (!e.target.closest('#customDropdown') && !e.target.closest('#selectedRatio')) {
+                document.getElementById("customDropdown").classList.add("hidden");
+            }
+            
+            if (!e.target.closest('#customDropdown2') && !e.target.closest('#selectedRatio2')) {
+                document.getElementById("customDropdown2").classList.add("hidden");
+            }
+            
+            if (!e.target.closest('#tooltip') && !e.target.closest('[onclick="toggleTooltip()"]')) {
+                document.getElementById("tooltip").classList.add("hidden");
+            }
+        });
+        
+        // Form submission
+        $(document).ready(function() {
+            $('#uploadForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                $('#loading').classList.remove('hidden');
+                $('#submitBtn').disabled = true;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    $('#loading').classList.add('hidden');
+                    $('#submitBtn').disabled = false;
+                    
+                    // Show results (in a real app, this would be the API response)
+                    const resultContainer = document.getElementById('resultContainer');
+                    resultContainer.innerHTML = `
+                        <div class="grid grid-cols-1 gap-4">
+                            <img class="result-image w-full h-auto rounded-xl cursor-pointer" 
+                                 src="https://i.pinimg.com/736x/05/2c/cd/052ccd66002a159e8b24dc54bf47dd5e.jpg" 
+                                 alt="Generated fashion image">
+                            <img class="result-image w-full h-auto rounded-xl cursor-pointer" 
+                                 src="https://i.pinimg.com/736x/df/7c/6c/df7c6c6452e5948b61f03e64cd76bd4f.jpg" 
+                                 alt="Generated fashion image">
+                        </div>
+                        <div class="flex justify-center mt-4">
+                            <button onclick="downloadAllImages()" class="fashion-btn fashion-btn-secondary px-6 py-2 rounded-full">
+                                <i class="fas fa-download mr-2"></i> Download All
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Add click event to images
+                    document.querySelectorAll('.result-image').forEach(img => {
+                        img.addEventListener('click', function() {
+                            document.getElementById('popupImage').src = this.src;
+                            document.getElementById('popupContainer').classList.remove('hidden');
+                        });
+                    });
+                }, 2000);
+            });
+        });
+        
+        // Image preview modal functions
+        function closePopup() {
+            document.getElementById('popupContainer').classList.add('hidden');
+        }
+        
+        function copyPrompt() {
+            const promptText = document.getElementById('promptText').textContent;
+            navigator.clipboard.writeText(promptText).then(() => {
+                alert('Prompt copied to clipboard!');
+            });
+        }
+        
+        function downloadImage() {
+            const imageUrl = document.getElementById('popupImage').src;
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = 'fashion-image-' + new Date().getTime() + '.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function downloadAllImages() {
+            const images = document.querySelectorAll('.result-image');
+            images.forEach((img, index) => {
+                setTimeout(() => {
+                    const link = document.createElement('a');
+                    link.href = img.src;
+                    link.download = 'fashion-image-' + (index + 1) + '-' + new Date().getTime() + '.jpg';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }, index * 300);
+            });
+        }
+        
+        function regenerateImage() {
+            alert('Regenerating this image...');
+            // In a real app, this would call your API to regenerate the image
+        }
+        
+        // Click on result images to open modal
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.result-image').forEach(img => {
+                img.addEventListener('click', function() {
+                    document.getElementById('popupImage').src = this.src;
+                    document.getElementById('popupContainer').classList.remove('hidden');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
