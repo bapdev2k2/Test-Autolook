@@ -223,7 +223,7 @@
         .avatar-box2 {
             position: relative;
             width: 100%;
-            height: 100px;
+            height: 80px;
             border: 3px solid rgba(8, 145, 178, 0.3);
             border-radius: 20px;
             display: flex;
@@ -930,7 +930,7 @@
 
             <!-- Desltop languege -->
             <div style="z-index: 49;"
-                class="flex flex-col justify-center items-center gap-3 xs:fixed md:top-8 md:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
+                class="flex flex-col justify-center items-center gap-3 xs:fixed md:static md:top-8 md:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
                 <!-- Toggle Switch Dark/Light -->
                 <div class="flex items-center gap-2">
                     <b class="sm:block xs:hidden">Dark</b>
@@ -978,20 +978,20 @@
             </div>
         </div>
        
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl xs:pl-0 lg:pl-0 md:pl-[60px] md:mt-24 mx-auto">
                     <!--  Enhanced header with modern typography -->
                     <div class="flex flex-col justify-center items-center mb-16">
                         <h1 class="text-5xl md:text-6xl font-heading font-bold text-primary mb-6 leading-tight">
                             Liên hệ
                            
                         </h1>
-                        <p class="whitespace-nowrap text-xl md:text-2xl text-muted font-light leading-relaxed mx-auto">
+                        <p class="lg:whitespace-nowrap text-center text-xl md:text-2xl text-muted font-light leading-relaxed mx-auto">
                             Hãy kết nối với đội ngũ Autolook để được hỗ trợ tốt nhất về thời trang AI
                         </p>
                     </div>
 
                     <!--  Beautiful contact cards with glassmorphic design -->
-                    <div class="grid md:grid-cols-2 gap-8 mb-16">
+                    <div class="grid lg:grid-cols-2 gap-8 mb-16">
                         <!-- Team Avatar Section -->
                         <div class="glass-card p-8">
                             <h3 class="text-2xl font-heading font-bold text-primary mb-6 text-center">Đội ngũ hỗ trợ</h3>
@@ -1033,7 +1033,7 @@
                                 </div>
                             </a>
 
-                            <a href="https://zalo.me/0898485555" target="_blank" class="text-sm opacity-90 hover:opacity-100 avatar-box2">
+                            <a href="https://zalo.me/0898485555" target="_blank" class=" text-sm opacity-90 hover:opacity-100 avatar-box2">
                                 <div class="flex items-center space-x-4">
                                     <i class="fas fa-comments text-2xl"></i>
                                     <div>
@@ -1043,7 +1043,18 @@
                                         </span>
                                     </div>
                                 </div>
-                                </a> 
+                                </a>
+                                 <a href="tel:0898485555" class="text-sm opacity-90 hover:opacity-100 avatar-box2">
+                                <div class="flex items-center space-x-4">
+                                    <i class="fas fa-phone text-2xl"></i>
+                                    <div>
+                                        <div class="font-semibold">Hotline</div>
+                                        <span class="text-sm opacity-90 hover:opacity-100">
+                                            0898485555
+                                        </span>
+                                    </div>
+                                </div>
+                            </a> 
                             </div>
                         </div>
         

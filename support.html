@@ -135,6 +135,54 @@
         input#darkModeToggle:checked+label span {
             transform: translateX(180%);
         }
+         /* ======= STYLE MAIN MỚI (Design Tokens) – KHÔNG ĐỤNG HEADER/NAV ======= */
+    :root {
+      --background:#ffffff; --foreground:#4b5563;
+      --card:#f9fafb; --card-foreground:#4b5563;
+      --popover:#ffffff; --popover-foreground:#4b5563;
+      --primary:#0891b2; --primary-foreground:#ffffff; /* cyan-600 */
+      --secondary:#f97316; --secondary-foreground:#ffffff; /* orange-500 */
+      --muted:#f9fafb; --muted-foreground:#4b5563;
+      --accent:#f97316; --accent-foreground:#ffffff;
+      --destructive:#ea580c; --destructive-foreground:#ffffff;
+      --border:#e5e7eb; --input:#f1f5f9; --ring:rgba(8,145,178,.5);
+      --chart-1:#60a5fa; --chart-2:#f97316; --chart-3:#34d399; --chart-4:#a78bfa; --chart-5:#fbbf24;
+      --radius:.75rem;
+      --sidebar:#f9fafb; --sidebar-foreground:#4b5563;
+      --sidebar-primary:#ffffff; --sidebar-primary-foreground:#4b5563;
+      --sidebar-accent:#0891b2; --sidebar-accent-foreground:#ffffff;
+      --sidebar-border:#e5e7eb; --sidebar-ring:rgba(8,145,178,.5);
+    }
+    html.dark {
+      --background:#0f172a; --foreground:#f1f5f9;
+      --card:rgba(30,41,59,1); --card-foreground:#f1f5f9;
+      --popover:rgba(30,41,59,.9); --popover-foreground:#f1f5f9;
+      --primary:#0ea5e9; --primary-foreground:#0f172a;
+      --secondary:#f472b6; --secondary-foreground:#0f172a;
+      --muted:rgba(51,65,85,.5); --muted-foreground:#94a3b8;
+      --accent:#f472b6; --accent-foreground:#0f172a;
+      --destructive:#dc2626; --destructive-foreground:#f1f5f9;
+      --border:rgba(255,255,255,.1); --input:rgba(30,41,59,.8);
+      --ring:rgba(14,165,233,.3);
+      --sidebar:rgba(30,41,59,.9); --sidebar-foreground:#f1f5f9;
+      --sidebar-primary:#0ea5e9; --sidebar-primary-foreground:#0f172a;
+      --sidebar-accent:#f472b6; --sidebar-accent-foreground:#0f172a;
+      --sidebar-border:rgba(255,255,255,.1); --sidebar-ring:rgba(14,165,233,.3);
+    }
+    .bg-grid { /* override nhè nhẹ cho trang hướng dẫn */
+      background-image:
+        repeating-linear-gradient(to right, transparent 0 20px, rgb(229 231 235) 20px 21px),
+        repeating-linear-gradient(to bottom, transparent 0 20px, rgb(229 231 235) 20px 21px);
+    }
+    @keyframes tutorial-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .tutorial-float { animation: tutorial-float 3s ease-in-out infinite; }
+    html { scroll-behavior: smooth; }
+/* tránh bị header mobile che mất phần đầu section */
+#tutorials { scroll-margin-top: 80px; }
+
+@media (min-width: 768px) {
+  #tutorials { scroll-margin-top: 16px; } /* desktop sidebar không che */
+}
     </style>
 </head>
 <script>
@@ -684,7 +732,7 @@
 
             <!-- Desltop languege -->
             <div style="z-index: 49;"
-                class="flex flex-col justify-center items-center gap-3 xs:fixed md:top-8 md:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
+                class="flex flex-col justify-center items-center gap-3 xs:fixed md:static md:top-8 md:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
                 <!-- Toggle Switch Dark/Light -->
                 <div class="flex items-center gap-2">
                     <b class="sm:block xs:hidden">Dark</b>
@@ -732,9 +780,143 @@
             </div>
         </div>
        
-        <div class="p-3 w-2 bg-white">
-        
+         <!-- ====== MAIN MỚI (Áp dụng vào trang, không động tới header/nav) ====== -->
+  <div class="container mx-auto sm:px-4 xs:px-0 py-8 md:pl-20 md:mt-20 sm:mt-[60px] xl:mt-0 xs:mt-16">
+    <!-- Hero -->
+    <section class="tutorial-float text-white rounded-[var(--radius)] mb-12 px-8 py-16 text-center" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+          Hướng dẫn sử dụng
+          <span class="block text-3xl md:text-5xl mt-2">Autolook AI Fashion</span>
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 opacity-90">Khám phá sức mạnh của AI trong việc tạo ra những hình ảnh thời trang tuyệt đẹp</p>
+        <a href="#tutorials" class="inline-flex items-center gap-2 no-underline rounded-[var(--radius)] px-4 py-3 font-semibold transition duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--secondary)]">
+          <i class="fas fa-play"></i>Bắt đầu học ngay
+        </a>
+      </div>
+    </section>
+
+    <!-- Tutorial Grid -->
+    <section id="tutorials" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 my-8">
+      <!-- Card 1 -->
+      <article class="flex flex-col justify-between bg-[var(--card)] border border-[var(--border)] rounded-[var(--radius)] p-6 shadow hover:-translate-y-2 hover:shadow-2xl hover:border-[var(--primary)] transition">
+        <div>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl mb-4 bg-[var(--primary)]">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
         </div>
+        <h3 class="text-2xl font-bold mb-4 text-[var(--card-foreground)]">Tạo ảnh thời trang với AI</h3>
+        <p class="text-[var(--muted-foreground)] mb-6 leading-relaxed">Học cách sử dụng AI để tạo ra những hình ảnh thời trang chuyên nghiệp. Từ việc viết prompt hiệu quả đến tùy chỉnh style và màu sắc.</p>
+        </div>
+        <div class="space-y-3 mb-6 text-sm text-[var(--muted-foreground)]">
+          <div class="flex items-center"><i class="fas fa-check-circle text-[var(--primary)] mr-2"></i>Hướng dẫn viết prompt chi tiết</div>
+          <div class="flex items-center"><i class="fas fa-check-circle text-[var(--primary)] mr-2"></i>Tùy chỉnh style nam và nữ</div>
+          <div class="flex items-center"><i class="fas fa-check-circle text-[var(--primary)] mr-2"></i>Tips tạo ảnh chất lượng cao</div>
+        </div>
+        <a href="https://chatgpt.com/g/g-685e69d6300c8191bcbcb1293f63db23-chuyen-gia-viet-promt-autolook" target="_blank" class="w-fit inline-flex items-center gap-2 no-underline rounded-[var(--radius)] px-4 py-3 font-semibold transition duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--secondary)]">
+          <i class="fas fa-external-link-alt"></i>Chatbot tạo ảnh
+        </a>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="flex flex-col justify-between bg-[var(--card)] border border-[var(--border)] rounded-[var(--radius)] p-6 shadow hover:-translate-y-2 hover:shadow-2xl hover:border-[var(--primary)] transition">
+        <div>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl mb-4 bg-[var(--secondary)]">
+          <i class="bi bi-images"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-[var(--card-foreground)]">Ghép ảnh chuyên nghiệp</h3>
+        <p class="text-[var(--muted-foreground)] mb-6 leading-relaxed">Kỹ thuật ghép ảnh để tạo ra những bộ trang phục hoàn hảo. Học cách kết hợp nhiều elements để tạo nên look hoàn chỉnh.</p>
+        </div>
+        <div class="h-full flex flex-col justify-end space-y-3 mb-6 text-sm text-[var(--muted-foreground)]">
+          <div class="flex items-center"><i class="fas fa-check-circle text-[var(--secondary)] mr-2"></i>Kỹ thuật ghép ảnh cơ bản</div>
+          <div class="flex items-center"><i class="fas fa-check-circle text-[var(--secondary)] mr-2"></i>Tạo background phù hợp</div>
+          <div class="flex items-center"><i class="fas fa-check-circle text-[var(--secondary)] mr-2"></i>Điều chỉnh ánh sáng và màu sắc</div>
+        </div>
+        <a href="https://chatgpt.com/share/687628fa-2474-8010-9949-6d249b05a85c" target="_blank" class="w-fit inline-flex items-center gap-2 no-underline rounded-[var(--radius)] px-4 py-3 font-semibold transition duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:bg-[var(--accent)]">
+          <i class="fas fa-external-link-alt"></i>Chatbot ghép ảnh
+        </a>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="flex flex-col justify-between bg-[var(--card)] border border-[var(--border)] rounded-[var(--radius)] p-6 shadow hover:-translate-y-2 hover:shadow-2xl hover:border-[var(--primary)] transition">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl mb-4" style="background:var(--chart-3);">
+          <i class="fa-solid fa-hand-sparkles"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-[var(--card-foreground)]">Nâng cấp chất lượng 4K</h3>
+        <p class="text-[var(--muted-foreground)] mb-6 leading-relaxed">Biến những hình ảnh thông thường thành tác phẩm nghệ thuật 4K sắc nét. Tìm hiểu về công nghệ upscaling và enhancement.</p>
+        <div class="space-y-3 mb-2 text-sm text-[var(--muted-foreground)]">
+          <div class="flex items-center"><i class="fas fa-check-circle mr-2" style="color:var(--chart-3);"></i>Công nghệ AI upscaling</div>
+          <div class="flex items-center"><i class="fas fa-check-circle mr-2" style="color:var(--chart-3);"></i>Tối ưu hóa độ phân giải</div>
+          <div class="flex items-center"><i class="fas fa-check-circle mr-2" style="color:var(--chart-3);"></i>Giữ nguyên chất lượng gốc</div>
+        </div>
+        <a href="#" class="w-fit inline-flex items-center gap-2 no-underline rounded-[var(--radius)] px-4 py-3 font-semibold transition duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg" style="background:var(--chart-3);color:#fff;">
+          <i class="fas fa-play"></i>Xem hướng dẫn
+        </a>
+      </article>
+
+      <!-- Card 4 -->
+      <article class=" flex flex-col justify-between bg-[var(--card)] border border-[var(--border)] rounded-[var(--radius)] p-6 shadow hover:-translate-y-2 hover:shadow-2xl hover:border-[var(--primary)] transition">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl mb-4" style="background:var(--chart-4);">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-[var(--card-foreground)]">Hướng dẫn toàn diện</h3>
+        <p class="text-[var(--muted-foreground)] mb-6 leading-relaxed">Tài liệu hướng dẫn chi tiết từ A-Z về cách sử dụng tất cả tính năng của Autolook. Từ cơ bản đến nâng cao.</p>
+        <div class="space-y-3 mb-6 text-sm text-[var(--muted-foreground)]">
+          <div class="flex items-center"><i class="fas fa-check-circle mr-2" style="color:var(--chart-4);"></i>Video hướng dẫn chi tiết</div>
+          <div class="flex items-center"><i class="fas fa-check-circle mr-2" style="color:var(--chart-4);"></i>Ví dụ thực tế</div>
+          <div class="flex items-center"><i class="fas fa-check-circle mr-2" style="color:var(--chart-4);"></i>FAQ và troubleshooting</div>
+        </div>
+        <a href="http://hd.autolook.vn/meo-huong-dan-autolook-full" target="_blank" class="w-fit inline-flex items-center gap-2 no-underline rounded-[var(--radius)] px-4 py-3 font-semibold transition duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg" style="background:var(--chart-4);color:#fff;">
+          <i class="fas fa-external-link-alt"></i>Xem hướng dẫn full
+        </a>
+      </article>
+
+      <!-- Card 5 -->
+      <article class="flex flex-col justify-between bg-[var(--card)] border border-[var(--border)] rounded-[var(--radius)] p-6 shadow hover:-translate-y-2 hover:shadow-2xl hover:border-[var(--primary)] transition">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl mb-4" style="background:var(--chart-5);">
+          <i class="fas fa-lightbulb"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-[var(--card-foreground)]">Tips & Tricks</h3>
+        <p class="text-[var(--muted-foreground)] mb-6 leading-relaxed">Những mẹo hay và thủ thuật từ các chuyên gia để tạo ra những hình ảnh thời trang ấn tượng nhất.</p>
+        <div class="space-y-3 mb-6 text-sm text-[var(--muted-foreground)]">
+          <div class="flex items-center"><i class="fas fa-check-circle mr-2" style="color:var(--chart-5);"></i>Prompt templates hiệu quả</div>
+          <div class="flex items-center"><i class="fas fa-check-circle mr-2" style="color:var(--chart-5);"></i>Kỹ thuật phối màu</div>
+          <div class="flex items-center"><i class="fas fa-check-circle mr-2" style="color:var(--chart-5);"></i>Nguồn cảm hứng phong cách</div>
+        </div>
+        <a href="https://www.facebook.com/HieuLeAI.Agency" class="w-fit inline-flex items-center gap-2 no-underline rounded-[var(--radius)] px-4 py-3 font-semibold transition duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg" style="background:var(--chart-5);color:#fff;">
+          <i class="fas fa-magic"></i>Khám phá tips
+        </a>
+      </article>
+
+      <!-- Card 6 -->
+      <article class="flex flex-col justify-between bg-[var(--card)] border border-[var(--border)] rounded-[var(--radius)] p-6 shadow hover:-translate-y-2 hover:shadow-2xl hover:border-[var(--primary)] transition">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl mb-4 bg-[var(--destructive)]">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-[var(--card-foreground)]">Cộng đồng Autolook</h3>
+        <p class="text-[var(--muted-foreground)] mb-6 leading-relaxed">Tham gia cộng đồng người dùng Autolook để chia sẻ kinh nghiệm, học hỏi và cùng nhau sáng tạo.</p>
+        <div class="space-y-3 mb-6 text-sm text-[var(--muted-foreground)]">
+          <div class="flex items-center"><i class="fas fa-check-circle text-[var(--destructive)] mr-2"></i>Chia sẻ tác phẩm</div>
+          <div class="flex items-center"><i class="fas fa-check-circle text-[var(--destructive)] mr-2"></i>Nhận feedback từ cộng đồng</div>
+          <div class="flex items-center"><i class="fas fa-check-circle text-[var(--destructive)] mr-2"></i>Tham gia challenges</div>
+        </div>
+        <a href="contact.html" class="w-fit inline-flex items-center gap-2 no-underline rounded-[var(--radius)] px-4 py-3 font-semibold transition duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg bg-[var(--destructive)] text-[var(--destructive-foreground)] hover:bg-[var(--secondary)]">
+          <i class="fas fa-comments"></i>Tham gia ngay
+        </a>
+      </article>
+    </section>
+
+    <!-- CTA -->
+    <section class="mt-16 text-center">
+      <div class="max-w-2xl mx-auto bg-[var(--card)] border border-[var(--border)] rounded-[var(--radius)] p-8 shadow">
+        <h2 class="text-3xl font-bold mb-4 text-[var(--card-foreground)]">Sẵn sàng bắt đầu?</h2>
+        <p class="text-lg mb-8 text-[var(--muted-foreground)]">Hãy thử ngay các tính năng AI tạo ảnh thời trang của Autolook và tạo ra những tác phẩm tuyệt vời của riêng bạn.</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="tao-anh.html" class="inline-flex items-center gap-2 no-underline rounded-[var(--radius)] px-4 py-3 font-semibold transition duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--secondary)]"><i class="fas fa-wand-magic-sparkles"></i>Tạo ảnh ngay</a>
+          <a href="contact.html" class="inline-flex items-center gap-2 no-underline rounded-[var(--radius)] px-4 py-3 font-semibold transition duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:bg-[var(--accent)]"><i class="fas fa-headset"></i>Liên hệ hỗ trợ</a>
+        </div>
+      </div>
+    </section>
+</div>
         
   </main>
        

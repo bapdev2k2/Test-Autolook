@@ -672,52 +672,55 @@
     <main class="container mx-auto px-4 py-8 md:pl-64 md:mt-0 sm:mt-[80px] xs:mt-20">
 
         <!-- <main class="container mx-auto w-full md:ml-64 px-4 py-8  inline-flex md:pt-24 md:pl-4 md:pr-4"> -->
-        <div style="z-index: 49;"
-                class="flex flex-col justify-center items-center gap-3 xs:fixed md:top-8 md:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
-                <!-- Toggle Switch Dark/Light -->
-                <div class="flex items-center gap-2">
-                    <b class="sm:block xs:hidden">Dark</b>
-                    <input type="checkbox" id="darkModeToggle" class="sr-only">
-                    <label for="darkModeToggle"
-                        class="flex items-center cursor-pointer relative w-16 h-7 rounded-full bg-[#30475e] dark:bg-gray-700 transition">
-                        <span
-                            class="absolute left-1 top-1 w-5 h-5 z-10 rounded-full bg-white shadow-md transform transition peer-checked:translate-x-8"
-                            id="toggleBall"></span>
-                        <i
-                            class="fas fa-moon text-gray-400 sm:text-xl xs:text-base absolute left-2 top-0.4 pointer-events-none z-9 dark:text-gray-200"></i>
-                        <i
-                            class="fas fa-sun text-yellow-400 sm:text-base xs:text-sm absolute sm:right-[6px] xs:right-2 xs:top-1 sm:top-0.5 pointer-events-none z-9"></i>
-                    </label>
-                    <b class="sm:block xs:hidden">Light</b>
-                </div>
-                <div class="relative inline-block text-left md:w-[150px] xs:w-[100px]" id="langDropdownWrapper">
-                    <button onclick="toggleLangDropdown()"
-                        class="inline-flex justify-center items-center w-full px-4 md:py-2 xs:py-1 bg-white rounded-xl text-sm xs:border md:border-none xs:shadow-none md:shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)]">
-                        <img id="currentLangIcon" src="./images/Vi.svg" alt="" class="w-5 h-5 mr-2">
-                        <span id="currentLangLabel" class="md:block xs:hidden">Vietnamese</span>
-                        <span id="currentLangLabel" class="md:hidden xs:block">VN</span>
-                        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                            <path d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
+            <div class="absolute md:top-8 md:right-7 flex items-center gap-2 xs:right-[45px] xs:top-3">
 
-                    <div id="langDropdown"
-                        class="hidden absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow">
-                        <div onclick="changeLang('vi')"
-                            class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
-                            <img src="./images/Vi.svg" class="w-5 h-5 mr-2">
-                            <span class="md:block xs:hidden">Vietnamese</span>
-                            <span class="md:hidden xs:block">VN</span>
+                <div style="z-index: 49;"
+                        class="flex flex-col justify-center items-center gap-3 xs:fixed md:static md:top-8 md:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
+                        <!-- Toggle Switch Dark/Light -->
+                        <div class="flex items-center gap-2">
+                            <b class="sm:block xs:hidden">Dark</b>
+                            <input type="checkbox" id="darkModeToggle" class="sr-only">
+                            <label for="darkModeToggle"
+                                class="flex items-center cursor-pointer relative w-16 h-7 rounded-full bg-[#30475e] dark:bg-gray-700 transition">
+                                <span
+                                    class="absolute left-1 top-1 w-5 h-5 z-10 rounded-full bg-white shadow-md transform transition peer-checked:translate-x-8"
+                                    id="toggleBall"></span>
+                                <i
+                                    class="fas fa-moon text-gray-400 sm:text-xl xs:text-base absolute left-2 top-0.4 pointer-events-none z-9 dark:text-gray-200"></i>
+                                <i
+                                    class="fas fa-sun text-yellow-400 sm:text-base xs:text-sm absolute sm:right-[6px] xs:right-2 xs:top-1 sm:top-0.5 pointer-events-none z-9"></i>
+                            </label>
+                            <b class="sm:block xs:hidden">Light</b>
                         </div>
-                        <div onclick="changeLang('en')"
-                            class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
-                            <img src="./images/En.svg" class="w-5 h-5 mr-2">
-                            <span class="md:block xs:hidden">English</span>
-                            <span class="md:hidden xs:block">EN</span>
+                        <div class="relative inline-block text-left md:w-[150px] xs:w-[100px]" id="langDropdownWrapper">
+                            <button onclick="toggleLangDropdown()"
+                                class="inline-flex justify-center items-center w-full px-4 md:py-2 xs:py-1 bg-white rounded-xl text-sm xs:border md:border-none xs:shadow-none md:shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)]">
+                                <img id="currentLangIcon" src="./images/Vi.svg" alt="" class="w-5 h-5 mr-2">
+                                <span id="currentLangLabel" class="md:block xs:hidden">Vietnamese</span>
+                                <span id="currentLangLabel" class="md:hidden xs:block">VN</span>
+                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+        
+                            <div id="langDropdown"
+                                class="hidden absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow">
+                                <div onclick="changeLang('vi')"
+                                    class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
+                                    <img src="./images/Vi.svg" class="w-5 h-5 mr-2">
+                                    <span class="md:block xs:hidden">Vietnamese</span>
+                                    <span class="md:hidden xs:block">VN</span>
+                                </div>
+                                <div onclick="changeLang('en')"
+                                    class="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100">
+                                    <img src="./images/En.svg" class="w-5 h-5 mr-2">
+                                    <span class="md:block xs:hidden">English</span>
+                                    <span class="md:hidden xs:block">EN</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
             </div>
         <div
             class="sm:text-center xs:text-start flex flex-col items-center justify-center w-full xs:text-[12px] sm:text-[14px] bg-[#F5F5F5] shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)] rounded-2xl p-4 font-semibold">
