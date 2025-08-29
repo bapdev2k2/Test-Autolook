@@ -155,22 +155,32 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             width: 200px;
-            
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	animation: gradient 3s ease infinite;
+    background-size: 400% 400%;
             font-size: 15px;
             font-weight: 600;
             border-radius: 100px;
-           
-            background: linear-gradient(to right, #d63384, #0dcaf0);
             color: white;
             cursor: pointer;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             backdrop-filter: blur(4px);
         }
-        
+        @keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
         .select-custom:hover {
-            background: linear-gradient(to right, #d63384, #0dcaf0);
-            transform: translateY(-3px);
+            
+            
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             border-color: rgba(255, 255, 255, 0.3);
         }
@@ -212,6 +222,8 @@
             pointer-events: none;
             opacity: 0.5;
         }
+
+
     </style>
 </head>
 <script>
@@ -907,7 +919,7 @@
                                             sản phẩm để ra kết quả tốt nhất</span>
                                     </div>
                                     <div
-                                        class="text-[11.5px] text-center text-white primary-key p-2 rounded-2xl  mt-5 grid">
+                                        class="text-[11.5px] text-center text-white bg-[#F05454] transition-all duration-300 ease-in-out p-2 rounded-2xl  mt-5 grid">
                                         <span>Nếu bạn chưa có ảnh người mẫu, hãy truy cập:
 
                                         </span>
@@ -947,7 +959,7 @@
                                                 </div>
                                                 <div class="sm:flex xs:grid gap-3 my-[7px] sm:items-center"><a
                                                         href="https://chatgpt.com/g/g-686e13b19f1c8191a09978185f7bd5c5-chuyen-gia-tao-promt-ghep-anh-autolook"
-                                                        class="primary-key text-white border
+                                                        class="bg-[#F05454] transition-all duration-300 ease-in-out text-white border
                                                         rounded-full shadow-sm text-sm font-medium text-white 
                                                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 p-2 uppercase font-semibold"
                                                         target="_blank">Chatbot tạo prompt ghép ảnh</a>
@@ -1123,7 +1135,7 @@
                                                 class="mt-1 h-[160px] block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"></textarea>
                                         </div>
                                         <!-- 2. Nhập nội dung -->
-                                         <div
+                                        <div
                                         class="flex lg:flex-row xs:flex-col justify-between items-center sm:mt-2 xs:mt-4 gap-2">
                                         <div class="flex items-center md:pl-3 xs:pl-0 sm:mb-0 xs:mb-4">
                                             <div class="relative inline-block">
@@ -1159,9 +1171,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="bg-white py-1 px-2 rounded-xl">
-                                            <i class="text-sm text-[#F05454]">Sử dụng model Autolook Ultra để cho ra kết quả tốt nhất!</i>
-                                        </div>
+                                      
                                         <div class="flex xs:flex-col sm:flex-row gap-3 items-center">
                                             <div class="text-center rounded-2xl flex justify-center items-center gap-2">
                                                 <div class="relative inline-block">
@@ -1181,7 +1191,7 @@
     
                                                     <!-- Tooltip -->
                                                     <div id="tooltip2"
-                                                        class="hidden absolute z-50 top-full left-[10px] mt-2 sm:w-[300px] xs:w-[255px] bg-white text-[#000000] text-[13px] p-3 rounded-xl shadow-lg">
+                                                        class="hidden absolute z-50 top-8 left-[10px] mt-2 sm:w-[300px] xs:w-[255px] bg-white text-[#000000] text-[13px] p-3 rounded-xl shadow-lg">
                                                         <p><b>Lưu ý:</b></p>
                                                         <p class="mt-1">– Sử dụng Autolook Ultra khi bạn cần làm nhiều trang phục, các trang phục khó.</p>
                                                         <p>– Sử dụng Autolook Classic khi bạn cần làm ít trang phục, các trang phục dễ.</p>
@@ -1262,7 +1272,7 @@
 
                                             <!-- 3. Button Thực hiện -->
                                             <div class="grid gap-4">
-                                                <button type="submit" id="submitBtn" class="bg-[#d63384] text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
+                                                <button type="submit" id="submitBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
                                             rounded-full shadow-sm text-sm font-medium text-white
                                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                                     <div class="flex"><span class="font-bold">1</span>&nbsp;<svg width="18px" height="18px" viewBox="0 0 16 16" fill="none"
@@ -1350,50 +1360,39 @@
             </div>
         </div>
         </div>
-
-         <script>
+<script>
 document.addEventListener("DOMContentLoaded", function () {
-  const modelSelect = document.getElementById("model-select");
-
-  // 1) Khối Prompt Upsampling (toggle + checkbox)
+  const modelSelect      = document.getElementById("model-select");
   const promptUpsampling = document.querySelector(".flex.items-center.md\\:pl-3");
+  const ratioDropdown    = document.querySelector(".relative.w-\\[10rem\\]");
+  const submitCount      = document.querySelector("#submitBtn .font-bold");
 
-  // 2) Khối dropdown tỉ lệ ảnh
-  const ratioDropdown = document.querySelector(".relative.w-\\[10rem\\]");
-
-  // 3) Số đếm trên nút Thực hiện (span.font-bold)
-  const submitCount = document.querySelector("#submitBtn .font-bold");
-
-  // 4) DIV note “Sử dụng model Autolook Ultra…”
-  const ultraNote = Array.from(document.querySelectorAll(".bg-white.py-1.px-2.rounded-xl"))
-    .find(el => el.textContent.trim().includes("Sử dụng model Autolook Ultra"));
-
-  // 5) Action bar: khối chứa note + select + nút Thực hiện
-  const actionBar = document.querySelector(".md\\:flex.md\\:flex-row.xs\\:flex-col.items-center");
+  // Cha chứa cả 2 bên
+  const actionBar = document.querySelector(".flex.lg\\:flex-row.xs\\:flex-col.justify-between.items-center");
+  // Nhóm phải = cụm chứa select + nút
+  const rightGroup = document.getElementById("model-select")?.closest(".flex.xs\\:flex-col.sm\\:flex-row.gap-3.items-center");
 
   function applyUI() {
-    const isUltra = modelSelect && modelSelect.value === "v2"; // v2 = Autolook Ultra
+    const isUltra = modelSelect && modelSelect.value === "v2";
 
-    // Note: Ultra hiện, Classic ẩn
-    if (ultraNote) ultraNote.classList.toggle("hidden", !isUltra);
+    // Ẩn/hiện Prompt Upsampling + Dropdown tỉ lệ
+    if (promptUpsampling) promptUpsampling.style.display = isUltra ? "none"  : "flex";
+    if (ratioDropdown)    ratioDropdown.style.display    = isUltra ? "none"  : "block";
 
-    // Prompt Upsampling + Dropdown tỉ lệ
-    if (promptUpsampling) promptUpsampling.style.display = isUltra ? "none" : "flex";
-    if (ratioDropdown)    ratioDropdown.style.display    = isUltra ? "none" : "block";
-
-    // Số đếm trên nút Thực hiện
+    // Đổi số trên nút Thực hiện
     if (submitCount) submitCount.textContent = isUltra ? "1.5" : "1";
 
-    // Căn chỉnh toàn khối
-    if (actionBar) {
-      actionBar.classList.remove("justify-between", "justify-end");
-      actionBar.classList.add(isUltra ? "justify-between" : "justify-end");
-      actionBar.classList.add("w-full"); // để justify-between có không gian giãn
+    // Layout: để khối giãn full hàng và đẩy nhóm phải về mép phải khi Ultra
+    if (actionBar) actionBar.classList.add("w-full");
+    if (rightGroup) {
+      rightGroup.classList.toggle("ml-auto", isUltra);   // Ultra => sát lề phải
+      rightGroup.classList.toggle("ml-auto", isUltra);   // đảm bảo áp dụng
+      if (!isUltra) rightGroup.classList.remove("ml-auto"); // Classic => bỏ
     }
   }
 
-  applyUI();                           // chạy khi load
-  if (modelSelect) modelSelect.addEventListener("change", applyUI); // chạy khi đổi model
+  applyUI();
+  if (modelSelect) modelSelect.addEventListener("change", applyUI);
 });
 </script>
 
