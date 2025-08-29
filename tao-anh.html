@@ -28,7 +28,9 @@
                 background: linear-gradient(to_right, #d63384, #0dcaf0);
             }
         }
-
+        .primary-key {
+            background: linear-gradient(to right, #d63384, #0dcaf0);
+        }
         .loading {
             display: none;
         }
@@ -144,6 +146,77 @@
         input#darkModeToggle:checked+label span {
             transform: translateX(180%);
         }
+
+   .select-container {
+            position: relative;
+            width: 100%;
+            
+            margin: 0 auto;
+        }
+        
+        .select-custom {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 200px;
+            
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 100px;
+           
+            background: linear-gradient(to right, #d63384, #0dcaf0);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        .select-custom:hover {
+            background: linear-gradient(to right, #d63384, #0dcaf0);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .select-custom:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.4);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .select-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+       
+     
+        
+        .option-v1 {
+            background-color: white;
+            color: black;
+        }
+       
+        
+        
+        .highlight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.75rem;
+         
+            pointer-events: none;
+            opacity: 0.5;
+        }
+ 
     </style>
 </head>
 <script>
@@ -793,12 +866,7 @@
                                     </a>
                                 </div>
                                 <div class=" flex flex-col justify-center items-center gap-2 w-full pt-5">
-                                    <!-- <input required type="file" id="imageInput" accept="image/*" class="block w-full text-sm text-gray-500
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-md file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-blue-50 file:text-blue-700
-                            hover:file:bg-blue-100"> -->
+                                    
                                     <div class="image-upload-grid w-fit justify-center">
                                         <label class="image-upload-box w-[6rem]">
                                             <input type="file" accept="image/*" required />
@@ -824,6 +892,9 @@
                                     <span class="!text-center text-sm">*Lưu ý: Bạn nên tạo tối đa 2 - 3 sản phẩm để ra
                                         kết quả tốt nhất</span>
                                 </div>
+                                <div class="select-container pulse mb-6">
+             
+    </div>
                             </div>
                             <div class="w-[2px] bg-gray-400 h-auto my-2 self-stretch"></div>
                             <!-- 2. Nhập nội dung -->
@@ -831,7 +902,7 @@
                                 <div class="">
 
                                     <div class="x">
-                                        <div class="flex xs:justify-center sm:justify-start items-center gap-1">
+                                        <div class="flex xs:justify-center sm:justify-between items-center gap-1">
                                             <div class="grid xs:gap-4 sm:gap-0">
                                                 <div class="sm:flex xs:grid gap-2 items-center">
                                                 <div class="xs:flex sm:hidden justify-between ">
@@ -856,7 +927,7 @@
                                                 </div>
                                                 <div class="grid gap-3 my-[7px]"><a
                                                         href="https://chatgpt.com/g/g-6871cf1ece4881918e7c0147c2b3990b-chuyen-gia-tao-promt-autolook"
-                                                        class="bg-[#F05454] text-white border
+                                                        class="primary-key text-white border
                                                         rounded-full shadow-sm text-sm font-medium text-white
                                                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 p-2 uppercase font-semibold"
                                                         target="_blank">Chatbot tạo prompt người mẫu</a>
@@ -905,7 +976,7 @@
                                                 </div>
                                                 <div class="grid gap-3 my-[7px]"><a
                                                         href="https://chatgpt.com/g/g-689ac585d2b481919f56a13403361b35-chatbot-tai-tao-concept-thoi-trang?model=gpt-4o"
-                                                        class="bg-[#F05454] text-white border
+                                                        class="primary-key text-white border
                                                         rounded-full shadow-sm text-sm font-medium text-white
                                                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 p-2 uppercase font-semibold"
                                                         target="_blank">Chatbot tái tạo concept</a>
@@ -932,6 +1003,7 @@
                                                 </div>
                                             </div>
                                             </div>
+                                            
                                             <!-- Popup -->
                                             <div id="popupTips"
                                                 class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
@@ -1117,27 +1189,52 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="flex gap-3">
-                                            <div class="relative sm:w-[10rem] xs:w-[167px]">
-                                                <!-- Nút chọn -->
-                                                <button onclick="toggleDropdown2()" id="selectedRatio2"
-                                                    class="w-full bg-[#30475e] text-white p-2 rounded-full text-sm text-center">
-                                                    1 ảnh ▼
-                                                </button>
+                                        <div class="bg-white py-1 px-2 rounded-xl">
+                                            <i class="text-sm text-[#F05454]">Sử dụng model Autolook Ultra để cho ra kết quả tốt nhất!</i>
+                                        </div>
+                                        <div class="flex gap-3 items-center">
+                                            <div class="relative inline-block">
+                                                <!-- Nút kích hoạt -->
+                                                <div onclick="toggleTooltip2()"
+                                                    class="cursor-pointer select-none bg-[#0cc0df]  ml-2 w-[24px] h-[24px] rounded-xl text-white flex items-center justify-center gap-1 text-sm">
+                                                    
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="none" stroke="currentColor" stroke-width="2"
+                                                        stroke-linecap="round" stroke-linejoin="round"
+                                                        class="lucide lucide-info h-4 w-3 text-primary-500 cursor-pointer">
+                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                        <path d="M12 16v-4"></path>
+                                                        <path d="M12 8h.01"></path>
+                                                    </svg>
+                                                </div>
 
-                                                <!-- Danh sách dropdown -->
-                                                <ul id="customDropdown2"
-                                                    class="hidden absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 text-sm text-gray-800 shadow-lg">
-                                                    <li onclick="selectRatio2('1 ảnh')"
-                                                        class="px-3 py-2 hover:bg-gray-100 cursor-pointer">1 ảnh</li>
-                                                    <li onclick="selectRatio2('2 ảnh')"
-                                                        class="px-3 py-2 hover:bg-gray-100 cursor-pointer">2 ảnh</li>
-                                                    <!-- <li onclick="selectRatio2('3 ảnh')"
-                                                        class="px-3 py-2 hover:bg-gray-100 cursor-pointer">3 ảnh</li>
-                                                    <li onclick="selectRatio2('4 ảnh')"
-                                                        class="px-3 py-2 hover:bg-gray-100 cursor-pointer">4 ảnh</li> -->
-                                                </ul>
+                                                <!-- Tooltip -->
+                                                <div id="tooltip2"
+                                                    class="hidden absolute z-50 top-full left-[10px] mt-2 sm:w-[300px] xs:w-[255px] bg-white text-[#000000] text-[13px] p-3 rounded-xl shadow-lg">
+                                                    <p><b>Lưu ý:</b></p>
+                                                    <p class="mt-1">– Sử dụng Autolook Ultra khi bạn cần làm nhiều trang phục, các trang phục khó.</p>
+                                                    <p>– Sử dụng Autolook Classic khi bạn cần làm ít trang phục, các trang phục dễ.</p>
+                                                </div>
                                             </div>
+                                            <div class="text-center rounded-2xl ">
+                                    
+        
+        <div class="select-container pulse w-fit">
+            <div class="highlight"></div>
+            <select id="model-select" class="select-custom p-2">
+                
+                <option value="v2" class="option-v1 text-base ">Autolook Ultra</option>
+                <option value="v1" class="option-v1 text-base ">Autolook Classic</option>
+            </select>
+            <div class="select-icon">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+        
+         <!-- Modal Backdrop -->
+        <div id="modal-backdrop" class="fixed inset-0 bg-black/50 z-50 hidden"></div>
+
+    </div>
                                             <div class="relative w-[10rem]">
                                                 <!-- Nút chọn -->
                                                 <button onclick="toggleDropdown()" id="selectedRatio"
@@ -1195,7 +1292,7 @@
 
                                             <!-- 3. Button Thực hiện -->
                                             <div class="grid gap-4">
-                                                <button type="submit" id="submitBtn" class="bg-[#F05454] text-white sm:w-[10rem] xs:w-[96px] xs:h-[36px] flex items-center justify-around py-2 px-4
+                                                <button type="submit" id="submitBtn" class="bg-[#d63384] text-white sm:w-[10rem] xs:w-[96px] xs:h-[36px] flex items-center justify-around py-2 px-4
                                             rounded-full shadow-sm text-sm font-medium text-white
                                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                                     <div class="flex"><span class="font-bold">1</span>&nbsp;<svg width="18px" height="18px" viewBox="0 0 16 16" fill="none"
@@ -1283,7 +1380,87 @@
             </div>
         </div>
         </div>
+        <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const modelSelect = document.getElementById("model-select");
 
+  // 1) Khối Prompt Upsampling (toggle + checkbox)
+  const promptUpsampling = document.querySelector(".flex.items-center.md\\:pl-3");
+
+  // 2) Khối dropdown tỉ lệ ảnh
+  const ratioDropdown = document.querySelector(".relative.w-\\[10rem\\]");
+
+  // 3) Số đếm trên nút Thực hiện (span.font-bold)
+  const submitCount = document.querySelector("#submitBtn .font-bold");
+
+  // 4) DIV note “Sử dụng model Autolook Ultra…”
+  const ultraNote = Array.from(document.querySelectorAll(".bg-white.py-1.px-2.rounded-xl"))
+    .find(el => el.textContent.trim().includes("Sử dụng model Autolook Ultra"));
+
+  // 5) Action bar: khối chứa note + select + nút Thực hiện
+  const actionBar = document.querySelector(".md\\:flex.md\\:flex-row.xs\\:flex-col.items-center");
+
+  function applyUI() {
+    const isUltra = modelSelect && modelSelect.value === "v2"; // v2 = Autolook Ultra
+
+    // Note: Ultra hiện, Classic ẩn
+    if (ultraNote) ultraNote.classList.toggle("hidden", !isUltra);
+
+    // Prompt Upsampling + Dropdown tỉ lệ
+    if (promptUpsampling) promptUpsampling.style.display = isUltra ? "none" : "flex";
+    if (ratioDropdown)    ratioDropdown.style.display    = isUltra ? "none" : "block";
+
+    // Số đếm trên nút Thực hiện
+    if (submitCount) submitCount.textContent = isUltra ? "1.5" : "1";
+
+    // Căn chỉnh toàn khối
+    if (actionBar) {
+      actionBar.classList.remove("justify-between", "justify-end");
+      actionBar.classList.add(isUltra ? "justify-between" : "justify-end");
+      actionBar.classList.add("w-full"); // để justify-between có không gian giãn
+    }
+  }
+
+  applyUI();                           // chạy khi load
+  if (modelSelect) modelSelect.addEventListener("change", applyUI); // chạy khi đổi model
+});
+</script>
+
+
+
+<script>
+        document.getElementById('model-select').addEventListener('change', function() {
+            const selection = this.value;
+            const feedback = document.getElementById('selection-feedback');
+            const backdrop = document.getElementById('modal-backdrop');
+            const v1Feedback = document.getElementById('v1-feedback');
+            const v2Feedback = document.getElementById('v2-feedback');
+            
+            feedback.classList.remove('hidden');
+            backdrop.classList.remove('hidden');
+            v1Feedback.classList.add('hidden');
+            v2Feedback.classList.add('hidden');
+            
+            if (selection === 'v1') {
+                v1Feedback.classList.remove('hidden');
+                document.querySelector('.select-custom').classList.remove('bg-emerald-500');
+                document.querySelector('.select-custom').classList.add('bg-indigo-600');
+            } else if (selection === 'v2') {
+                v2Feedback.classList.remove('hidden');
+                document.querySelector('.select-custom').classList.remove('bg-indigo-600');
+                document.querySelector('.select-custom').classList.add('bg-emerald-500');
+            }
+        });
+
+        // Close modal when clicking close button or backdrop
+        document.getElementById('close-modal').addEventListener('click', closeModal);
+        document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+
+        function closeModal() {
+            document.getElementById('selection-feedback').classList.add('hidden');
+            document.getElementById('modal-backdrop').classList.add('hidden');
+        }
+    </script>
         <script>
             $(document).ready(function () {
                 function func_get_image_result() {
@@ -1722,7 +1899,10 @@
                 const tooltip = document.getElementById('tooltip');
                 tooltip.classList.toggle('hidden');
             }
-
+             function toggleTooltip2() {
+                const tooltip = document.getElementById('tooltip2');
+                tooltip.classList.toggle('hidden');
+            }
             // Optional: ẩn khi click ngoài
             document.addEventListener('click', function (e) {
                 const tooltip = document.getElementById('tooltip');
