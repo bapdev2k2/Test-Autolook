@@ -1154,7 +1154,7 @@
                                     </div>
                                     <!-- 2. Nhập nội dung -->
                                     <div
-                                        class="md:flex md:flex-row xs:flex-col justify-between items-center sm:mt-2 xs:mt-4">
+                                        class="flex lg:flex-row xs:flex-col justify-between items-center sm:mt-2 xs:mt-4 gap-2">
                                         <div class="flex items-center md:pl-3 xs:pl-0 sm:mb-0 xs:mb-4">
                                             <div class="relative inline-block">
                                                 <!-- Nút kích hoạt -->
@@ -1192,31 +1192,31 @@
                                         <div class="bg-white py-1 px-2 rounded-xl">
                                             <i class="text-sm text-[#F05454]">Sử dụng model Autolook Ultra để cho ra kết quả tốt nhất!</i>
                                         </div>
-                                        <div class="flex gap-3 items-center">
-                                            <div class="relative inline-block">
-                                                <!-- Nút kích hoạt -->
-                                                <div onclick="toggleTooltip2()"
-                                                    class="cursor-pointer select-none bg-[#0cc0df]  ml-2 w-[24px] h-[24px] rounded-xl text-white flex items-center justify-center gap-1 text-sm">
-                                                    
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                        fill="none" stroke="currentColor" stroke-width="2"
-                                                        stroke-linecap="round" stroke-linejoin="round"
-                                                        class="lucide lucide-info h-4 w-3 text-primary-500 cursor-pointer">
-                                                        <circle cx="12" cy="12" r="10"></circle>
-                                                        <path d="M12 16v-4"></path>
-                                                        <path d="M12 8h.01"></path>
-                                                    </svg>
+                                        <div class="flex xs:flex-col sm:flex-row gap-3 items-center">
+                                            <div class="text-center rounded-2xl flex justify-center items-center gap-2">
+                                                <div class="relative inline-block">
+                                                    <!-- Nút kích hoạt -->
+                                                    <div onclick="toggleTooltip2()"
+                                                        class="cursor-pointer select-none bg-[#0cc0df]  ml-2 w-[24px] h-[24px] rounded-xl text-white flex items-center justify-center gap-1 text-sm">
+                                                        
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                            fill="none" stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-info h-4 w-3 text-primary-500 cursor-pointer">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <path d="M12 16v-4"></path>
+                                                            <path d="M12 8h.01"></path>
+                                                        </svg>
+                                                    </div>
+    
+                                                    <!-- Tooltip -->
+                                                    <div id="tooltip2"
+                                                        class="hidden absolute z-50 top-full left-[10px] mt-2 sm:w-[300px] xs:w-[255px] bg-white text-[#000000] text-[13px] p-3 rounded-xl shadow-lg">
+                                                        <p><b>Lưu ý:</b></p>
+                                                        <p class="mt-1">– Sử dụng Autolook Ultra khi bạn cần làm nhiều trang phục, các trang phục khó.</p>
+                                                        <p>– Sử dụng Autolook Classic khi bạn cần làm ít trang phục, các trang phục dễ.</p>
+                                                    </div>
                                                 </div>
-
-                                                <!-- Tooltip -->
-                                                <div id="tooltip2"
-                                                    class="hidden absolute z-50 top-full left-[10px] mt-2 sm:w-[300px] xs:w-[255px] bg-white text-[#000000] text-[13px] p-3 rounded-xl shadow-lg">
-                                                    <p><b>Lưu ý:</b></p>
-                                                    <p class="mt-1">– Sử dụng Autolook Ultra khi bạn cần làm nhiều trang phục, các trang phục khó.</p>
-                                                    <p>– Sử dụng Autolook Classic khi bạn cần làm ít trang phục, các trang phục dễ.</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-center rounded-2xl ">
                                     
         
         <div class="select-container pulse w-fit">
@@ -1292,7 +1292,7 @@
 
                                             <!-- 3. Button Thực hiện -->
                                             <div class="grid gap-4">
-                                                <button type="submit" id="submitBtn" class="bg-[#d63384] text-white sm:w-[10rem] xs:w-[96px] xs:h-[36px] flex items-center justify-around py-2 px-4
+                                                <button type="submit" id="submitBtn" class="bg-[#d63384] text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
                                             rounded-full shadow-sm text-sm font-medium text-white
                                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                                     <div class="flex"><span class="font-bold">1</span>&nbsp;<svg width="18px" height="18px" viewBox="0 0 16 16" fill="none"
