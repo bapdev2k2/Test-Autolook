@@ -1408,7 +1408,32 @@
             </div>
         </div>
         </div>
-        
+        <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const model = document.getElementById('model-select');
+  // chịu cả hai khả năng id: "content" hoặc " content"
+  const contentEl = document.getElementById('content') || document.getElementById(' content');
+  if (!model || !contentEl) return;
+
+  // Placeholder gốc (V1) – copy đúng nội dung hiện tại
+  const PLACEHOLDER_V1 = `- Bạn có thể viết câu lệnh bằng tiếng Việt nếu yêu cầu đơn giản (Bắt buộc bật tính năng Prompt Upsampling). 
+- Yêu cầu bạn nên sử dụng ChatBot A.I của Autolook để upload hình ảnh và đưa yêu cầu. Sau đó lấy Prompt tiếng Anh và chỉnh sửa thêm theo ý bạn để có kết quả tốt nhất. Khi có câu lệnh chi tiết bằng tiếng Anh từ ChatBot A.I thì bạn hãy tắt tính năng Prompt Upsampling đi.
+- Hãy đọc kỹ hướng dẫn trước khi tạo ảnh để tránh lãng phí credit`;
+
+  // Placeholder cho V2
+  const PLACEHOLDER_V2 = `- Bạn có thể sử dụng Tiếng Việt hay Tiếng Anh đều được.
+- Hãy đọc kỹ hướng dẫn trước khi tạo ảnh để tránh lãng phí credit
+  `;
+
+  const applyPlaceholder = () => {
+    contentEl.placeholder = (model.value === 'v2') ? PLACEHOLDER_V2 : PLACEHOLDER_V1;
+  };
+
+  // Áp ngay khi load + khi đổi model
+  applyPlaceholder();
+  model.addEventListener('change', applyPlaceholder);
+});
+</script>
      <script>
 document.addEventListener("DOMContentLoaded", function () {
   const modelSelect      = document.getElementById("model-select");
@@ -2166,8 +2191,8 @@ document.addEventListener("DOMContentLoaded", function () {
   <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 
               bg-[url('https://w.ladicdn.com/668665e58fb7e80020232e3b/bg-20250724100845-bkivz.png')] dark:bg-[#1f1f1f] rounded-2xl shadow-2xl 
               w-[min(90vw,900px)] p-4">
-    <button id="v2Close" class="absolute top-2 right-2 p-2 rounded-full bg-black/50 text-white">
-      <i class="fa-solid fa-xmark"></i>
+    <button id="v2Close" class="absolute top-2 right-2 p-2 rounded-full bg-black/50 text-white w-[30px] h-[30px]">
+      <i class="absolute right-0 left-0 top-2 fa-solid fa-xmark"></i>
     </button>
 
     <div class="flex flex-col gap-3">
