@@ -2626,6 +2626,221 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         </script>
 
+<!-- Gift Countdown 24h (drop-in) -->
+<script>
+(() => {
+  const LS_START   = 'gift24h_startAt';
+  const LS_MIN     = 'gift24h_minimized';
+  const LS_CLAIM   = 'gift24h_claimed';
+  const SS_SHOWN   = 'gift24h_autoShownSession'; // 1 lần / phiên đăng nhập
+
+  const DURATION_MS = 24 * 60 * 60 * 1000;
+
+  // ===== helpers =====
+  const now = () => Date.now();
+  const fmt = (ms) => {
+    if (ms < 0) ms = 0;
+    const s = Math.floor(ms / 1000);
+    const hh = String(Math.floor(s/3600)).padStart(2,'0');
+    const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
+    const ss = String(s%60).padStart(2,'0');
+    return `${hh}:${mm}:${ss}`;
+  };
+  const $ = (sel) => document.querySelector(sel);
+  const show = (el) => el && (el.classList.remove('hidden'), el.setAttribute('aria-hidden','false'));
+  const hide = (el) => el && (el.classList.add('hidden'), el.setAttribute('aria-hidden','true'));
+
+  // ===== inject DOM =====
+  const root = document.createElement('div');
+  root.innerHTML = `
+  <style>
+    .gift-z { z-index: 9999; }
+    .gift-glass { backdrop-filter: blur(4px); }
+    .gift-badge { position:absolute; top:65px; right:-30px; }
+    .gift-pulse { animation: giftPulse 1.2s ease-in-out infinite; }
+    @keyframes giftPulse { 0%{ transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
+  </style>
+
+  <!-- Modal -->
+  <div id="gift24h-modal" class="gift-z fixed inset-0 hidden" aria-hidden="true">
+    <div class="absolute inset-0 bg-black/50 gift-glass"></div>
+    <div class="flex items-center justify-center min-h-full p-4">
+      <div class="relative w-full max-w-md rounded-2xl bg-white dark:bg-[#2c2c2c] text-gray-800 dark:text-white shadow-xl">
+        <button id="gift24h-x" class="absolute right-3 top-3 p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10" aria-label="Đóng">
+          ✕
+        </button>
+        <div class="p-6">
+          <div class="text-center">
+            <div class="mx-auto mb-2 w-14 h-14 rounded-full bg-[#30475e] text-white flex items-center justify-center gift-pulse">🎁</div>
+            <h3 class="text-xl font-bold">Quà tặng chỉ trong 24 giờ</h3>
+            <p class="mt-1 text-sm opacity-80">Nhanh tay nhận ưu đãi trước khi hết hạn.</p>
+            <div class="mt-4">
+              <div class="text-sm opacity-70">Thời gian còn lại</div>
+              <div id="gift24h-timer" class="mt-1 text-3xl font-extrabold tabular-nums">24:00:00</div>
+              <div id="gift24h-expired" class="mt-2 text-red-600 font-semibold hidden">Đã hết hạn</div>
+            </div>
+            <div class="mt-6 flex gap-3 justify-center">
+              <button id="gift24h-claim" class="px-4 py-2 rounded-xl bg-[#F05454] text-white font-semibold hover:opacity-90 focus:outline-none">
+                Nhận quà
+              </button>
+              <button id="gift24h-later" class="px-4 py-2 rounded-xl bg-gray-200 dark:bg-gray-700 font-semibold hover:opacity-90 focus:outline-none">
+                Để sau
+              </button>
+            </div>
+            <div id="gift24h-claimedHint" class="mt-3 text-green-600 font-medium hidden">Bạn đã nhận quà. Có thể mở lại từ icon 🎁.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Icon -->
+  <button id="gift24h-fab" class="gift-z absolute top-[8rem] right-[5rem] hidden w-14 h-14 rounded-full text-white flex items-center justify-center active:scale-95 transition text-[60px]">
+    🎁
+    <span id="gift24h-fabBadge" class="gift-badge inline-flex items-center justify-center w-[7.5rem] h-[3.5rem] text-[1.75rem] font-bold bg-[#F05454] text-white rounded-full">!</span>
+  </button>
+  `;
+  document.body.appendChild(root);
+
+  const modal    = $('#gift24h-modal');
+  const xBtn     = $('#gift24h-x');
+  const claimBtn = $('#gift24h-claim');
+  const laterBtn = $('#gift24h-later');
+  const timerEl  = $('#gift24h-timer');
+  const expired  = $('#gift24h-expired');
+  const claimedHint = $('#gift24h-claimedHint');
+  const fab      = $('#gift24h-fab');
+  const fabBadge = $('#gift24h-fabBadge');
+
+  let intervalId = null;
+
+  // ===== state =====
+  const getStart = () => Number(localStorage.getItem(LS_START) || 0);
+  const setStart = (t) => localStorage.setItem(LS_START, String(t));
+  const getMin   = () => localStorage.getItem(LS_MIN) === '1';
+  const setMin   = (v) => localStorage.setItem(LS_MIN, v ? '1' : '0');
+  const getClaim = () => localStorage.getItem(LS_CLAIM) === '1';
+  const setClaim = (v) => localStorage.setItem(LS_CLAIM, v ? '1' : '0');
+  const getShown = () => sessionStorage.getItem(SS_SHOWN) === '1';
+  const setShown = (v) => sessionStorage.setItem(SS_SHOWN, v ? '1' : '0');
+
+  // tạo mốc đếm 24h lần đầu trong đời trang
+  if (!getStart()) setStart(now());
+
+  // ===== countdown =====
+  const tick = () => {
+    const left = getStart() + DURATION_MS - now();
+    timerEl.textContent = fmt(left);
+    const isExpired = left <= 0;
+    if (isExpired) {
+      show(expired);
+      claimBtn.disabled = true;
+      claimBtn.classList.add('opacity-60','cursor-not-allowed');
+      fabBadge.textContent = '0';
+      fabBadge.classList.add('hidden');
+      if (intervalId) { clearInterval(intervalId); intervalId = null; }
+    } else {
+      // badge hiển thị giờ:phút
+      const s = Math.floor(left / 1000);
+      const hh = String(Math.floor(s/3600)).padStart(2,'0');
+      const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
+      fabBadge.textContent = `${hh}:${mm}`;
+      fabBadge.classList.remove('hidden');
+    }
+  };
+
+  const startLoop = () => {
+    if (intervalId) clearInterval(intervalId);
+    tick();
+    intervalId = setInterval(tick, 1000);
+  };
+
+  // ===== UI actions =====
+  const openModal = () => {
+    hide(fab);
+    show(modal);
+    document.documentElement.classList.add('overflow-hidden'); // khóa scroll khi mở
+    startLoop();
+  };
+  const minimize = () => {
+    setMin(true);
+    hide(modal);
+    show(fab);
+    document.documentElement.classList.remove('overflow-hidden');
+  };
+  const closeModal = () => minimize();
+
+  const markClaimed = () => {
+    setClaim(true);
+    claimedHint && show(claimedHint);
+    claimBtn.textContent = 'ĐÃ NHẬN';
+    claimBtn.disabled = true;
+    claimBtn.classList.add('opacity-60','cursor-not-allowed');
+    // Gửi event để bạn hook API/logic tặng quà
+    window.dispatchEvent(new CustomEvent('gift:claimed'));
+    if (typeof window.onGiftClaim === 'function') {
+      try { window.onGiftClaim(); } catch(e) { console.warn('onGiftClaim error', e); }
+    }
+    minimize();
+  };
+
+  // ===== first-show logic =====
+  const initAutoShow = () => {
+    // Chỉ tự động hiện 1 lần duy nhất trong mỗi phiên đăng nhập
+    if (!getShown()) {
+      setShown(true);
+      setMin(false); // lần đầu không ở trạng thái thu nhỏ
+      openModal();
+    } else {
+      // phiên này đã auto show rồi: chỉ hiện icon để người dùng tự mở
+      show(fab);
+    }
+  };
+
+  // ===== restore visual state =====
+  const restore = () => {
+    // Luôn chạy countdown (persist thời gian)
+    startLoop();
+
+    // Nếu đã claim trước đó → nút claim disable + hint
+    if (getClaim()) {
+      claimBtn.textContent = 'ĐÃ NHẬN';
+      claimBtn.disabled = true;
+      claimBtn.classList.add('opacity-60','cursor-not-allowed');
+      show(claimedHint);
+    }
+
+    // Nếu đã thu nhỏ trước đó → hiện icon; nếu chưa, tuân thủ auto show 1 lần/phiên
+    if (getMin()) {
+      hide(modal);
+      show(fab);
+    } else {
+      initAutoShow();
+    }
+  };
+
+  // ===== bind =====
+  fab.addEventListener('click', openModal);
+  xBtn.addEventListener('click', closeModal);
+  laterBtn.addEventListener('click', minimize);
+  claimBtn.addEventListener('click', markClaimed);
+  modal.addEventListener('click', (e) => { // click nền để thu nhỏ
+    if (e.target === modal) minimize();
+  });
+
+  // ===== kick off =====
+  restore();
+
+  // ===== optional: bạn có thể reset khi logout
+  // window.resetGiftCountdown = () => {
+  //   localStorage.removeItem(LS_START);
+  //   localStorage.removeItem(LS_MIN);
+  //   localStorage.removeItem(LS_CLAIM);
+  //   sessionStorage.removeItem(SS_SHOWN);
+  //   location.reload();
+  // };
+})();
+</script>
 
 </body>
 
