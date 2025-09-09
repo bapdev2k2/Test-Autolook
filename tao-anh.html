@@ -230,6 +230,7 @@
         }
  
     </style>
+    
 </head>
 <script>
     tailwind.config = {
@@ -2627,220 +2628,203 @@ document.addEventListener('DOMContentLoaded', () => {
         </script>
 
 <!-- Gift Countdown 24h (drop-in) -->
-<script>
-(() => {
-  const LS_START   = 'gift24h_startAt';
-  const LS_MIN     = 'gift24h_minimized';
-  const LS_CLAIM   = 'gift24h_claimed';
-  const SS_SHOWN   = 'gift24h_autoShownSession'; // 1 lần / phiên đăng nhập
+<!-- ===================== GIFT 24H: CSS ===================== -->
+<style>
+  .gift-z { z-index: 9999; }
+  .gift-glass { backdrop-filter: blur(4px); }
+  .gift-badge { position:absolute; top:65px; right:-30px; }
+  .gift-pulse { animation: giftPulse 1.2s ease-in-out infinite; transform-origin:center; }
+  @keyframes giftPulse { 0%{transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
+  #gift24h-modal button, #gift24h-fab { user-select:none; }
 
-  const DURATION_MS = 24 * 60 * 60 * 1000;
+  /* Countdown cards (the “Days/Hours/Minutes/Seconds” UI) */
+  .gift-count-item {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+  }
+</style>
 
-  // ===== helpers =====
-  const now = () => Date.now();
-  const fmt = (ms) => {
-    if (ms < 0) ms = 0;
-    const s = Math.floor(ms / 1000);
-    const hh = String(Math.floor(s/3600)).padStart(2,'0');
-    const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
-    const ss = String(s%60).padStart(2,'0');
-    return `${hh}:${mm}:${ss}`;
-  };
-  const $ = (sel) => document.querySelector(sel);
-  const show = (el) => el && (el.classList.remove('hidden'), el.setAttribute('aria-hidden','false'));
-  const hide = (el) => el && (el.classList.add('hidden'), el.setAttribute('aria-hidden','true'));
+<!-- ===================== GIFT 24H: HTML (place inside <body>) ===================== -->
+<!-- Modal -->
+<div id="gift24h-modal" class="gift-z fixed inset-0 hidden" aria-hidden="true">
+  <div class="absolute inset-0 bg-black/50 gift-glass"></div>
+  <div class="flex items-center justify-center min-h-full p-4">
+    <div class="relative w-full max-w-2xl rounded-2xl bg-white text-gray-800 shadow-xl overflow-hidden">
+      <button id="gift24h-x" class="absolute right-3 top-3 p-2 rounded-full hover:bg-black/5" aria-label="Đóng">✕</button>
 
-  // ===== inject DOM =====
-  const root = document.createElement('div');
-  root.innerHTML = `
-  <style>
-    .gift-z { z-index: 9999; }
-    .gift-glass { backdrop-filter: blur(4px); }
-    .gift-badge { position:absolute; top:65px; right:-30px; }
-    .gift-pulse { animation: giftPulse 1.2s ease-in-out infinite; }
-    @keyframes giftPulse { 0%{ transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
-  </style>
+      <!-- Banner + badge -->
+      <div class="relative">
+        <!-- Đổi ảnh banner theo ý bạn -->
+        <img src="./images/bg-gift.png" alt="Sale Banner" class="w-full h-50 object-cover">
+        <div class="absolute top-0 right-0 w-[100px] "><img src="./images/hotsale.gif" alt=""></div>
+      </div>
+      <!-- Body -->
+      <div class="p-6">
+        <h2 class="text-4xl font-extrabold text-gray-800 mb-2">FLASH SALE!</h2>
+        <p class="text-gray-600 mb-6">Ưu đãi có hạn trong 24 giờ — đừng bỏ lỡ.</p>
 
-  <!-- Modal -->
-  <div id="gift24h-modal" class="gift-z fixed inset-0 hidden" aria-hidden="true">
-    <div class="absolute inset-0 bg-black/50 gift-glass"></div>
-    <div class="flex items-center justify-center min-h-full p-4">
-      <div class="relative w-full max-w-md rounded-2xl bg-white dark:bg-[#2c2c2c] text-gray-800 dark:text-white shadow-xl">
-        <button id="gift24h-x" class="absolute right-3 top-3 p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10" aria-label="Đóng">
-          ✕
-        </button>
-        <div class="p-6">
-          <div class="text-center">
-            <div class="mx-auto mb-2 w-14 h-14 rounded-full bg-[#30475e] text-white flex items-center justify-center gift-pulse">🎁</div>
-            <h3 class="text-xl font-bold">Quà tặng chỉ trong 24 giờ</h3>
-            <p class="mt-1 text-sm opacity-80">Nhanh tay nhận ưu đãi trước khi hết hạn.</p>
-            <div class="mt-4">
-              <div class="text-sm opacity-70">Thời gian còn lại</div>
-              <div id="gift24h-timer" class="mt-1 text-3xl font-extrabold tabular-nums">24:00:00</div>
-              <div id="gift24h-expired" class="mt-2 text-red-600 font-semibold hidden">Đã hết hạn</div>
+        <!-- Countdown grid -->
+        <div class="mb-6">
+          <p class="text-sm text-gray-500 mb-2">Còn lại:</p>
+          <div class="flex justify-between gap-2">
+            <div class="gift-count-item flex flex-col items-center justify-center w-1/4 py-3">
+              <span id="gift24h-days" class="text-2xl font-bold text-red-500">00</span>
+              <span class="text-xs text-gray-500">Days</span>
             </div>
-            <div class="mt-6 flex gap-3 justify-center">
-              <button id="gift24h-claim" class="px-4 py-2 rounded-xl bg-[#F05454] text-white font-semibold hover:opacity-90 focus:outline-none">
-                Nhận quà
-              </button>
-              <button id="gift24h-later" class="px-4 py-2 rounded-xl bg-gray-200 dark:bg-gray-700 font-semibold hover:opacity-90 focus:outline-none">
-                Để sau
-              </button>
+            <div class="gift-count-item flex flex-col items-center justify-center w-1/4 py-3">
+              <span id="gift24h-hours" class="text-2xl font-bold text-red-500">00</span>
+              <span class="text-xs text-gray-500">Hours</span>
             </div>
-            <div id="gift24h-claimedHint" class="mt-3 text-green-600 font-medium hidden">Bạn đã nhận quà. Có thể mở lại từ icon 🎁.</div>
+            <div class="gift-count-item flex flex-col items-center justify-center w-1/4 py-3">
+              <span id="gift24h-minutes" class="text-2xl font-bold text-red-500">00</span>
+              <span class="text-xs text-gray-500">Minutes</span>
+            </div>
+            <div class="gift-count-item flex flex-col items-center justify-center w-1/4 py-3">
+              <span id="gift24h-seconds" class="text-2xl font-bold text-red-500">00</span>
+              <span class="text-xs text-gray-500">Seconds</span>
+            </div>
           </div>
+        </div>
+
+        <!-- Alert box (không dùng feather để tránh phụ thuộc) -->
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <!-- simple info icon -->
+              <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm.75-11.5a.75.75 0 10-1.5 0 .75.75 0 001.5 0ZM9 9.75a1 1 0 112 0v4.5a1 1 0 11-2 0v-4.5Z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-yellow-700">Chỉ áp dụng trong <span class="font-bold">thời gian</span> này.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col space-y-3">
+          <button id="gift24h-claim" class="gift-pulse bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition">
+            <a href="buy-credit.html"  class="mr-2">🎁</a> NHẬN ƯU ĐÃI -30%
+          </button>
+          <button id="gift24h-later" class="text-gray-500 hover:text-gray-700 text-sm font-medium py-2 px-4 rounded-lg transition">
+            Để sau
+          </button>
+          <div id="gift24h-expired" class="hidden text-center text-red-600 font-semibold">Đã hết hạn</div>
+          
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Floating Icon -->
-  <button id="gift24h-fab" class="gift-z absolute top-[8rem] right-[5rem] hidden w-14 h-14 rounded-full text-white flex items-center justify-center active:scale-95 transition text-[60px]">
-    🎁
-    <span id="gift24h-fabBadge" class="gift-badge inline-flex items-center justify-center w-[7.5rem] h-[3.5rem] text-[1.75rem] font-bold bg-[#F05454] text-white rounded-full">!</span>
-  </button>
-  `;
-  document.body.appendChild(root);
+<!-- Floating Icon -->
+<button id="gift24h-fab" class="gift-z fixed top-32 right-20 hidden w-14 h-14 rounded-full text-white flex items-center justify-center active:scale-95 transition text-[32px] bg-[#F05454]" aria-label="Mở quà">
+  <span class="gift-pulse">🎁</span>
+</button>
 
-  const modal    = $('#gift24h-modal');
-  const xBtn     = $('#gift24h-x');
-  const claimBtn = $('#gift24h-claim');
-  const laterBtn = $('#gift24h-later');
-  const timerEl  = $('#gift24h-timer');
-  const expired  = $('#gift24h-expired');
-  const claimedHint = $('#gift24h-claimedHint');
-  const fab      = $('#gift24h-fab');
-  const fabBadge = $('#gift24h-fabBadge');
+<!-- ===================== GIFT 24H: JS (place before </body>) ===================== -->
+<script>
+(() => {
+  const MODAL   = document.getElementById('gift24h-modal');
+  const CLOSE   = document.getElementById('gift24h-x');
+  const CLAIM   = document.getElementById('gift24h-claim');
+  const LATER   = document.getElementById('gift24h-later');
+  const HINT    = document.getElementById('gift24h-claimedHint');
+  const FAB     = document.getElementById('gift24h-fab');
+  const EXPIRED = document.getElementById('gift24h-expired');
 
-  let intervalId = null;
+  // New: per-box refs for your UI
+  const BOX_D = document.getElementById('gift24h-days');
+  const BOX_H = document.getElementById('gift24h-hours');
+  const BOX_M = document.getElementById('gift24h-minutes');
+  const BOX_S = document.getElementById('gift24h-seconds');
 
-  // ===== state =====
-  const getStart = () => Number(localStorage.getItem(LS_START) || 0);
-  const setStart = (t) => localStorage.setItem(LS_START, String(t));
-  const getMin   = () => localStorage.getItem(LS_MIN) === '1';
-  const setMin   = (v) => localStorage.setItem(LS_MIN, v ? '1' : '0');
-  const getClaim = () => localStorage.getItem(LS_CLAIM) === '1';
-  const setClaim = (v) => localStorage.setItem(LS_CLAIM, v ? '1' : '0');
-  const getShown = () => sessionStorage.getItem(SS_SHOWN) === '1';
-  const setShown = (v) => sessionStorage.setItem(SS_SHOWN, v ? '1' : '0');
+  const KEY_START = 'gift24h_start';
+  const KEY_STATE = 'gift24h_state'; // 'modal' | 'fab' | 'claimed' | 'hidden'
+  const DURATION_MS = 24 * 60 * 60 * 1000;
 
-  // tạo mốc đếm 24h lần đầu trong đời trang
-  if (!getStart()) setStart(now());
+  // Helpers
+  const show = (el) => el && el.classList.remove('hidden');
+  const hide = (el) => el && el.classList.add('hidden');
 
-  // ===== countdown =====
-  const tick = () => {
-    const left = getStart() + DURATION_MS - now();
-    timerEl.textContent = fmt(left);
-    const isExpired = left <= 0;
-    if (isExpired) {
-      show(expired);
-      claimBtn.disabled = true;
-      claimBtn.classList.add('opacity-60','cursor-not-allowed');
-      fabBadge.textContent = '0';
-      fabBadge.classList.add('hidden');
-      if (intervalId) { clearInterval(intervalId); intervalId = null; }
+  function readStart() {
+    const raw = localStorage.getItem(KEY_START);
+    const t = raw ? Number(raw) : NaN;
+    if (Number.isFinite(t)) return t;
+    const now = Date.now();
+    localStorage.setItem(KEY_START, String(now));
+    return now;
+  }
+
+  function timeLeft() {
+    const start = readStart();
+    return (start + DURATION_MS) - Date.now();
+  }
+
+  function getState() {
+    return localStorage.getItem(KEY_STATE) || 'modal';
+  }
+  function setState(s) {
+    localStorage.setItem(KEY_STATE, s);
+  }
+
+  // Render countdown per-box
+  function renderBoxes(ms) {
+    if (ms < 0) ms = 0;
+    const totalSec = Math.floor(ms / 1000);
+    const days = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const minutes = Math.floor((totalSec % 3600) / 60);
+    const seconds = totalSec % 60;
+
+    if (BOX_D) BOX_D.textContent = String(days).padStart(2, '0');
+    if (BOX_H) BOX_H.textContent = String(hours).padStart(2, '0');
+    if (BOX_M) BOX_M.textContent = String(minutes).padStart(2, '0');
+    if (BOX_S) BOX_S.textContent = String(seconds).padStart(2, '0');
+  }
+
+  function applyState() {
+    const left = timeLeft();
+    renderBoxes(left);
+
+    const expired = left <= 0;
+    if (expired) {
+      show(EXPIRED);
+      // khoá nhận quà
+      CLAIM?.setAttribute('disabled', 'true');
+      CLAIM?.classList.add('opacity-50', 'cursor-not-allowed');
     } else {
-      // badge hiển thị giờ:phút
-      const s = Math.floor(left / 1000);
-      const hh = String(Math.floor(s/3600)).padStart(2,'0');
-      const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
-      fabBadge.textContent = `${hh}:${mm}`;
-      fabBadge.classList.remove('hidden');
-    }
-  };
-
-  const startLoop = () => {
-    if (intervalId) clearInterval(intervalId);
-    tick();
-    intervalId = setInterval(tick, 1000);
-  };
-
-  // ===== UI actions =====
-  const openModal = () => {
-    hide(fab);
-    show(modal);
-    document.documentElement.classList.add('overflow-hidden'); // khóa scroll khi mở
-    startLoop();
-  };
-  const minimize = () => {
-    setMin(true);
-    hide(modal);
-    show(fab);
-    document.documentElement.classList.remove('overflow-hidden');
-  };
-  const closeModal = () => minimize();
-
-  const markClaimed = () => {
-    setClaim(true);
-    claimedHint && show(claimedHint);
-    claimBtn.textContent = 'ĐÃ NHẬN';
-    claimBtn.disabled = true;
-    claimBtn.classList.add('opacity-60','cursor-not-allowed');
-    // Gửi event để bạn hook API/logic tặng quà
-    window.dispatchEvent(new CustomEvent('gift:claimed'));
-    if (typeof window.onGiftClaim === 'function') {
-      try { window.onGiftClaim(); } catch(e) { console.warn('onGiftClaim error', e); }
-    }
-    minimize();
-  };
-
-  // ===== first-show logic =====
-  const initAutoShow = () => {
-    // Chỉ tự động hiện 1 lần duy nhất trong mỗi phiên đăng nhập
-    if (!getShown()) {
-      setShown(true);
-      setMin(false); // lần đầu không ở trạng thái thu nhỏ
-      openModal();
-    } else {
-      // phiên này đã auto show rồi: chỉ hiện icon để người dùng tự mở
-      show(fab);
-    }
-  };
-
-  // ===== restore visual state =====
-  const restore = () => {
-    // Luôn chạy countdown (persist thời gian)
-    startLoop();
-
-    // Nếu đã claim trước đó → nút claim disable + hint
-    if (getClaim()) {
-      claimBtn.textContent = 'ĐÃ NHẬN';
-      claimBtn.disabled = true;
-      claimBtn.classList.add('opacity-60','cursor-not-allowed');
-      show(claimedHint);
+      hide(EXPIRED);
+      CLAIM?.removeAttribute('disabled');
+      CLAIM?.classList.remove('opacity-50', 'cursor-not-allowed');
     }
 
-    // Nếu đã thu nhỏ trước đó → hiện icon; nếu chưa, tuân thủ auto show 1 lần/phiên
-    if (getMin()) {
-      hide(modal);
-      show(fab);
-    } else {
-      initAutoShow();
+    switch (getState()) {
+      case 'modal':
+        show(MODAL); hide(FAB); break;
+      case 'fab':
+        hide(MODAL); show(FAB); break;
+      case 'claimed':
+        hide(MODAL); show(FAB); show(HINT); break;
+      default:
+        hide(MODAL); show(FAB);
     }
-  };
+  }
 
-  // ===== bind =====
-  fab.addEventListener('click', openModal);
-  xBtn.addEventListener('click', closeModal);
-  laterBtn.addEventListener('click', minimize);
-  claimBtn.addEventListener('click', markClaimed);
-  modal.addEventListener('click', (e) => { // click nền để thu nhỏ
-    if (e.target === modal) minimize();
-  });
+  // Events
+  CLOSE?.addEventListener('click', () => { setState('fab'); applyState(); });
+  LATER?.addEventListener('click', () => { setState('fab'); applyState(); });
+  CLAIM?.addEventListener('click', () => { setState('claimed'); applyState(); /* TODO: gọi API/đi link ưu đãi ở đây */ });
+  FAB?.addEventListener('click', () => { setState('modal'); applyState(); });
 
-  // ===== kick off =====
-  restore();
-
-  // ===== optional: bạn có thể reset khi logout
-  // window.resetGiftCountdown = () => {
-  //   localStorage.removeItem(LS_START);
-  //   localStorage.removeItem(LS_MIN);
-  //   localStorage.removeItem(LS_CLAIM);
-  //   sessionStorage.removeItem(SS_SHOWN);
-  //   location.reload();
-  // };
+  // Tick
+  applyState();
+  setInterval(applyState, 1000);
 })();
 </script>
+
+
 
 </body>
 
