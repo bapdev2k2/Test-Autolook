@@ -230,7 +230,21 @@
         }
  
     </style>
-    
+    <style>
+  .gift-z { z-index: 9999; }
+  .gift-glass { backdrop-filter: blur(4px); }
+  .gift-badge { position:absolute; top:65px; right:-30px; }
+  .gift-pulse { animation: giftPulse 1.2s ease-in-out infinite; transform-origin:center; }
+  @keyframes giftPulse { 0%{transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
+  #gift24h-modal button, #gift24h-fab { user-select:none; }
+
+  /* Countdown cards (the “Days/Hours/Minutes/Seconds” UI) */
+  .gift-count-item {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+  }
+</style>
 </head>
 <script>
     tailwind.config = {
@@ -826,6 +840,24 @@
             </div>
 
         </div>
+<div class="relative w-full h-16 mb-6 flex justify-center items-center">
+  <!-- Nền chính -->
+  <div class="absolute inset-0 rounded-full bg-[linear-gradient(-225deg,#FFE29F_0%,#FFA99F_48%,#FF719A_100%)] shadow-[0px_10px_20px_rgba(0,0,0,0.25)]"></div>
+  
+  <!-- Viền sáng xoay -->
+  <div class="absolute inset-0 rounded-full p-[3px] bg-[conic-gradient(var(--angle),#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee,#ff9a9e)] animate-spin-slow">
+    <div class="w-full h-full rounded-full bg-[#fff5] backdrop-blur-sm"></div>
+  </div>
+
+  <!-- Nút bấm -->
+  <button id="gift24h-fab"
+    class="relative z-10 flex items-center gap-2 px-8 py-2 rounded-full 
+           bg-gradient-to-r from-pink-500 to-red-400 text-white font-bold 
+           text-lg uppercase shadow-lg hover:scale-105 active:scale-95 transition">
+    <i class="fa-solid fa-gift animate-bounce"></i>
+    <span>SALE 24H</span>
+  </button>
+</div>
         <!-- <main class="container mx-auto w-full md:ml-64 px-4 py-8  inline-flex md:pt-24 md:pl-4 md:pr-4"> -->
         <div
             class="sm:text-center xs:text-start flex flex-col items-center justify-center w-full xs:text-[12px] sm:text-[14px] bg-[#F5F5F5] shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)] rounded-2xl p-4 font-semibold">
@@ -2627,24 +2659,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         </script>
 
-<!-- Gift Countdown 24h (drop-in) -->
-<!-- ===================== GIFT 24H: CSS ===================== -->
-<style>
-  .gift-z { z-index: 9999; }
-  .gift-glass { backdrop-filter: blur(4px); }
-  .gift-badge { position:absolute; top:65px; right:-30px; }
-  .gift-pulse { animation: giftPulse 1.2s ease-in-out infinite; transform-origin:center; }
-  @keyframes giftPulse { 0%{transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
-  #gift24h-modal button, #gift24h-fab { user-select:none; }
-
-  /* Countdown cards (the “Days/Hours/Minutes/Seconds” UI) */
-  .gift-count-item {
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
-  }
-</style>
-
 <!-- ===================== GIFT 24H: HTML (place inside <body>) ===================== -->
 <!-- Modal -->
 <div id="gift24h-modal" class="gift-z fixed inset-0 hidden" aria-hidden="true">
@@ -2657,13 +2671,15 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="relative">
         <!-- Đổi ảnh banner theo ý bạn -->
         <img src="./images/bg-gift.png" alt="Sale Banner" class="w-full h-50 object-cover">
-        <div class="absolute top-0 right-0 w-[100px] "><img src="./images/hotsale.gif" alt=""></div>
+        
       </div>
       <!-- Body -->
-      <div class="p-6">
+      <div class="p-6 flex flex-col justify-center gap-2">
         <h2 class="text-4xl font-extrabold text-gray-800 mb-2">FLASH SALE!</h2>
         <p class="text-gray-600 mb-6">Ưu đãi có hạn trong 24 giờ — đừng bỏ lỡ.</p>
-
+        <button onclick="window.location.href='./buy-credit.html'" id="gift24h-claim" class="gift-pulse bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition">
+            <span class="mr-2">🎁</span> Nhận ngay ưu đãi 30% cho toàn bộ gói credit
+          </button>
         <!-- Countdown grid -->
         <div class="mb-6">
           <p class="text-sm text-gray-500 mb-2">Còn lại:</p>
@@ -2688,7 +2704,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <!-- Alert box (không dùng feather để tránh phụ thuộc) -->
-        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
           <div class="flex">
             <div class="flex-shrink-0">
               <!-- simple info icon -->
@@ -2704,9 +2720,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Actions -->
         <div class="flex flex-col space-y-3">
-          <button id="gift24h-claim" class="gift-pulse bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition">
-            <a href="buy-credit.html"  class="mr-2">🎁</a> NHẬN ƯU ĐÃI -30%
-          </button>
+          
           <button id="gift24h-later" class="text-gray-500 hover:text-gray-700 text-sm font-medium py-2 px-4 rounded-lg transition">
             Để sau
           </button>
@@ -2718,10 +2732,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 
-<!-- Floating Icon -->
-<button id="gift24h-fab" class="gift-z fixed top-32 right-20 hidden w-14 h-14 rounded-full text-white flex items-center justify-center active:scale-95 transition text-[32px] bg-[#F05454]" aria-label="Mở quà">
-  <span class="gift-pulse">🎁</span>
-</button>
+
 
 <!-- ===================== GIFT 24H: JS (place before </body>) ===================== -->
 <script>
