@@ -251,6 +251,7 @@
                     'sm': '768px',
                     'md': '1024px',
                     'lg': '1440px',
+                    'xl': '1441px'
                 }
             }
         }
@@ -768,16 +769,16 @@
             display: inline-block;
         }
     </style>
-    <main class="container mx-auto px-4 py-8 md:pl-64 md:mt-0 sm:mt-[80px] xs:mt-20">
+    <main class="container mx-auto px-4 py-8 md:pl-64 md:mt-0 sm:mt-[80px] xs:mt-20 md:!max-w-[888px] lg:!max-w-[1080px] xl:!max-w-[1440px]">
 
         <!-- <main class="container mx-auto w-full md:ml-64 px-4 py-8  inline-flex md:pt-24 md:pl-4 md:pr-4"> -->
             <div class="absolute md:top-8 md:right-7 flex items-center gap-2 xs:right-[45px] xs:top-3">
 
                 <div style="z-index: 49;"
-                        class="flex flex-col justify-center items-center gap-3 xs:fixed md:static md:top-8 md:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
+                        class=" flex flex-col justify-center items-center gap-3 xs:fixed lg:static md:top-8 md:right-[-2rem] lg:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
                         <!-- Toggle Switch Dark/Light -->
                         <div class="flex items-center gap-2">
-                            <b class="sm:block xs:hidden">Dark</b>
+                            <b class="sm:block md:hidden lg:block xs:hidden">Dark</b>
                             <input type="checkbox" id="darkModeToggle" class="sr-only">
                             <label for="darkModeToggle"
                                 class="flex items-center cursor-pointer relative w-16 h-7 rounded-full bg-[#30475e] dark:bg-gray-700 transition">
@@ -789,14 +790,14 @@
                                 <i
                                     class="fas fa-sun text-yellow-400 sm:text-base xs:text-sm absolute sm:right-[6px] xs:right-2 xs:top-1 sm:top-0.5 pointer-events-none z-9"></i>
                             </label>
-                            <b class="sm:block xs:hidden">Light</b>
+                            <b class="sm:block md:hidden lg:block xs:hidden">Light</b>
                         </div>
-                        <div class="relative inline-block text-left md:w-[150px] xs:w-[100px]" id="langDropdownWrapper">
+                        <div class="relative flex justify-center inline-block text-left md:w-[150px] xs:w-[100px]" id="langDropdownWrapper">
                             <button onclick="toggleLangDropdown()"
-                                class="inline-flex justify-center items-center w-full px-4 md:py-2 xs:py-1 bg-white rounded-xl text-sm xs:border md:border-none xs:shadow-none md:shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)]">
+                                class="inline-flex justify-center items-center lg:w-full md:w-[64px] px-4 md:py-2 xs:py-1 bg-white rounded-xl text-sm xs:border md:border-none xs:shadow-none md:shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)]">
                                 <img id="currentLangIcon" src="./images/Vi.svg" alt="" class="w-5 h-5 mr-2">
-                                <span id="currentLangLabel" class="md:block xs:hidden">Vietnamese</span>
-                                <span id="currentLangLabel" class="md:hidden xs:block">VN</span>
+                                <span id="currentLangLabel" class="lg:block xs:hidden">Vietnamese</span>
+                                <span id="currentLangLabel" class="lg:hidden xs:block">VN</span>
                                 <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
                                     <path d="M19 9l-7 7-7-7" />
@@ -821,6 +822,36 @@
                         </div>
                     </div>
             </div>
+           <!-- CHẾ ĐỘ (custom dropdown, không dùng <select>) -->
+<div class="absolute left-[20rem] top-3 px-4 mt-4 z-[60]">
+  <label class="block text-center font-medium mb-1">Chế độ</label>
+
+  <!-- Nút hiển thị, dùng đúng gradient 'select-custom' sẵn có -->
+  <button id="modeBtn"
+    class="select-custom w-[130px] h-10 px-4 rounded-full flex items-center justify-between">
+    <span id="modeLabel" class="font-bold">Chọn model</span>
+    <i class="fa-solid fa-chevron-down ml-3 text-white/90"></i>
+  </button>
+
+  <!-- Menu dropdown có nền gradient -->
+  <div id="modeMenu" class="hidden absolute mt-2 w-[220px]">
+    <div class="p-[3px] rounded-2xl
+         bg-[linear-gradient(-45deg,#ee7752,#e73c7e,#23a6d5,#23d5ab)]
+         animate-[gradient_3s_ease_infinite] [background-size:400%_400%]">
+      <div class="rounded-xl bg-white/10 backdrop-blur">
+        <button type="button" data-target="ghep-anhv2.html"
+          class="w-full text-left px-4 py-2.5 font-semibold text-white hover:bg-white/10 rounded-t-xl">
+          Thủ công
+        </button>
+        <button type="button" data-target="ghep-anh.html"
+          class="w-full text-left px-4 py-2.5 font-semibold text-white hover:bg-white/10 rounded-b-xl">
+          Tự động
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
             <div class="relative w-full h-16 mb-6 flex justify-center items-center">
   <!-- Nền chính -->
   <div class="absolute inset-0 rounded-full bg-[linear-gradient(-225deg,#FFE29F_0%,#FFA99F_48%,#FF719A_100%)] shadow-[0px_10px_20px_rgba(0,0,0,0.25)]"></div>
@@ -2685,10 +2716,6 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
-
-
-
-<!-- ===================== GIFT 24H: JS (place before </body>) ===================== -->
 <script>
 (() => {
   const MODAL   = document.getElementById('gift24h-modal');
@@ -2786,6 +2813,39 @@ document.addEventListener('DOMContentLoaded', () => {
   // Tick
   applyState();
   setInterval(applyState, 1000);
+})();
+</script>
+<script>
+(() => {
+  const btn   = document.getElementById('modeBtn');
+  const menu  = document.getElementById('modeMenu');
+  const label = document.getElementById('modeLabel');
+
+  // Toggle mở/đóng
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.classList.toggle('hidden');
+  });
+
+  // Đóng khi click ra ngoài hoặc nhấn Esc
+  document.addEventListener('click', () => menu.classList.add('hidden'));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') menu.classList.add('hidden');
+  });
+
+  // Chọn mục -> đổi label + điều hướng
+  menu.querySelectorAll('[data-target]').forEach(item => {
+    item.addEventListener('click', () => {
+      const href = item.getAttribute('data-target');
+      label.textContent = item.textContent.trim();
+      window.location.href = href;
+    });
+  });
+
+  // Khởi tạo label theo trang hiện tại
+  const path = location.pathname;
+  if (path.includes('ghep-anhv2.html'))      label.textContent = 'Thủ công';
+  else if (path.includes('ghep-anh.html'))   label.textContent = 'Tự động';
 })();
 </script>
 
