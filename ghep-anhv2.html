@@ -289,6 +289,28 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1), 0 2px 4px -1px rgba(0, 0, 0, .06);
         }
     </style>
+    <style>
+  /* Áp cho toàn bộ control trong modal */
+  #paramsModal { color-scheme: dark; }
+
+  /* Nền/txt của listbox khi mở */
+  #paramsModal select,
+  #paramsModal option{
+    background-color:#1f1f1f; color:#fff;
+  }
+  /* Khi đang focus vẫn giữ màu */
+  #paramsModal select:focus option{
+    background-color:#1f1f1f; color:#fff;
+  }
+
+  /* Ẩn viền xanh khó chịu trên Windows */
+  #paramsModal select:focus{ outline:none; }
+
+  /* (tuỳ chọn) thanh cuộn của list */
+  #paramsModal select::-webkit-scrollbar{ width:10px; }
+  #paramsModal select::-webkit-scrollbar-thumb{ background:#3a3a3a; border-radius:6px; }
+</style>
+
 </head>
 <script>
     tailwind.config = {
@@ -1013,6 +1035,15 @@
                                 </button>
                             </div>
                         </div>
+                        <div>
+                            <div class="grid gap-4">
+                                <button type="submit" id="paramsBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
+                                            rounded-full shadow-sm text-sm font-bold text-white
+                                            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <span>Thông số</span>
+                                </button>
+                            </div>
+                        </div>
                         <div class="grid gap-4">
                             <button type="submit" id="submitBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
                                             rounded-full shadow-sm text-sm font-medium text-white
@@ -1117,6 +1148,138 @@
             </div>
         </div>
         </div>
+        <!-- Modal Thông số -->
+<div id="paramsModal" class="fixed inset-0 z-[100] hidden [color-scheme:dark]">
+  <!-- overlay -->
+  <div id="paramsOverlay" class="absolute inset-0 bg-black/60"></div>
+
+  <!-- panel -->
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+              w-[520px] max-w-[95vw] rounded-2xl shadow-2xl overflow-hidden
+              bg-[#1f1f1f] text-white">
+    <!-- header -->
+    <div class="flex items-center justify-between px-5 py-3 bg-[#2a2a2a]">
+      <h3 class="font-semibold text-lg">Thông số</h3>
+      <button id="paramsClose" class="p-2 rounded-lg hover:bg-white/10">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- body: dạng list giống UI ảnh -->
+    <div class="divide-y divide-white/10">
+      <!-- item -->
+      <div class="flex items-center justify-between px-5 py-3">
+        <div class="text-sm opacity-90">seed</div>
+        <input id="p-seed" type="number" step="1" value="18043870723184"
+               class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right focus:outline-none focus:ring-2 focus:ring-pink-500">
+      </div>
+      <div class="flex items-center justify-between px-5 py-3">
+        <div class="text-sm opacity-90">control_after_generate</div>
+        <select id="p-control-after" class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+          <option value="randomize">randomize</option>
+          <option value="fix">fix</option>
+          <option value="keep">keep</option>
+        </select>
+      </div>
+      <div class="flex items-center justify-between px-5 py-3">
+        <div class="text-sm opacity-90">steps</div>
+        <input id="p-steps" type="number" min="1" max="100" value="8"
+               class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+      </div>
+      <div class="flex items-center justify-between px-5 py-3">
+        <div class="text-sm opacity-90">cfg</div>
+        <input id="p-cfg" type="number" step="0.1" min="0" value="1.0"
+               class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+      </div>
+      <div class="flex items-center justify-between px-5 py-3">
+        <div class="text-sm opacity-90">sampler_name</div>
+        <select id="p-sampler" class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+          <option>euler</option>
+          <option>euler_a</option>
+          <option>ddim</option>
+          <option>ddpm</option>
+        </select>
+      </div>
+      <div class="flex items-center justify-between px-5 py-3">
+        <div class="text-sm opacity-90">scheduler</div>
+        <select id="p-scheduler" class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+          <option>beta</option>
+          <option>karras</option>
+          <option>exponential</option>
+        </select>
+      </div>
+      <div class="flex items-center justify-between px-5 py-3">
+        <div class="text-sm opacity-90">denoise</div>
+        <input id="p-denoise" type="number" step="0.01" min="0" max="1" value="1.00"
+               class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+      </div>
+    </div>
+
+    <!-- footer -->
+    <div class="flex items-center justify-end gap-2 px-5 py-3 bg-[#2a2a2a]">
+      <button id="paramsCancel" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20">Hủy</button>
+      <button id="paramsSave" class="px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-red-400 font-semibold">
+        Lưu & đóng
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+  (function () {
+    const btn = document.getElementById('paramsBtn');
+    const modal = document.getElementById('paramsModal');
+    const overlay = document.getElementById('paramsOverlay');
+    const closeX = document.getElementById('paramsClose');
+    const cancel = document.getElementById('paramsCancel');
+    const save = document.getElementById('paramsSave');
+
+    const open = () => modal.classList.remove('hidden');
+    const close = () => modal.classList.add('hidden');
+
+    btn?.addEventListener('click', open);
+    overlay?.addEventListener('click', close);
+    closeX?.addEventListener('click', close);
+    cancel?.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+    // Lưu về state toàn cục nếu bạn cần dùng khi “Thực hiện”
+    window.currentParams = {
+      seed: 18043870723184, control_after_generate: 'randomize', steps: 8,
+      cfg: 1.0, sampler_name: 'euler', scheduler: 'beta', denoise: 1.00
+    };
+
+    // Prefill input theo state
+    const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    const prefill = () => {
+      setVal('p-seed', window.currentParams.seed);
+      setVal('p-control-after', window.currentParams.control_after_generate);
+      setVal('p-steps', window.currentParams.steps);
+      setVal('p-cfg', window.currentParams.cfg);
+      setVal('p-sampler', window.currentParams.sampler_name);
+      setVal('p-scheduler', window.currentParams.scheduler);
+      setVal('p-denoise', window.currentParams.denoise);
+    };
+    prefill();
+
+    save?.addEventListener('click', () => {
+      window.currentParams = {
+        seed: Number(document.getElementById('p-seed').value || 0),
+        control_after_generate: document.getElementById('p-control-after').value,
+        steps: Number(document.getElementById('p-steps').value || 0),
+        cfg: Number(document.getElementById('p-cfg').value || 0),
+        sampler_name: document.getElementById('p-sampler').value,
+        scheduler: document.getElementById('p-scheduler').value,
+        denoise: Number(document.getElementById('p-denoise').value || 0),
+      };
+      close();
+      // TODO: truyền currentParams vào pipeline thực thi của bạn khi bấm “Thực hiện”.
+      // Ví dụ:
+      // runJob({ ...window.currentParams, ...otherInputs });
+      console.log('Saved params:', window.currentParams);
+    });
+  })();
+</script>
+
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const modelSelect = document.getElementById("model-select");
@@ -2540,24 +2703,17 @@
 </div>
 
                   <div class="p-6 w-full">
-  <!-- Viewport: khu vực làm việc -->
-  <div id="viewport" class="relative w-full h-[80vh] overflow-hidden bg-[radial-gradient(circle,_#eee_1px,_transparent_1px)] [background-size:16px_16px] cursor-default select-none">
-    <!-- Stage: lớp chứa ảnh, sẽ được translate/scale -->
-    <div id="stage" class="absolute inset-0 will-change-transform">
-      <img
-        id="zoomableImage"
-        src="https://s3.prod.nordy.ai/media/raw/baffb9d3-8235-4def-bc4a-2fba25a65a98.png?channel=rgb"
-        alt=""
-        class="block max-w-none pointer-events-none select-none"
-        draggable="false"
-      />
-      <div id="stage" class="absolute inset-0 will-change-transform">
-  <img id="zoomableImage" ... />
-  <canvas id="paintLayer" class="block max-w-none"></canvas>
+ <!-- Viewport -->
+<div id="viewport" class="relative w-full h-[80vh] overflow-hidden bg-[radial-gradient(circle,_#eee_1px,_transparent_1px)] [background-size:16px_16px] cursor-default select-none">
+  <!-- Stage: CHỈ MỘT -->
+ <div id="stage" class="absolute inset-0 will-change-transform">
+  <img id="zoomableImage" src="" class="block max-w-none pointer-events-none select-none" />
+  <canvas id="imgLayer"   class="absolute inset-0 block max-w-none"></canvas>
+  <canvas id="paintLayer" class="absolute inset-0 block max-w-none"></canvas>
 </div>
 
-    </div>
-  </div>
+</div>
+
 
   <!-- Gợi ý phím tắt nhỏ -->
   <div class="mt-3 text-sm text-gray-500">
@@ -2597,10 +2753,11 @@
                             </div>
                             <div class="">
                                 <h1>Màu con trỏ</h1>
-                                <select name="" id="" class="p-2 bg-gray-200 rounded-lg">
-                                    <option value="">white</option>
-                                    <option value="">black</option>
+                                <select id="brushColorSelect" class="p-2 bg-gray-200 rounded-lg">
+                                    <option value="black" selected>black</option>
+                                    <option value="white">white</option>
                                 </select>
+
                             </div>
                         </div>
                     </div>
@@ -2920,6 +3077,269 @@ document.addEventListener("DOMContentLoaded", () => {
   if (path.includes('ghep-anhv2.html'))      label.textContent = 'Thủ công';
   else if (path.includes('ghep-anh.html'))   label.textContent = 'Tự động';
 })();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // ===== DOM =====
+  const popup    = document.getElementById("popupOverlay");
+  const viewport = popup.querySelector("#viewport");
+  const stage    = popup.querySelector("#stage");
+  const imgTag   = stage.querySelector("#zoomableImage");
+  const imgLayer = stage.querySelector("#imgLayer");   // nền ảnh
+  const paint    = stage.querySelector("#paintLayer"); // lớp tô
+  const ictx = imgLayer.getContext("2d");
+  const pctx = paint.getContext("2d");
+
+  // ===== TOOLBAR BUTTONS =====
+  const toolbar = popup.querySelector('header .flex.gap-3');
+  const btnUndo = toolbar?.querySelector('i.fa-reply')?.closest('button') || null;
+  const btnRedo = toolbar?.querySelector('i.fa-share')?.closest('button') || null;
+  const btnByText = (label) => {
+    if (!toolbar) return null;
+    return Array.from(toolbar.querySelectorAll('button'))
+      .find(b => (b.textContent || "").trim().includes(label)) || null;
+  };
+  const btnInvert = btnByText('Đảo');
+  const btnClear  = btnByText('Xoá');
+  const btnSave   = btnByText('Lưu');
+
+  // ===== Input ảnh (ô "Ảnh người mẫu" – phần đầu tiên) =====
+  const firstModelInput = document.querySelectorAll("#imageInput")[0];
+
+  // ===== Panel =====
+  const [sizeSlider, opacitySlider, hardnessSlider, smoothSlider] =
+        popup.querySelectorAll('input[type="range"]');
+  const colorSelect = document.getElementById("brushColorSelect");
+  const btnBrush  = document.getElementById("btnPencil");
+  const btnEraser = document.getElementById("btnEraser");
+
+  // ===== UNDO/REDO HISTORY (ảnh chụp paintLayer) =====
+  const MAX_HISTORY = 80;
+  let undoStack = [];
+  let redoStack = [];
+  let historyInitialized = false;
+
+  function drawStateFromURL(url){
+    const im = new Image();
+    im.onload = () => {
+      pctx.clearRect(0,0,paint.width,paint.height);
+      pctx.globalCompositeOperation = 'source-over';
+      pctx.globalAlpha = 1;
+      pctx.drawImage(im,0,0,paint.width,paint.height);
+    };
+    im.src = url;
+  }
+  function pushHistory(){
+    try {
+      const url = paint.toDataURL('image/png');
+      undoStack.push(url);
+      if (undoStack.length > MAX_HISTORY) undoStack.shift();
+      redoStack.length = 0; // reset redo
+    } catch (e) {}
+  }
+  function ensureHistoryInit(){
+    if (historyInitialized) return;
+    pushHistory(); // trạng thái rỗng ban đầu
+    historyInitialized = true;
+  }
+
+  // ===== STATE =====
+  let mode="paint", drawing=false;
+  let brushSize    = +sizeSlider?.value || 24;
+  let brushOpacity = +opacitySlider?.value ?? 1;
+  let hardness     = +hardnessSlider?.value ?? 1;   // (không dùng khi tô đặc)
+  let smoothSteps  = +smoothSlider?.value || 10;
+  // mặc định màu đen
+  if (colorSelect) colorSelect.value = "black";
+  let brushColor   = (colorSelect?.value || "black").toLowerCase();
+
+  // ===== Handlers panel =====
+  sizeSlider?.addEventListener("input", e => brushSize = +e.target.value);
+  opacitySlider?.addEventListener("input", e => brushOpacity = +e.target.value);
+  hardnessSlider?.addEventListener("input", e => hardness = +e.target.value);
+  smoothSlider?.addEventListener("input", e => smoothSteps = +e.target.value);
+
+  colorSelect?.addEventListener("change", e => {
+    brushColor = (e.target.value || "black").toLowerCase();
+    // Trắng phải là nét đặc tuyệt đối
+    if (brushColor === "white") {
+      brushOpacity = 1;  if (opacitySlider)  opacitySlider.value  = "1";
+      hardness     = 1;  if (hardnessSlider) hardnessSlider.value = "1";
+    }
+  });
+
+  btnBrush?.addEventListener("click",  () => { mode = "paint";  paint.style.cursor = "crosshair"; });
+  btnEraser?.addEventListener("click", () => { mode = "erase";  paint.style.cursor = "crosshair"; });
+
+  // ===== Upload ảnh (không tự mở popup) =====
+  firstModelInput?.addEventListener("change", e => {
+    const f = e.target.files?.[0]; if (!f) return;
+    imgTag.src = URL.createObjectURL(f);
+  });
+
+  // ===== Đồng bộ & vẽ nền ảnh vào imgLayer (KHÔNG đụng paintLayer) =====
+  function syncAndDraw(){
+    const rImg  = imgTag.getBoundingClientRect();
+    const rView = viewport.getBoundingClientRect();
+
+    for (const c of [imgLayer, paint]) {
+      Object.assign(c.style, {
+        position: "absolute",
+        left:  (rImg.left - rView.left) + "px",
+        top:   (rImg.top  - rView.top)  + "px",
+        width:  rImg.width  + "px",
+        height: rImg.height + "px",
+        pointerEvents: "auto",
+        zIndex: c === imgLayer ? 20 : 30
+      });
+      c.width  = Math.max(1, Math.round(rImg.width));
+      c.height = Math.max(1, Math.round(rImg.height));
+    }
+
+    // Vẽ ảnh gốc lên nền
+    ictx.clearRect(0, 0, imgLayer.width, imgLayer.height);
+    if (imgTag.naturalWidth)
+      ictx.drawImage(imgTag, 0, 0, imgLayer.width, imgLayer.height);
+
+    ensureHistoryInit(); // init history sau sync
+    imgTag.style.visibility = "hidden";
+  }
+
+  imgTag.addEventListener("load", () => {
+    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+  });
+  window.addEventListener("resize", () => {
+    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+  });
+  new MutationObserver(() => {
+    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+  }).observe(popup, { attributes: true, attributeFilter: ["class"] });
+
+  // ===== VẼ (stroke liền mạch, không donut) =====
+  paint.addEventListener("contextmenu", e => e.preventDefault()); // chặn chuột phải
+
+  function getPos(evt){
+    const r = paint.getBoundingClientRect();
+    const cx = evt.touches ? evt.touches[0].clientX : evt.clientX;
+    const cy = evt.touches ? evt.touches[0].clientY : evt.clientY;
+    return {
+      x: (cx - r.left) * (paint.width  / r.width),
+      y: (cy - r.top ) * (paint.height / r.height)
+    };
+  }
+
+  function begin(e){
+    if (e.button !== undefined && e.button !== 0) return; // chỉ chuột trái
+    if (paint.width < 2) return;
+
+    const p = getPos(e);
+    drawing = true;
+
+    pctx.save();
+    pctx.globalCompositeOperation = (mode === "erase") ? "destination-out" : "source-over";
+    pctx.globalAlpha = (mode === "erase") ? 1 : brushOpacity;
+    pctx.lineCap = "round";
+    pctx.lineJoin = "round";
+    pctx.lineWidth = brushSize;
+    if (mode !== "erase") pctx.strokeStyle = (brushColor === "white") ? "#fff" : "#000";
+    pctx.beginPath();
+    pctx.moveTo(p.x, p.y);
+
+    window.addEventListener("mousemove", move, { passive:false });
+    window.addEventListener("mouseup", end);
+    e.preventDefault();
+  }
+
+  function move(e){
+    if (!drawing) return;
+    const p = getPos(e);
+    pctx.lineTo(p.x, p.y);
+    pctx.stroke();
+    e.preventDefault();
+  }
+
+  function end(){
+    if (!drawing) return;
+    drawing = false;
+    pctx.closePath();
+    pctx.restore();
+    window.removeEventListener("mousemove", move);
+    window.removeEventListener("mouseup", end);
+    // chụp lịch sử sau mỗi stroke
+    pushHistory();
+  }
+
+  paint.addEventListener("mousedown", begin);
+  paint.addEventListener("touchstart", begin, {passive:false});
+  paint.addEventListener("touchmove",  move,  {passive:false});
+  window.addEventListener("touchend", end);
+
+  // ====== BUTTON HANDLERS ======
+  btnUndo?.addEventListener('click', () => {
+    if (undoStack.length <= 1) return;
+    const curr = undoStack.pop();
+    redoStack.push(curr);
+    const prev = undoStack[undoStack.length - 1];
+    drawStateFromURL(prev);
+  });
+
+  btnRedo?.addEventListener('click', () => {
+    const next = redoStack.pop();
+    if (!next) return;
+    undoStack.push(next);
+    drawStateFromURL(next);
+  });
+
+  // Âm bản trên lớp tô (trắng <-> đen)
+  btnInvert?.addEventListener('click', () => {
+    pctx.save();
+    pctx.globalCompositeOperation = 'difference';
+    pctx.fillStyle = '#fff';
+    pctx.fillRect(0,0,paint.width,paint.height);
+    pctx.restore();
+    pushHistory();
+  });
+
+  // Xoá hết lớp tô
+  btnClear?.addEventListener('click', () => {
+    pctx.clearRect(0,0,paint.width,paint.height);
+    pushHistory();
+  });
+
+  // Lưu: ghép imgLayer + paintLayer → cập nhật preview ngoài + cập nhật luôn ảnh trong popup, rồi ĐÓNG popup
+  btnSave?.addEventListener('click', () => {
+    const out = document.createElement('canvas');
+    out.width  = imgLayer.width;
+    out.height = imgLayer.height;
+    const octx = out.getContext('2d');
+
+    octx.drawImage(imgLayer, 0, 0);
+    octx.drawImage(paint,    0, 0);
+
+    const dataURL = out.toDataURL('image/png');
+
+    // fill vào khung upload ngoài (cột trái – phần đầu tiên)
+    const firstPreview = document.querySelectorAll('#previewImage')[0];
+    if (firstPreview) {
+      firstPreview.src = dataURL;
+      firstPreview.style.display = 'block';
+      const placeholder = firstPreview.parentElement.querySelector('#placeholderContent');
+      if (placeholder) placeholder.style.display = 'none';
+    }
+
+    // cập nhật luôn ảnh trong popup cho lần mở kế tiếp
+    imgTag.src = dataURL;
+    // reset lớp tô & history cho phiên mới
+    pctx.clearRect(0,0,paint.width,paint.height);
+    undoStack = []; redoStack = []; historyInitialized = false; ensureHistoryInit();
+
+    // TỰ THOÁT POPUP
+    popup.classList.add('hidden');
+  });
+
+  // Nếu popup đang mở sẵn thì sync ngay
+  if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+});
 </script>
 
 </body>
