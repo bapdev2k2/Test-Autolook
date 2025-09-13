@@ -232,16 +232,17 @@
             pointer-events: none;
             opacity: 0.5;
         }
+
         select.select-custom option {
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  color: white;
-  font-weight: 600;
-}
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            color: white;
+            font-weight: 600;
+        }
 
         select.select-custom option:hover {
-  background: linear-gradient(-45deg, #e73c7e, #ee7752, #23d5ab, #23a6d5);
-  color: #fff;
-}
+            background: linear-gradient(-45deg, #e73c7e, #ee7752, #23d5ab, #23a6d5);
+            color: #fff;
+        }
     </style>
     <style>
         .gift-z {
@@ -290,26 +291,39 @@
         }
     </style>
     <style>
-  /* Áp cho toàn bộ control trong modal */
-  #paramsModal { color-scheme: dark; }
+        /* Áp cho toàn bộ control trong modal */
+        #paramsModal {
+            color-scheme: dark;
+        }
 
-  /* Nền/txt của listbox khi mở */
-  #paramsModal select,
-  #paramsModal option{
-    background-color:#1f1f1f; color:#fff;
-  }
-  /* Khi đang focus vẫn giữ màu */
-  #paramsModal select:focus option{
-    background-color:#1f1f1f; color:#fff;
-  }
+        /* Nền/txt của listbox khi mở */
+        #paramsModal select,
+        #paramsModal option {
+            background-color: #1f1f1f;
+            color: #fff;
+        }
 
-  /* Ẩn viền xanh khó chịu trên Windows */
-  #paramsModal select:focus{ outline:none; }
+        /* Khi đang focus vẫn giữ màu */
+        #paramsModal select:focus option {
+            background-color: #1f1f1f;
+            color: #fff;
+        }
 
-  /* (tuỳ chọn) thanh cuộn của list */
-  #paramsModal select::-webkit-scrollbar{ width:10px; }
-  #paramsModal select::-webkit-scrollbar-thumb{ background:#3a3a3a; border-radius:6px; }
-</style>
+        /* Ẩn viền xanh khó chịu trên Windows */
+        #paramsModal select:focus {
+            outline: none;
+        }
+
+        /* (tuỳ chọn) thanh cuộn của list */
+        #paramsModal select::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #paramsModal select::-webkit-scrollbar-thumb {
+            background: #3a3a3a;
+            border-radius: 6px;
+        }
+    </style>
 
 </head>
 <script>
@@ -891,55 +905,61 @@
                 </div>
             </div>
         </div>
-         <!-- CHẾ ĐỘ (custom dropdown, không dùng <select>) -->
-<div class="absolute left-[20rem] top-3 px-4 mt-4 z-[50]">
-  <label class="block text-center font-medium mb-1">Chế độ</label>
+        <!-- CHẾ ĐỘ (custom dropdown, không dùng <select>) -->
+        <div class="relative">
+            <div class="absolute xs:left-[5.7rem] w-fit top-16 px-4 mt-4 z-[50]">
+                <div class="flex justify-center items-center">
 
-  <!-- Nút hiển thị, dùng đúng gradient 'select-custom' sẵn có -->
-  <button id="modeBtn"
-    class="select-custom w-[130px] h-10 px-4 rounded-full flex items-center justify-between">
-    <span id="modeLabel" class="font-bold">Chọn model</span>
-    <i class="fa-solid fa-chevron-down ml-3 text-white/90"></i>
-  </button>
+                    <label class="block text-center font-medium mb-1 bg-white w-fit px-2 rounded-full font-semibold">Chế
+                        độ</label>
+                </div>
 
-  <!-- Menu dropdown có nền gradient -->
-  <div id="modeMenu" class="hidden absolute mt-2 w-[220px]">
-    <div class="p-[3px] rounded-2xl
+                <!-- Nút hiển thị, dùng đúng gradient 'select-custom' sẵn có -->
+                <button id="modeBtn"
+                    class="select-custom w-[130px] h-10 px-4 rounded-full flex items-center justify-between">
+                    <span id="modeLabel" class="font-bold">Chọn model</span>
+                    <i class="fa-solid fa-chevron-down ml-3 text-white/90"></i>
+                </button>
+
+                <!-- Menu dropdown có nền gradient -->
+                <div id="modeMenu" class="hidden absolute mt-2 w-[220px]">
+                    <div class="p-[3px] rounded-2xl
          bg-[linear-gradient(-45deg,#ee7752,#e73c7e,#23a6d5,#23d5ab)]
          animate-[gradient_3s_ease_infinite] [background-size:400%_400%]">
-      <div class="rounded-xl bg-white/10 backdrop-blur">
-        <button type="button" data-target="ghep-anhv2.html"
-          class="w-full text-left px-4 py-2.5 font-semibold text-white hover:bg-white/10 rounded-t-xl">
-          Thủ công
-        </button>
-        <button type="button" data-target="ghep-anh.html"
-          class="w-full text-left px-4 py-2.5 font-semibold text-white hover:bg-white/10 rounded-b-xl">
-          Tự động
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-        <div class="relative w-full h-16 mb-6 flex justify-center items-center">
-            <!-- Nền chính -->
-            <div
-                class="absolute inset-0 rounded-full bg-[linear-gradient(-225deg,#FFE29F_0%,#FFA99F_48%,#FF719A_100%)] shadow-[0px_10px_20px_rgba(0,0,0,0.25)]">
+                        <div class="rounded-xl bg-white/10 backdrop-blur">
+                            <button type="button" data-target="ghep-anhv2.html"
+                                class="w-full text-left px-4 py-2.5 font-semibold text-white hover:bg-white/10 rounded-t-xl">
+                                Thủ công
+                            </button>
+                            <button type="button" data-target="ghep-anh.html"
+                                class="w-full text-left px-4 py-2.5 font-semibold text-white hover:bg-white/10 rounded-b-xl">
+                                Tự động
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Viền sáng xoay -->
-            <div
-                class="absolute inset-0 rounded-full p-[3px] bg-[conic-gradient(var(--angle),#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee,#ff9a9e)] animate-spin-slow">
-                <div class="w-full h-full rounded-full bg-[#fff5] backdrop-blur-sm"></div>
-            </div>
+            <div class="relative w-full h-16 mb-6 flex justify-center items-center">
+                <!-- Nền chính -->
+                <div
+                    class="absolute inset-0 rounded-full bg-[linear-gradient(-225deg,#FFE29F_0%,#FFA99F_48%,#FF719A_100%)] shadow-[0px_10px_20px_rgba(0,0,0,0.25)]">
+                </div>
 
-            <!-- Nút bấm -->
-            <button id="gift24h-fab" class="relative z-10 flex items-center gap-2 px-8 py-2 rounded-full 
+                <!-- Viền sáng xoay -->
+                <div
+                    class="absolute inset-0 rounded-full p-[3px] bg-[conic-gradient(var(--angle),#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee,#ff9a9e)] animate-spin-slow">
+                    <div class="w-full h-full rounded-full bg-[#fff5] backdrop-blur-sm"></div>
+                </div>
+
+                <!-- Nút bấm -->
+                <button id="gift24h-fab" class="relative z-10 flex items-center gap-2 px-8 py-2 rounded-full 
            bg-gradient-to-r from-pink-500 to-red-400 text-white font-bold 
            text-lg uppercase shadow-lg hover:scale-105 active:scale-95 transition">
-                <i class="fa-solid fa-gift animate-bounce"></i>
-                <span>SALE 24H</span>
-            </button>
+                    <i class="fa-solid fa-gift animate-bounce"></i>
+                    <span>SALE 24H</span>
+                </button>
+            </div>
         </div>
         <!-- <div
             class="sm:text-center xs:text-start flex flex-col items-center justify-center w-full xs:text-[12px] sm:text-[14px] bg-[#F5F5F5] shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)] rounded-2xl p-4 font-semibold">
@@ -966,7 +986,7 @@
             </div>
 
         </div> -->
-        <div class=" md:grid mt-[30px]">
+        <div class=" md:grid mt-[100px]">
             <div class="flex flex-col">
                 <div
                     class="xs:grid bg-[#F5F5F5]  md:rounded-3xl shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)] p-6 sm:max-w-full max-w-mdx xs:max-w-[375px] xs:rounded-2xl break-after-column">
@@ -978,7 +998,7 @@
                             Trình ghép ảnh thủ công</h1>
 
                     </div>
-                    <div class="flex gap-10 mx-14">
+                    <div class="flex md:flex-row xs: flex-col gap-10 xs:mx-0 md:mx-14">
                         <div class="w-full">
                             <h1
                                 class="text-lg font-bold text-gray-800 mb-4 bg-gradient-to-r from-pink-500 to-red-400 text-white p-1 text-center rounded-full">
@@ -1025,9 +1045,9 @@
                             </label>
                         </div>
                     </div>
-                    <div class="flex justify-center mt-5 gap-5">
-                        <div>
-                            <div class="grid gap-4">
+                    <div class="flex md:flex-row xs:flex-col justify-center xs:mt-[20px] md:mt-0">
+                        <div class="xs:block md:hidden mx-auto">
+                            <div class="">
                                 <button type="submit" id="submitBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
                                             rounded-full shadow-sm text-sm font-bold text-white
                                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -1035,35 +1055,47 @@
                                 </button>
                             </div>
                         </div>
-                        <div>
-                            <div class="grid gap-4">
-                                <button type="submit" id="paramsBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
+                        <div class="flex justify-center mt-5 gap-5">
+                            <div class="xs:hidden md:block">
+                                <div class="">
+                                    <button type="submit" id="submitBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
                                             rounded-full shadow-sm text-sm font-bold text-white
                                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    <span>Thông số</span>
-                                </button>
+                                        <span>Tô vùng chọn</span>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="grid gap-4">
-                            <button type="submit" id="submitBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
+                            <div>
+                                <div class="">
+                                    <button type="submit" id="paramsBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[130px] xs:h-[36px] flex items-center justify-around py-2 px-4
+                                            rounded-full shadow-sm text-sm font-bold text-white
+                                            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        <span>Thông số</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="">
+                                <button type="submit" id="submitBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[130px] xs:h-[36px] flex items-center justify-around py-2 px-4
                                             rounded-full shadow-sm text-sm font-medium text-white
                                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                <div class="flex"><span class="font-bold">1</span>&nbsp;<svg width="18px" height="18px"
-                                        viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"
-                                        class="opacity-[90%] relative">
-                                        <rect width="16" height="16" rx="8" fill="url(#paint0_linear_1_1999)"></rect>
-                                        <path
-                                            d="M8.66725 4.80043C8.66725 4.30571 8.02563 4.11145 7.75121 4.52307L5.0626 8.55599C4.84108 8.88827 5.07928 9.33335 5.47863 9.33335H7.3339V11.1996C7.3339 11.6943 7.97552 11.8886 8.24994 11.4769L10.9385 7.44401C11.1601 7.11173 10.9219 6.66665 10.5225 6.66665H8.66725V4.80043Z"
-                                            fill="white"></path>
-                                        <defs>
-                                            <linearGradient id="paint0_linear_1_1999" x1="8" y1="0" x2="8" y2="16"
-                                                gradientUnits="userSpaceOnUse">
-                                                <stop stop-color="#6B7280"></stop>
-                                                <stop offset="1"></stop>
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>&nbsp;</div><span>Thực hiện</span>
-                            </button>
+                                    <div class="flex"><span class="font-bold">1</span>&nbsp;<svg width="18px"
+                                            height="18px" viewBox="0 0 16 16" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" class="opacity-[90%] relative">
+                                            <rect width="16" height="16" rx="8" fill="url(#paint0_linear_1_1999)">
+                                            </rect>
+                                            <path
+                                                d="M8.66725 4.80043C8.66725 4.30571 8.02563 4.11145 7.75121 4.52307L5.0626 8.55599C4.84108 8.88827 5.07928 9.33335 5.47863 9.33335H7.3339V11.1996C7.3339 11.6943 7.97552 11.8886 8.24994 11.4769L10.9385 7.44401C11.1601 7.11173 10.9219 6.66665 10.5225 6.66665H8.66725V4.80043Z"
+                                                fill="white"></path>
+                                            <defs>
+                                                <linearGradient id="paint0_linear_1_1999" x1="8" y1="0" x2="8" y2="16"
+                                                    gradientUnits="userSpaceOnUse">
+                                                    <stop stop-color="#6B7280"></stop>
+                                                    <stop offset="1"></stop>
+                                                </linearGradient>
+                                            </defs>
+                                        </svg>&nbsp;</div><span>Thực hiện</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -1149,136 +1181,140 @@
         </div>
         </div>
         <!-- Modal Thông số -->
-<div id="paramsModal" class="fixed inset-0 z-[100] hidden [color-scheme:dark]">
-  <!-- overlay -->
-  <div id="paramsOverlay" class="absolute inset-0 bg-black/60"></div>
+        <div id="paramsModal" class="fixed inset-0 z-[100] hidden [color-scheme:dark]">
+            <!-- overlay -->
+            <div id="paramsOverlay" class="absolute inset-0 bg-black/60"></div>
 
-  <!-- panel -->
-  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+            <!-- panel -->
+            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
               w-[520px] max-w-[95vw] rounded-2xl shadow-2xl overflow-hidden
               bg-[#1f1f1f] text-white">
-    <!-- header -->
-    <div class="flex items-center justify-between px-5 py-3 bg-[#2a2a2a]">
-      <h3 class="font-semibold text-lg">Thông số</h3>
-      <button id="paramsClose" class="p-2 rounded-lg hover:bg-white/10">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
+                <!-- header -->
+                <div class="flex items-center justify-between px-5 py-3 bg-[#2a2a2a]">
+                    <h3 class="font-semibold text-lg">Thông số</h3>
+                    <button id="paramsClose" class="p-2 rounded-lg hover:bg-white/10">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
 
-    <!-- body: dạng list giống UI ảnh -->
-    <div class="divide-y divide-white/10">
-      <!-- item -->
-      <div class="flex items-center justify-between px-5 py-3">
-        <div class="text-sm opacity-90">seed</div>
-        <input id="p-seed" type="number" step="1" value="18043870723184"
-               class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right focus:outline-none focus:ring-2 focus:ring-pink-500">
-      </div>
-      <div class="flex items-center justify-between px-5 py-3">
-        <div class="text-sm opacity-90">control_after_generate</div>
-        <select id="p-control-after" class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
-          <option value="randomize">randomize</option>
-          <option value="fix">fix</option>
-          <option value="keep">keep</option>
-        </select>
-      </div>
-      <div class="flex items-center justify-between px-5 py-3">
-        <div class="text-sm opacity-90">steps</div>
-        <input id="p-steps" type="number" min="1" max="100" value="8"
-               class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
-      </div>
-      <div class="flex items-center justify-between px-5 py-3">
-        <div class="text-sm opacity-90">cfg</div>
-        <input id="p-cfg" type="number" step="0.1" min="0" value="1.0"
-               class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
-      </div>
-      <div class="flex items-center justify-between px-5 py-3">
-        <div class="text-sm opacity-90">sampler_name</div>
-        <select id="p-sampler" class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
-          <option>euler</option>
-          <option>euler_a</option>
-          <option>ddim</option>
-          <option>ddpm</option>
-        </select>
-      </div>
-      <div class="flex items-center justify-between px-5 py-3">
-        <div class="text-sm opacity-90">scheduler</div>
-        <select id="p-scheduler" class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
-          <option>beta</option>
-          <option>karras</option>
-          <option>exponential</option>
-        </select>
-      </div>
-      <div class="flex items-center justify-between px-5 py-3">
-        <div class="text-sm opacity-90">denoise</div>
-        <input id="p-denoise" type="number" step="0.01" min="0" max="1" value="1.00"
-               class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
-      </div>
-    </div>
+                <!-- body: dạng list giống UI ảnh -->
+                <div class="divide-y divide-white/10">
+                    <!-- item -->
+                    <div class="flex items-center justify-between px-5 py-3">
+                        <div class="text-sm opacity-90">seed</div>
+                        <input id="p-seed" type="number" step="1" value="18043870723184"
+                            class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div class="flex items-center justify-between px-5 py-3">
+                        <div class="text-sm opacity-90">control_after_generate</div>
+                        <select id="p-control-after"
+                            class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+                            <option value="randomize">randomize</option>
+                            <option value="fix">fix</option>
+                            <option value="keep">keep</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-between px-5 py-3">
+                        <div class="text-sm opacity-90">steps</div>
+                        <input id="p-steps" type="number" min="1" max="100" value="8"
+                            class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+                    </div>
+                    <div class="flex items-center justify-between px-5 py-3">
+                        <div class="text-sm opacity-90">cfg</div>
+                        <input id="p-cfg" type="number" step="0.1" min="0" value="1.0"
+                            class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+                    </div>
+                    <div class="flex items-center justify-between px-5 py-3">
+                        <div class="text-sm opacity-90">sampler_name</div>
+                        <select id="p-sampler"
+                            class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+                            <option>euler</option>
+                            <option>euler_a</option>
+                            <option>ddim</option>
+                            <option>ddpm</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-between px-5 py-3">
+                        <div class="text-sm opacity-90">scheduler</div>
+                        <select id="p-scheduler"
+                            class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+                            <option>beta</option>
+                            <option>karras</option>
+                            <option>exponential</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-between px-5 py-3">
+                        <div class="text-sm opacity-90">denoise</div>
+                        <input id="p-denoise" type="number" step="0.01" min="0" max="1" value="1.00"
+                            class="w-60 bg-transparent border border-white/20 rounded px-3 py-1.5 text-right">
+                    </div>
+                </div>
 
-    <!-- footer -->
-    <div class="flex items-center justify-end gap-2 px-5 py-3 bg-[#2a2a2a]">
-      <button id="paramsCancel" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20">Hủy</button>
-      <button id="paramsSave" class="px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-red-400 font-semibold">
-        Lưu & đóng
-      </button>
-    </div>
-  </div>
-</div>
-<script>
-  (function () {
-    const btn = document.getElementById('paramsBtn');
-    const modal = document.getElementById('paramsModal');
-    const overlay = document.getElementById('paramsOverlay');
-    const closeX = document.getElementById('paramsClose');
-    const cancel = document.getElementById('paramsCancel');
-    const save = document.getElementById('paramsSave');
+                <!-- footer -->
+                <div class="flex items-center justify-end gap-2 px-5 py-3 bg-[#2a2a2a]">
+                    <button id="paramsCancel" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20">Hủy</button>
+                    <button id="paramsSave"
+                        class="px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-red-400 font-semibold">
+                        Lưu & đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script>
+            (function () {
+                const btn = document.getElementById('paramsBtn');
+                const modal = document.getElementById('paramsModal');
+                const overlay = document.getElementById('paramsOverlay');
+                const closeX = document.getElementById('paramsClose');
+                const cancel = document.getElementById('paramsCancel');
+                const save = document.getElementById('paramsSave');
 
-    const open = () => modal.classList.remove('hidden');
-    const close = () => modal.classList.add('hidden');
+                const open = () => modal.classList.remove('hidden');
+                const close = () => modal.classList.add('hidden');
 
-    btn?.addEventListener('click', open);
-    overlay?.addEventListener('click', close);
-    closeX?.addEventListener('click', close);
-    cancel?.addEventListener('click', close);
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+                btn?.addEventListener('click', open);
+                overlay?.addEventListener('click', close);
+                closeX?.addEventListener('click', close);
+                cancel?.addEventListener('click', close);
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 
-    // Lưu về state toàn cục nếu bạn cần dùng khi “Thực hiện”
-    window.currentParams = {
-      seed: 18043870723184, control_after_generate: 'randomize', steps: 8,
-      cfg: 1.0, sampler_name: 'euler', scheduler: 'beta', denoise: 1.00
-    };
+                // Lưu về state toàn cục nếu bạn cần dùng khi “Thực hiện”
+                window.currentParams = {
+                    seed: 18043870723184, control_after_generate: 'randomize', steps: 8,
+                    cfg: 1.0, sampler_name: 'euler', scheduler: 'beta', denoise: 1.00
+                };
 
-    // Prefill input theo state
-    const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
-    const prefill = () => {
-      setVal('p-seed', window.currentParams.seed);
-      setVal('p-control-after', window.currentParams.control_after_generate);
-      setVal('p-steps', window.currentParams.steps);
-      setVal('p-cfg', window.currentParams.cfg);
-      setVal('p-sampler', window.currentParams.sampler_name);
-      setVal('p-scheduler', window.currentParams.scheduler);
-      setVal('p-denoise', window.currentParams.denoise);
-    };
-    prefill();
+                // Prefill input theo state
+                const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+                const prefill = () => {
+                    setVal('p-seed', window.currentParams.seed);
+                    setVal('p-control-after', window.currentParams.control_after_generate);
+                    setVal('p-steps', window.currentParams.steps);
+                    setVal('p-cfg', window.currentParams.cfg);
+                    setVal('p-sampler', window.currentParams.sampler_name);
+                    setVal('p-scheduler', window.currentParams.scheduler);
+                    setVal('p-denoise', window.currentParams.denoise);
+                };
+                prefill();
 
-    save?.addEventListener('click', () => {
-      window.currentParams = {
-        seed: Number(document.getElementById('p-seed').value || 0),
-        control_after_generate: document.getElementById('p-control-after').value,
-        steps: Number(document.getElementById('p-steps').value || 0),
-        cfg: Number(document.getElementById('p-cfg').value || 0),
-        sampler_name: document.getElementById('p-sampler').value,
-        scheduler: document.getElementById('p-scheduler').value,
-        denoise: Number(document.getElementById('p-denoise').value || 0),
-      };
-      close();
-      // TODO: truyền currentParams vào pipeline thực thi của bạn khi bấm “Thực hiện”.
-      // Ví dụ:
-      // runJob({ ...window.currentParams, ...otherInputs });
-      console.log('Saved params:', window.currentParams);
-    });
-  })();
-</script>
+                save?.addEventListener('click', () => {
+                    window.currentParams = {
+                        seed: Number(document.getElementById('p-seed').value || 0),
+                        control_after_generate: document.getElementById('p-control-after').value,
+                        steps: Number(document.getElementById('p-steps').value || 0),
+                        cfg: Number(document.getElementById('p-cfg').value || 0),
+                        sampler_name: document.getElementById('p-sampler').value,
+                        scheduler: document.getElementById('p-scheduler').value,
+                        denoise: Number(document.getElementById('p-denoise').value || 0),
+                    };
+                    close();
+                    // TODO: truyền currentParams vào pipeline thực thi của bạn khi bấm “Thực hiện”.
+                    // Ví dụ:
+                    // runJob({ ...window.currentParams, ...otherInputs });
+                    console.log('Saved params:', window.currentParams);
+                });
+            })();
+        </script>
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
@@ -2689,37 +2725,42 @@
                         <button
                             class="bg-[#F05454] hover:bg-[#30475E] text-white px-2 rounded-lg w-[100px]">Lưu</button>
                     </div>
-                     <button id="closePopup"
-    class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-300 hover:bg-red-500 text-black hover:text-white rounded-full">
-    <i class="fas fa-times"></i>
-  </button>
+                    <button id="closePopup"
+                        class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-300 hover:bg-red-500 text-black hover:text-white rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </header>
                 <div class="flex justify-between h-[calc(95vh-64px)]">
                     <div class="bg-white w-[90px] h-full rounded-bl-xl flex flex-col items-center justify-start">
-  <div class="grid gap-4 py-3">
-    <button id="btnPencil" class="h-[55px] w-[55px] rounded-lg" title="Brush"><i class="fa-solid fa-pencil text-3xl opacity-70"></i></button>
-    <button id="btnEraser" class="h-[55px] w-[55px] rounded-lg" title="Eraser"><i class="fa-solid fa-eraser text-3xl opacity-70"></i></button>
-  </div>
-</div>
+                        <div class="grid gap-4 py-3">
+                            <button id="btnPencil" class="h-[55px] w-[55px] rounded-lg" title="Brush"><i
+                                    class="fa-solid fa-pencil text-3xl opacity-70"></i></button>
+                            <button id="btnEraser" class="h-[55px] w-[55px] rounded-lg" title="Eraser"><i
+                                    class="fa-solid fa-eraser text-3xl opacity-70"></i></button>
+                        </div>
+                    </div>
 
-                  <div class="p-6 w-full">
- <!-- Viewport -->
-<div id="viewport" class="relative w-full h-[80vh] overflow-hidden bg-[radial-gradient(circle,_#eee_1px,_transparent_1px)] [background-size:16px_16px] cursor-default select-none">
-  <!-- Stage: CHỈ MỘT -->
- <div id="stage" class="absolute inset-0 will-change-transform">
-  <img id="zoomableImage" src="" class="block max-w-none pointer-events-none select-none" />
-  <canvas id="imgLayer"   class="absolute inset-0 block max-w-none"></canvas>
-  <canvas id="paintLayer" class="absolute inset-0 block max-w-none"></canvas>
-</div>
+                    <div class="p-6 w-full">
+                        <!-- Viewport -->
+                        <div id="viewport"
+                            class="relative w-full h-[80vh] overflow-hidden bg-[radial-gradient(circle,_#eee_1px,_transparent_1px)] [background-size:16px_16px] cursor-default select-none">
+                            <!-- Stage: CHỈ MỘT -->
+                            <div id="stage" class="absolute inset-0 will-change-transform">
+                                <img id="zoomableImage" src=""
+                                    class="block max-w-none pointer-events-none select-none" />
+                                <canvas id="imgLayer" class="absolute inset-0 block max-w-none"></canvas>
+                                <canvas id="paintLayer" class="absolute inset-0 block max-w-none"></canvas>
+                            </div>
 
-</div>
+                        </div>
 
 
-  <!-- Gợi ý phím tắt nhỏ -->
-  <div class="mt-3 text-sm text-gray-500">
-    <b>Tip:</b> Lăn chuột = Zoom • Giữ <kbd class="px-1 border rounded">Space</kbd> rồi kéo = Pan • Nhấp đúp = Fit to view
-  </div>
-</div>
+                        <!-- Gợi ý phím tắt nhỏ -->
+                        <div class="mt-3 text-sm text-gray-500">
+                            <b>Tip:</b> Lăn chuột = Zoom • Giữ <kbd class="px-1 border rounded">Space</kbd> rồi kéo =
+                            Pan • Nhấp đúp = Fit to view
+                        </div>
+                    </div>
                     <div class="bg-white w-[300px] h-full rounded-br-xl px-3">
                         <div class="flex flex-col justify-center gap-7">
                             <h1 class="text-lg mt-2 text-center">Điều chỉnh con trỏ</h1>
@@ -2788,559 +2829,559 @@
                 });
             });
         </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const viewport = document.getElementById("viewport");
-  const stage    = document.getElementById("stage");
-  const img      = document.getElementById("zoomableImage");
-
-  let scale = 1, minScale = 0.1, maxScale = 8;
-  let originX = 0, originY = 0;        // pan offset (px)
-  let isDragging = false;
-  let dragStartX = 0, dragStartY = 0;  // pointer start (px)
-  let panStartX = 0, panStartY = 0;    // origin at start (px)
-  let spaceDown = false;
-
-  // Ngăn Space làm trang cuộn
-  window.addEventListener("keydown", (e) => {
-    if (e.code === "Space") {
-      if (!spaceDown) e.preventDefault();
-      spaceDown = true;
-      if (!isDragging) viewport.style.cursor = "grab";
-    }
-  }, { passive: false });
-
-  window.addEventListener("keyup", (e) => {
-    if (e.code === "Space") {
-      spaceDown = false;
-      if (!isDragging) viewport.style.cursor = "default";
-    }
-  });
-
- // Fit ảnh vào viewport khi tải xong
-img.addEventListener("load", fitToView);
-if (img.complete) fitToView(); // phòng khi ảnh đã cache
-
-// 1) Đặt cờ popup (nếu bạn có open/close popup)
-function openPaintPopup() {
-  // ... logic mở popup ...
-  // chờ 1 frame để layout đo được kích thước thật
-  requestAnimationFrame(() => setTimeout(fitToView, 0));
-}
-
-// 2) Fit ngay khi ảnh sẵn sàng
-img.addEventListener("load", fitToView);
-if (img.complete) setTimeout(fitToView, 0);
-
-// 3) Fit khi đổi kích thước khung
-window.addEventListener("resize", () => {
-  // chỉ fit khi người dùng chưa tự zoom/pan quá xa (tuỳ chọn)
-  fitToView();
-});
-
-function fitToView() {
-  const vw = viewport.clientWidth;
-  const vh = viewport.clientHeight;
-  if (!vw || !vh) return; // tránh tính sai khi viewport đang 0
-
-  const iw = img.naturalWidth || img.width;
-  const ih = img.naturalHeight || img.height;
-
-  // scale "contain"
-  const s = Math.min(vw / iw, vh / ih);
-  scale = clamp(s, minScale, maxScale);
-
-  // CĂN GIỮA CHUẨN
-  originX = (vw - iw * scale) / 2;
-  originY = (vh - ih * scale) / 2;
-
-  applyTransform();
-}
-
-
-  // Wheel zoom – giữ tâm zoom tại vị trí con trỏ
-  viewport.addEventListener("wheel", (e) => {
-    e.preventDefault();
-    const rect = viewport.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left; // toạ độ chuột trong viewport
-    const mouseY = e.clientY - rect.top;
-
-    const prevScale = scale;
-    const zoomDir = e.deltaY > 0 ? -1 : 1;
-    const zoomFactor = 1 + 0.12 * zoomDir; // tốc độ zoom
-    scale = clamp(scale * zoomFactor, minScale, maxScale);
-
-    // Giữ điểm (mouseX, mouseY) nằm yên sau khi scale
-    const imgX_before = (mouseX - originX) / prevScale;
-    const imgY_before = (mouseY - originY) / prevScale;
-    originX = mouseX - imgX_before * scale;
-    originY = mouseY - imgY_before * scale;
-
-    applyTransform();
-  }, { passive: false });
-
-  // Pointer Events để kéo cả vùng trống
-  viewport.addEventListener("pointerdown", (e) => {
-    // Cho phép kéo nếu: đang giữ Space, hoặc dùng nút giữa (button === 1)
-    if (!spaceDown && e.button !== 1) return;
-    e.preventDefault();
-
-    isDragging = true;
-    viewport.setPointerCapture(e.pointerId);
-
-    dragStartX = e.clientX;
-    dragStartY = e.clientY;
-    panStartX  = originX;
-    panStartY  = originY;
-
-    viewport.style.cursor = "grabbing";
-  });
-
-  viewport.addEventListener("pointermove", (e) => {
-    if (!isDragging) return;
-    const dx = e.clientX - dragStartX;
-    const dy = e.clientY - dragStartY;
-
-    originX = panStartX + dx;
-    originY = panStartY + dy;
-
-    applyTransform();
-  });
-
-  function endDrag(e) {
-    if (!isDragging) return;
-    isDragging = false;
-    try { viewport.releasePointerCapture(e.pointerId); } catch {}
-    viewport.style.cursor = spaceDown ? "grab" : "default";
-  }
-  viewport.addEventListener("pointerup", endDrag);
-  viewport.addEventListener("pointercancel", endDrag);
-  viewport.addEventListener("pointerleave", endDrag);
-
-  // Double click = Fit to view
-  viewport.addEventListener("dblclick", (e) => {
-    e.preventDefault();
-    fitToView();
-  });
-
-  // Áp transform
-  function applyTransform() {
-    stage.style.transform = `translate(${originX}px, ${originY}px) scale(${scale})`;
-    stage.style.transformOrigin = "0 0";
-  }
-
-  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const viewport   = document.getElementById("viewport");
-  const img        = document.getElementById("zoomableImage");
-  const canvas     = document.getElementById("paintLayer");
-  const ctx        = canvas.getContext("2d");
-
-  const btnPencil  = document.getElementById("btnPencil");
-  const btnEraser  = document.getElementById("btnEraser");
-
-  // ---- brush settings (có thể nối với UI slider sau) ----
-  let tool = "brush";                 // "brush" | "eraser"
-  let brushSize = 14;                 // px
-  let brushOpacity = 1.0;             // 0..1
-  let brushColor = "#000000";         // mặc định đen
-  let isDrawing = false;
-
-  // Fit canvas theo kích thước ảnh gốc
-  function sizeCanvasToImage() {
-    const iw = img.naturalWidth  || img.width;
-    const ih = img.naturalHeight || img.height;
-    if (!iw || !ih) return;
-    // Canvas vẽ theo pixel thật của ảnh
-    canvas.width  = iw;
-    canvas.height = ih;
-  }
-
-  // Gọi khi ảnh load & khi fitToView()
-  img.addEventListener("load", sizeCanvasToImage);
-  if (img.complete) sizeCanvasToImage();
-
-  // Đổi tool
-  btnPencil.addEventListener("click", () => {
-    tool = "brush";
-    btnPencil.classList.add("sidebar-active");
-    btnEraser.classList.remove("sidebar-active");
-  });
-  btnEraser.addEventListener("click", () => {
-    tool = "eraser";
-    btnEraser.classList.add("sidebar-active");
-    btnPencil.classList.remove("sidebar-active");
-  });
-
-  // Tính toạ độ vẽ trong hệ toạ độ ảnh (stage space)
-  function pointerToImageCoord(e) {
-    const rect = viewport.getBoundingClientRect();
-    const px = e.clientX - rect.left; // toạ độ trong viewport
-    const py = e.clientY - rect.top;
-    // chuyển về stage/ảnh: trừ pan rồi chia scale
-    const x = (px - window.originX) / window.scale;
-    const y = (py - window.originY) / window.scale;
-    return { x, y };
-  }
-
-  // Bắt đầu vẽ
-  viewport.addEventListener("pointerdown", (e) => {
-    // Không vẽ khi đang pan bằng Space hoặc khi bấm nút giữa/ phải
-    if (window.spaceDown || e.button !== 0) return;
-
-    isDrawing = true;
-    viewport.setPointerCapture(e.pointerId);
-
-    const p = pointerToImageCoord(e);
-    ctx.lineCap   = "round";
-    ctx.lineJoin  = "round";
-    ctx.lineWidth = brushSize;
-
-    if (tool === "brush") {
-      ctx.globalCompositeOperation = "source-over";
-      ctx.strokeStyle = hexWithAlpha(brushColor, brushOpacity);
-    } else {
-      // Eraser: xoá nét vẽ
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.strokeStyle = "rgba(0,0,0,1)";
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-  });
-
-  viewport.addEventListener("pointermove", (e) => {
-    if (!isDrawing) return;
-    const p = pointerToImageCoord(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-  });
-
-  function endDraw(e) {
-    if (!isDrawing) return;
-    isDrawing = false;
-    try { viewport.releasePointerCapture(e.pointerId); } catch {}
-    ctx.closePath();
-  }
-  viewport.addEventListener("pointerup", endDraw);
-  viewport.addEventListener("pointerleave", endDraw);
-  viewport.addEventListener("pointercancel", endDraw);
-
-  // Helper thêm alpha cho màu hex
-  function hexWithAlpha(hex, alpha) {
-    // hex "#RRGGBB"
-    const r = parseInt(hex.slice(1,3),16);
-    const g = parseInt(hex.slice(3,5),16);
-    const b = parseInt(hex.slice(5,7),16);
-    return `rgba(${r},${g},${b},${alpha})`;
-  }
-
-  // Nếu bạn có hàm fitToView() đã viết trước đó, hãy gọi lại sizeCanvasToImage() ngay sau khi fit
-  // ví dụ:
-  // const oldFit = window.fitToView;
-  // window.fitToView = function() { oldFit(); sizeCanvasToImage(); };
-});
-</script>
-
-<script>
-(() => {
-  const btn   = document.getElementById('modeBtn');
-  const menu  = document.getElementById('modeMenu');
-  const label = document.getElementById('modeLabel');
-
-  // Toggle mở/đóng
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    menu.classList.toggle('hidden');
-  });
-
-  // Đóng khi click ra ngoài hoặc nhấn Esc
-  document.addEventListener('click', () => menu.classList.add('hidden'));
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') menu.classList.add('hidden');
-  });
-
-  // Chọn mục -> đổi label + điều hướng
-  menu.querySelectorAll('[data-target]').forEach(item => {
-    item.addEventListener('click', () => {
-      const href = item.getAttribute('data-target');
-      label.textContent = item.textContent.trim();
-      window.location.href = href;
-    });
-  });
-
-  // Khởi tạo label theo trang hiện tại
-  const path = location.pathname;
-  if (path.includes('ghep-anhv2.html'))      label.textContent = 'Thủ công';
-  else if (path.includes('ghep-anh.html'))   label.textContent = 'Tự động';
-})();
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // ===== DOM =====
-  const popup    = document.getElementById("popupOverlay");
-  const viewport = popup.querySelector("#viewport");
-  const stage    = popup.querySelector("#stage");
-  const imgTag   = stage.querySelector("#zoomableImage");
-  const imgLayer = stage.querySelector("#imgLayer");   // nền ảnh
-  const paint    = stage.querySelector("#paintLayer"); // lớp tô
-  const ictx = imgLayer.getContext("2d");
-  const pctx = paint.getContext("2d");
-
-  // ===== TOOLBAR BUTTONS =====
-  const toolbar = popup.querySelector('header .flex.gap-3');
-  const btnUndo = toolbar?.querySelector('i.fa-reply')?.closest('button') || null;
-  const btnRedo = toolbar?.querySelector('i.fa-share')?.closest('button') || null;
-  const btnByText = (label) => {
-    if (!toolbar) return null;
-    return Array.from(toolbar.querySelectorAll('button'))
-      .find(b => (b.textContent || "").trim().includes(label)) || null;
-  };
-  const btnInvert = btnByText('Đảo');
-  const btnClear  = btnByText('Xoá');
-  const btnSave   = btnByText('Lưu');
-
-  // ===== Input ảnh (ô "Ảnh người mẫu" – phần đầu tiên) =====
-  const firstModelInput = document.querySelectorAll("#imageInput")[0];
-
-  // ===== Panel =====
-  const [sizeSlider, opacitySlider, hardnessSlider, smoothSlider] =
-        popup.querySelectorAll('input[type="range"]');
-  const colorSelect = document.getElementById("brushColorSelect");
-  const btnBrush  = document.getElementById("btnPencil");
-  const btnEraser = document.getElementById("btnEraser");
-
-  // ===== UNDO/REDO HISTORY (ảnh chụp paintLayer) =====
-  const MAX_HISTORY = 80;
-  let undoStack = [];
-  let redoStack = [];
-  let historyInitialized = false;
-
-  function drawStateFromURL(url){
-    const im = new Image();
-    im.onload = () => {
-      pctx.clearRect(0,0,paint.width,paint.height);
-      pctx.globalCompositeOperation = 'source-over';
-      pctx.globalAlpha = 1;
-      pctx.drawImage(im,0,0,paint.width,paint.height);
-    };
-    im.src = url;
-  }
-  function pushHistory(){
-    try {
-      const url = paint.toDataURL('image/png');
-      undoStack.push(url);
-      if (undoStack.length > MAX_HISTORY) undoStack.shift();
-      redoStack.length = 0; // reset redo
-    } catch (e) {}
-  }
-  function ensureHistoryInit(){
-    if (historyInitialized) return;
-    pushHistory(); // trạng thái rỗng ban đầu
-    historyInitialized = true;
-  }
-
-  // ===== STATE =====
-  let mode="paint", drawing=false;
-  let brushSize    = +sizeSlider?.value || 24;
-  let brushOpacity = +opacitySlider?.value ?? 1;
-  let hardness     = +hardnessSlider?.value ?? 1;   // (không dùng khi tô đặc)
-  let smoothSteps  = +smoothSlider?.value || 10;
-  // mặc định màu đen
-  if (colorSelect) colorSelect.value = "black";
-  let brushColor   = (colorSelect?.value || "black").toLowerCase();
-
-  // ===== Handlers panel =====
-  sizeSlider?.addEventListener("input", e => brushSize = +e.target.value);
-  opacitySlider?.addEventListener("input", e => brushOpacity = +e.target.value);
-  hardnessSlider?.addEventListener("input", e => hardness = +e.target.value);
-  smoothSlider?.addEventListener("input", e => smoothSteps = +e.target.value);
-
-  colorSelect?.addEventListener("change", e => {
-    brushColor = (e.target.value || "black").toLowerCase();
-    // Trắng phải là nét đặc tuyệt đối
-    if (brushColor === "white") {
-      brushOpacity = 1;  if (opacitySlider)  opacitySlider.value  = "1";
-      hardness     = 1;  if (hardnessSlider) hardnessSlider.value = "1";
-    }
-  });
-
-  btnBrush?.addEventListener("click",  () => { mode = "paint";  paint.style.cursor = "crosshair"; });
-  btnEraser?.addEventListener("click", () => { mode = "erase";  paint.style.cursor = "crosshair"; });
-
-  // ===== Upload ảnh (không tự mở popup) =====
-  firstModelInput?.addEventListener("change", e => {
-    const f = e.target.files?.[0]; if (!f) return;
-    imgTag.src = URL.createObjectURL(f);
-  });
-
-  // ===== Đồng bộ & vẽ nền ảnh vào imgLayer (KHÔNG đụng paintLayer) =====
-  function syncAndDraw(){
-    const rImg  = imgTag.getBoundingClientRect();
-    const rView = viewport.getBoundingClientRect();
-
-    for (const c of [imgLayer, paint]) {
-      Object.assign(c.style, {
-        position: "absolute",
-        left:  (rImg.left - rView.left) + "px",
-        top:   (rImg.top  - rView.top)  + "px",
-        width:  rImg.width  + "px",
-        height: rImg.height + "px",
-        pointerEvents: "auto",
-        zIndex: c === imgLayer ? 20 : 30
-      });
-      c.width  = Math.max(1, Math.round(rImg.width));
-      c.height = Math.max(1, Math.round(rImg.height));
-    }
-
-    // Vẽ ảnh gốc lên nền
-    ictx.clearRect(0, 0, imgLayer.width, imgLayer.height);
-    if (imgTag.naturalWidth)
-      ictx.drawImage(imgTag, 0, 0, imgLayer.width, imgLayer.height);
-
-    ensureHistoryInit(); // init history sau sync
-    imgTag.style.visibility = "hidden";
-  }
-
-  imgTag.addEventListener("load", () => {
-    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
-  });
-  window.addEventListener("resize", () => {
-    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
-  });
-  new MutationObserver(() => {
-    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
-  }).observe(popup, { attributes: true, attributeFilter: ["class"] });
-
-  // ===== VẼ (stroke liền mạch, không donut) =====
-  paint.addEventListener("contextmenu", e => e.preventDefault()); // chặn chuột phải
-
-  function getPos(evt){
-    const r = paint.getBoundingClientRect();
-    const cx = evt.touches ? evt.touches[0].clientX : evt.clientX;
-    const cy = evt.touches ? evt.touches[0].clientY : evt.clientY;
-    return {
-      x: (cx - r.left) * (paint.width  / r.width),
-      y: (cy - r.top ) * (paint.height / r.height)
-    };
-  }
-
-  function begin(e){
-    if (e.button !== undefined && e.button !== 0) return; // chỉ chuột trái
-    if (paint.width < 2) return;
-
-    const p = getPos(e);
-    drawing = true;
-
-    pctx.save();
-    pctx.globalCompositeOperation = (mode === "erase") ? "destination-out" : "source-over";
-    pctx.globalAlpha = (mode === "erase") ? 1 : brushOpacity;
-    pctx.lineCap = "round";
-    pctx.lineJoin = "round";
-    pctx.lineWidth = brushSize;
-    if (mode !== "erase") pctx.strokeStyle = (brushColor === "white") ? "#fff" : "#000";
-    pctx.beginPath();
-    pctx.moveTo(p.x, p.y);
-
-    window.addEventListener("mousemove", move, { passive:false });
-    window.addEventListener("mouseup", end);
-    e.preventDefault();
-  }
-
-  function move(e){
-    if (!drawing) return;
-    const p = getPos(e);
-    pctx.lineTo(p.x, p.y);
-    pctx.stroke();
-    e.preventDefault();
-  }
-
-  function end(){
-    if (!drawing) return;
-    drawing = false;
-    pctx.closePath();
-    pctx.restore();
-    window.removeEventListener("mousemove", move);
-    window.removeEventListener("mouseup", end);
-    // chụp lịch sử sau mỗi stroke
-    pushHistory();
-  }
-
-  paint.addEventListener("mousedown", begin);
-  paint.addEventListener("touchstart", begin, {passive:false});
-  paint.addEventListener("touchmove",  move,  {passive:false});
-  window.addEventListener("touchend", end);
-
-  // ====== BUTTON HANDLERS ======
-  btnUndo?.addEventListener('click', () => {
-    if (undoStack.length <= 1) return;
-    const curr = undoStack.pop();
-    redoStack.push(curr);
-    const prev = undoStack[undoStack.length - 1];
-    drawStateFromURL(prev);
-  });
-
-  btnRedo?.addEventListener('click', () => {
-    const next = redoStack.pop();
-    if (!next) return;
-    undoStack.push(next);
-    drawStateFromURL(next);
-  });
-
-  // Âm bản trên lớp tô (trắng <-> đen)
-  btnInvert?.addEventListener('click', () => {
-    pctx.save();
-    pctx.globalCompositeOperation = 'difference';
-    pctx.fillStyle = '#fff';
-    pctx.fillRect(0,0,paint.width,paint.height);
-    pctx.restore();
-    pushHistory();
-  });
-
-  // Xoá hết lớp tô
-  btnClear?.addEventListener('click', () => {
-    pctx.clearRect(0,0,paint.width,paint.height);
-    pushHistory();
-  });
-
-  // Lưu: ghép imgLayer + paintLayer → cập nhật preview ngoài + cập nhật luôn ảnh trong popup, rồi ĐÓNG popup
-  btnSave?.addEventListener('click', () => {
-    const out = document.createElement('canvas');
-    out.width  = imgLayer.width;
-    out.height = imgLayer.height;
-    const octx = out.getContext('2d');
-
-    octx.drawImage(imgLayer, 0, 0);
-    octx.drawImage(paint,    0, 0);
-
-    const dataURL = out.toDataURL('image/png');
-
-    // fill vào khung upload ngoài (cột trái – phần đầu tiên)
-    const firstPreview = document.querySelectorAll('#previewImage')[0];
-    if (firstPreview) {
-      firstPreview.src = dataURL;
-      firstPreview.style.display = 'block';
-      const placeholder = firstPreview.parentElement.querySelector('#placeholderContent');
-      if (placeholder) placeholder.style.display = 'none';
-    }
-
-    // cập nhật luôn ảnh trong popup cho lần mở kế tiếp
-    imgTag.src = dataURL;
-    // reset lớp tô & history cho phiên mới
-    pctx.clearRect(0,0,paint.width,paint.height);
-    undoStack = []; redoStack = []; historyInitialized = false; ensureHistoryInit();
-
-    // TỰ THOÁT POPUP
-    popup.classList.add('hidden');
-  });
-
-  // Nếu popup đang mở sẵn thì sync ngay
-  if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
-});
-</script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const viewport = document.getElementById("viewport");
+                const stage = document.getElementById("stage");
+                const img = document.getElementById("zoomableImage");
+
+                let scale = 1, minScale = 0.1, maxScale = 8;
+                let originX = 0, originY = 0;        // pan offset (px)
+                let isDragging = false;
+                let dragStartX = 0, dragStartY = 0;  // pointer start (px)
+                let panStartX = 0, panStartY = 0;    // origin at start (px)
+                let spaceDown = false;
+
+                // Ngăn Space làm trang cuộn
+                window.addEventListener("keydown", (e) => {
+                    if (e.code === "Space") {
+                        if (!spaceDown) e.preventDefault();
+                        spaceDown = true;
+                        if (!isDragging) viewport.style.cursor = "grab";
+                    }
+                }, { passive: false });
+
+                window.addEventListener("keyup", (e) => {
+                    if (e.code === "Space") {
+                        spaceDown = false;
+                        if (!isDragging) viewport.style.cursor = "default";
+                    }
+                });
+
+                // Fit ảnh vào viewport khi tải xong
+                img.addEventListener("load", fitToView);
+                if (img.complete) fitToView(); // phòng khi ảnh đã cache
+
+                // 1) Đặt cờ popup (nếu bạn có open/close popup)
+                function openPaintPopup() {
+                    // ... logic mở popup ...
+                    // chờ 1 frame để layout đo được kích thước thật
+                    requestAnimationFrame(() => setTimeout(fitToView, 0));
+                }
+
+                // 2) Fit ngay khi ảnh sẵn sàng
+                img.addEventListener("load", fitToView);
+                if (img.complete) setTimeout(fitToView, 0);
+
+                // 3) Fit khi đổi kích thước khung
+                window.addEventListener("resize", () => {
+                    // chỉ fit khi người dùng chưa tự zoom/pan quá xa (tuỳ chọn)
+                    fitToView();
+                });
+
+                function fitToView() {
+                    const vw = viewport.clientWidth;
+                    const vh = viewport.clientHeight;
+                    if (!vw || !vh) return; // tránh tính sai khi viewport đang 0
+
+                    const iw = img.naturalWidth || img.width;
+                    const ih = img.naturalHeight || img.height;
+
+                    // scale "contain"
+                    const s = Math.min(vw / iw, vh / ih);
+                    scale = clamp(s, minScale, maxScale);
+
+                    // CĂN GIỮA CHUẨN
+                    originX = (vw - iw * scale) / 2;
+                    originY = (vh - ih * scale) / 2;
+
+                    applyTransform();
+                }
+
+
+                // Wheel zoom – giữ tâm zoom tại vị trí con trỏ
+                viewport.addEventListener("wheel", (e) => {
+                    e.preventDefault();
+                    const rect = viewport.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left; // toạ độ chuột trong viewport
+                    const mouseY = e.clientY - rect.top;
+
+                    const prevScale = scale;
+                    const zoomDir = e.deltaY > 0 ? -1 : 1;
+                    const zoomFactor = 1 + 0.12 * zoomDir; // tốc độ zoom
+                    scale = clamp(scale * zoomFactor, minScale, maxScale);
+
+                    // Giữ điểm (mouseX, mouseY) nằm yên sau khi scale
+                    const imgX_before = (mouseX - originX) / prevScale;
+                    const imgY_before = (mouseY - originY) / prevScale;
+                    originX = mouseX - imgX_before * scale;
+                    originY = mouseY - imgY_before * scale;
+
+                    applyTransform();
+                }, { passive: false });
+
+                // Pointer Events để kéo cả vùng trống
+                viewport.addEventListener("pointerdown", (e) => {
+                    // Cho phép kéo nếu: đang giữ Space, hoặc dùng nút giữa (button === 1)
+                    if (!spaceDown && e.button !== 1) return;
+                    e.preventDefault();
+
+                    isDragging = true;
+                    viewport.setPointerCapture(e.pointerId);
+
+                    dragStartX = e.clientX;
+                    dragStartY = e.clientY;
+                    panStartX = originX;
+                    panStartY = originY;
+
+                    viewport.style.cursor = "grabbing";
+                });
+
+                viewport.addEventListener("pointermove", (e) => {
+                    if (!isDragging) return;
+                    const dx = e.clientX - dragStartX;
+                    const dy = e.clientY - dragStartY;
+
+                    originX = panStartX + dx;
+                    originY = panStartY + dy;
+
+                    applyTransform();
+                });
+
+                function endDrag(e) {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    try { viewport.releasePointerCapture(e.pointerId); } catch { }
+                    viewport.style.cursor = spaceDown ? "grab" : "default";
+                }
+                viewport.addEventListener("pointerup", endDrag);
+                viewport.addEventListener("pointercancel", endDrag);
+                viewport.addEventListener("pointerleave", endDrag);
+
+                // Double click = Fit to view
+                viewport.addEventListener("dblclick", (e) => {
+                    e.preventDefault();
+                    fitToView();
+                });
+
+                // Áp transform
+                function applyTransform() {
+                    stage.style.transform = `translate(${originX}px, ${originY}px) scale(${scale})`;
+                    stage.style.transformOrigin = "0 0";
+                }
+
+                function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+            });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const viewport = document.getElementById("viewport");
+                const img = document.getElementById("zoomableImage");
+                const canvas = document.getElementById("paintLayer");
+                const ctx = canvas.getContext("2d");
+
+                const btnPencil = document.getElementById("btnPencil");
+                const btnEraser = document.getElementById("btnEraser");
+
+                // ---- brush settings (có thể nối với UI slider sau) ----
+                let tool = "brush";                 // "brush" | "eraser"
+                let brushSize = 14;                 // px
+                let brushOpacity = 1.0;             // 0..1
+                let brushColor = "#000000";         // mặc định đen
+                let isDrawing = false;
+
+                // Fit canvas theo kích thước ảnh gốc
+                function sizeCanvasToImage() {
+                    const iw = img.naturalWidth || img.width;
+                    const ih = img.naturalHeight || img.height;
+                    if (!iw || !ih) return;
+                    // Canvas vẽ theo pixel thật của ảnh
+                    canvas.width = iw;
+                    canvas.height = ih;
+                }
+
+                // Gọi khi ảnh load & khi fitToView()
+                img.addEventListener("load", sizeCanvasToImage);
+                if (img.complete) sizeCanvasToImage();
+
+                // Đổi tool
+                btnPencil.addEventListener("click", () => {
+                    tool = "brush";
+                    btnPencil.classList.add("sidebar-active");
+                    btnEraser.classList.remove("sidebar-active");
+                });
+                btnEraser.addEventListener("click", () => {
+                    tool = "eraser";
+                    btnEraser.classList.add("sidebar-active");
+                    btnPencil.classList.remove("sidebar-active");
+                });
+
+                // Tính toạ độ vẽ trong hệ toạ độ ảnh (stage space)
+                function pointerToImageCoord(e) {
+                    const rect = viewport.getBoundingClientRect();
+                    const px = e.clientX - rect.left; // toạ độ trong viewport
+                    const py = e.clientY - rect.top;
+                    // chuyển về stage/ảnh: trừ pan rồi chia scale
+                    const x = (px - window.originX) / window.scale;
+                    const y = (py - window.originY) / window.scale;
+                    return { x, y };
+                }
+
+                // Bắt đầu vẽ
+                viewport.addEventListener("pointerdown", (e) => {
+                    // Không vẽ khi đang pan bằng Space hoặc khi bấm nút giữa/ phải
+                    if (window.spaceDown || e.button !== 0) return;
+
+                    isDrawing = true;
+                    viewport.setPointerCapture(e.pointerId);
+
+                    const p = pointerToImageCoord(e);
+                    ctx.lineCap = "round";
+                    ctx.lineJoin = "round";
+                    ctx.lineWidth = brushSize;
+
+                    if (tool === "brush") {
+                        ctx.globalCompositeOperation = "source-over";
+                        ctx.strokeStyle = hexWithAlpha(brushColor, brushOpacity);
+                    } else {
+                        // Eraser: xoá nét vẽ
+                        ctx.globalCompositeOperation = "destination-out";
+                        ctx.strokeStyle = "rgba(0,0,0,1)";
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                });
+
+                viewport.addEventListener("pointermove", (e) => {
+                    if (!isDrawing) return;
+                    const p = pointerToImageCoord(e);
+                    ctx.lineTo(p.x, p.y);
+                    ctx.stroke();
+                });
+
+                function endDraw(e) {
+                    if (!isDrawing) return;
+                    isDrawing = false;
+                    try { viewport.releasePointerCapture(e.pointerId); } catch { }
+                    ctx.closePath();
+                }
+                viewport.addEventListener("pointerup", endDraw);
+                viewport.addEventListener("pointerleave", endDraw);
+                viewport.addEventListener("pointercancel", endDraw);
+
+                // Helper thêm alpha cho màu hex
+                function hexWithAlpha(hex, alpha) {
+                    // hex "#RRGGBB"
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    return `rgba(${r},${g},${b},${alpha})`;
+                }
+
+                // Nếu bạn có hàm fitToView() đã viết trước đó, hãy gọi lại sizeCanvasToImage() ngay sau khi fit
+                // ví dụ:
+                // const oldFit = window.fitToView;
+                // window.fitToView = function() { oldFit(); sizeCanvasToImage(); };
+            });
+        </script>
+
+        <script>
+            (() => {
+                const btn = document.getElementById('modeBtn');
+                const menu = document.getElementById('modeMenu');
+                const label = document.getElementById('modeLabel');
+
+                // Toggle mở/đóng
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    menu.classList.toggle('hidden');
+                });
+
+                // Đóng khi click ra ngoài hoặc nhấn Esc
+                document.addEventListener('click', () => menu.classList.add('hidden'));
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') menu.classList.add('hidden');
+                });
+
+                // Chọn mục -> đổi label + điều hướng
+                menu.querySelectorAll('[data-target]').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const href = item.getAttribute('data-target');
+                        label.textContent = item.textContent.trim();
+                        window.location.href = href;
+                    });
+                });
+
+                // Khởi tạo label theo trang hiện tại
+                const path = location.pathname;
+                if (path.includes('ghep-anhv2.html')) label.textContent = 'Thủ công';
+                else if (path.includes('ghep-anh.html')) label.textContent = 'Tự động';
+            })();
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // ===== DOM =====
+                const popup = document.getElementById("popupOverlay");
+                const viewport = popup.querySelector("#viewport");
+                const stage = popup.querySelector("#stage");
+                const imgTag = stage.querySelector("#zoomableImage");
+                const imgLayer = stage.querySelector("#imgLayer");   // nền ảnh
+                const paint = stage.querySelector("#paintLayer"); // lớp tô
+                const ictx = imgLayer.getContext("2d");
+                const pctx = paint.getContext("2d");
+
+                // ===== TOOLBAR BUTTONS =====
+                const toolbar = popup.querySelector('header .flex.gap-3');
+                const btnUndo = toolbar?.querySelector('i.fa-reply')?.closest('button') || null;
+                const btnRedo = toolbar?.querySelector('i.fa-share')?.closest('button') || null;
+                const btnByText = (label) => {
+                    if (!toolbar) return null;
+                    return Array.from(toolbar.querySelectorAll('button'))
+                        .find(b => (b.textContent || "").trim().includes(label)) || null;
+                };
+                const btnInvert = btnByText('Đảo');
+                const btnClear = btnByText('Xoá');
+                const btnSave = btnByText('Lưu');
+
+                // ===== Input ảnh (ô "Ảnh người mẫu" – phần đầu tiên) =====
+                const firstModelInput = document.querySelectorAll("#imageInput")[0];
+
+                // ===== Panel =====
+                const [sizeSlider, opacitySlider, hardnessSlider, smoothSlider] =
+                    popup.querySelectorAll('input[type="range"]');
+                const colorSelect = document.getElementById("brushColorSelect");
+                const btnBrush = document.getElementById("btnPencil");
+                const btnEraser = document.getElementById("btnEraser");
+
+                // ===== UNDO/REDO HISTORY (ảnh chụp paintLayer) =====
+                const MAX_HISTORY = 80;
+                let undoStack = [];
+                let redoStack = [];
+                let historyInitialized = false;
+
+                function drawStateFromURL(url) {
+                    const im = new Image();
+                    im.onload = () => {
+                        pctx.clearRect(0, 0, paint.width, paint.height);
+                        pctx.globalCompositeOperation = 'source-over';
+                        pctx.globalAlpha = 1;
+                        pctx.drawImage(im, 0, 0, paint.width, paint.height);
+                    };
+                    im.src = url;
+                }
+                function pushHistory() {
+                    try {
+                        const url = paint.toDataURL('image/png');
+                        undoStack.push(url);
+                        if (undoStack.length > MAX_HISTORY) undoStack.shift();
+                        redoStack.length = 0; // reset redo
+                    } catch (e) { }
+                }
+                function ensureHistoryInit() {
+                    if (historyInitialized) return;
+                    pushHistory(); // trạng thái rỗng ban đầu
+                    historyInitialized = true;
+                }
+
+                // ===== STATE =====
+                let mode = "paint", drawing = false;
+                let brushSize = +sizeSlider?.value || 24;
+                let brushOpacity = +opacitySlider?.value ?? 1;
+                let hardness = +hardnessSlider?.value ?? 1;   // (không dùng khi tô đặc)
+                let smoothSteps = +smoothSlider?.value || 10;
+                // mặc định màu đen
+                if (colorSelect) colorSelect.value = "black";
+                let brushColor = (colorSelect?.value || "black").toLowerCase();
+
+                // ===== Handlers panel =====
+                sizeSlider?.addEventListener("input", e => brushSize = +e.target.value);
+                opacitySlider?.addEventListener("input", e => brushOpacity = +e.target.value);
+                hardnessSlider?.addEventListener("input", e => hardness = +e.target.value);
+                smoothSlider?.addEventListener("input", e => smoothSteps = +e.target.value);
+
+                colorSelect?.addEventListener("change", e => {
+                    brushColor = (e.target.value || "black").toLowerCase();
+                    // Trắng phải là nét đặc tuyệt đối
+                    if (brushColor === "white") {
+                        brushOpacity = 1; if (opacitySlider) opacitySlider.value = "1";
+                        hardness = 1; if (hardnessSlider) hardnessSlider.value = "1";
+                    }
+                });
+
+                btnBrush?.addEventListener("click", () => { mode = "paint"; paint.style.cursor = "crosshair"; });
+                btnEraser?.addEventListener("click", () => { mode = "erase"; paint.style.cursor = "crosshair"; });
+
+                // ===== Upload ảnh (không tự mở popup) =====
+                firstModelInput?.addEventListener("change", e => {
+                    const f = e.target.files?.[0]; if (!f) return;
+                    imgTag.src = URL.createObjectURL(f);
+                });
+
+                // ===== Đồng bộ & vẽ nền ảnh vào imgLayer (KHÔNG đụng paintLayer) =====
+                function syncAndDraw() {
+                    const rImg = imgTag.getBoundingClientRect();
+                    const rView = viewport.getBoundingClientRect();
+
+                    for (const c of [imgLayer, paint]) {
+                        Object.assign(c.style, {
+                            position: "absolute",
+                            left: (rImg.left - rView.left) + "px",
+                            top: (rImg.top - rView.top) + "px",
+                            width: rImg.width + "px",
+                            height: rImg.height + "px",
+                            pointerEvents: "auto",
+                            zIndex: c === imgLayer ? 20 : 30
+                        });
+                        c.width = Math.max(1, Math.round(rImg.width));
+                        c.height = Math.max(1, Math.round(rImg.height));
+                    }
+
+                    // Vẽ ảnh gốc lên nền
+                    ictx.clearRect(0, 0, imgLayer.width, imgLayer.height);
+                    if (imgTag.naturalWidth)
+                        ictx.drawImage(imgTag, 0, 0, imgLayer.width, imgLayer.height);
+
+                    ensureHistoryInit(); // init history sau sync
+                    imgTag.style.visibility = "hidden";
+                }
+
+                imgTag.addEventListener("load", () => {
+                    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+                });
+                window.addEventListener("resize", () => {
+                    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+                });
+                new MutationObserver(() => {
+                    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+                }).observe(popup, { attributes: true, attributeFilter: ["class"] });
+
+                // ===== VẼ (stroke liền mạch, không donut) =====
+                paint.addEventListener("contextmenu", e => e.preventDefault()); // chặn chuột phải
+
+                function getPos(evt) {
+                    const r = paint.getBoundingClientRect();
+                    const cx = evt.touches ? evt.touches[0].clientX : evt.clientX;
+                    const cy = evt.touches ? evt.touches[0].clientY : evt.clientY;
+                    return {
+                        x: (cx - r.left) * (paint.width / r.width),
+                        y: (cy - r.top) * (paint.height / r.height)
+                    };
+                }
+
+                function begin(e) {
+                    if (e.button !== undefined && e.button !== 0) return; // chỉ chuột trái
+                    if (paint.width < 2) return;
+
+                    const p = getPos(e);
+                    drawing = true;
+
+                    pctx.save();
+                    pctx.globalCompositeOperation = (mode === "erase") ? "destination-out" : "source-over";
+                    pctx.globalAlpha = (mode === "erase") ? 1 : brushOpacity;
+                    pctx.lineCap = "round";
+                    pctx.lineJoin = "round";
+                    pctx.lineWidth = brushSize;
+                    if (mode !== "erase") pctx.strokeStyle = (brushColor === "white") ? "#fff" : "#000";
+                    pctx.beginPath();
+                    pctx.moveTo(p.x, p.y);
+
+                    window.addEventListener("mousemove", move, { passive: false });
+                    window.addEventListener("mouseup", end);
+                    e.preventDefault();
+                }
+
+                function move(e) {
+                    if (!drawing) return;
+                    const p = getPos(e);
+                    pctx.lineTo(p.x, p.y);
+                    pctx.stroke();
+                    e.preventDefault();
+                }
+
+                function end() {
+                    if (!drawing) return;
+                    drawing = false;
+                    pctx.closePath();
+                    pctx.restore();
+                    window.removeEventListener("mousemove", move);
+                    window.removeEventListener("mouseup", end);
+                    // chụp lịch sử sau mỗi stroke
+                    pushHistory();
+                }
+
+                paint.addEventListener("mousedown", begin);
+                paint.addEventListener("touchstart", begin, { passive: false });
+                paint.addEventListener("touchmove", move, { passive: false });
+                window.addEventListener("touchend", end);
+
+                // ====== BUTTON HANDLERS ======
+                btnUndo?.addEventListener('click', () => {
+                    if (undoStack.length <= 1) return;
+                    const curr = undoStack.pop();
+                    redoStack.push(curr);
+                    const prev = undoStack[undoStack.length - 1];
+                    drawStateFromURL(prev);
+                });
+
+                btnRedo?.addEventListener('click', () => {
+                    const next = redoStack.pop();
+                    if (!next) return;
+                    undoStack.push(next);
+                    drawStateFromURL(next);
+                });
+
+                // Âm bản trên lớp tô (trắng <-> đen)
+                btnInvert?.addEventListener('click', () => {
+                    pctx.save();
+                    pctx.globalCompositeOperation = 'difference';
+                    pctx.fillStyle = '#fff';
+                    pctx.fillRect(0, 0, paint.width, paint.height);
+                    pctx.restore();
+                    pushHistory();
+                });
+
+                // Xoá hết lớp tô
+                btnClear?.addEventListener('click', () => {
+                    pctx.clearRect(0, 0, paint.width, paint.height);
+                    pushHistory();
+                });
+
+                // Lưu: ghép imgLayer + paintLayer → cập nhật preview ngoài + cập nhật luôn ảnh trong popup, rồi ĐÓNG popup
+                btnSave?.addEventListener('click', () => {
+                    const out = document.createElement('canvas');
+                    out.width = imgLayer.width;
+                    out.height = imgLayer.height;
+                    const octx = out.getContext('2d');
+
+                    octx.drawImage(imgLayer, 0, 0);
+                    octx.drawImage(paint, 0, 0);
+
+                    const dataURL = out.toDataURL('image/png');
+
+                    // fill vào khung upload ngoài (cột trái – phần đầu tiên)
+                    const firstPreview = document.querySelectorAll('#previewImage')[0];
+                    if (firstPreview) {
+                        firstPreview.src = dataURL;
+                        firstPreview.style.display = 'block';
+                        const placeholder = firstPreview.parentElement.querySelector('#placeholderContent');
+                        if (placeholder) placeholder.style.display = 'none';
+                    }
+
+                    // cập nhật luôn ảnh trong popup cho lần mở kế tiếp
+                    imgTag.src = dataURL;
+                    // reset lớp tô & history cho phiên mới
+                    pctx.clearRect(0, 0, paint.width, paint.height);
+                    undoStack = []; redoStack = []; historyInitialized = false; ensureHistoryInit();
+
+                    // TỰ THOÁT POPUP
+                    popup.classList.add('hidden');
+                });
+
+                // Nếu popup đang mở sẵn thì sync ngay
+                if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+            });
+        </script>
 
 </body>
 
