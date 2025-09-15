@@ -10,7 +10,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
@@ -19,6 +21,14 @@
             font-family: "Montserrat", sans-serif;
             font-optical-sizing: auto;
         }
+/* Ẩn scrollbar nhưng vẫn cho cuộn */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;  /* IE & Edge */
+  scrollbar-width: none;     /* Firefox */
+}
 
         @layer utilities {
             .bg-grid {
@@ -288,17 +298,16 @@
         <div class="flex">
             <!-- Desltop-sidebar -->
             <nav
-                class="fixed hidden md:flex w-[18rem] shadow-[5px_5px_rgba(128,128,128,0.4),10px_10px_rgba(128,128,128,0.3),15px_15px_rgba(128,128,128,0.2),20px_20px_rgba(128,128,128,0.1),25px_25px_rgba(128,128,128,0.05)] h-screen bg-[#F5F5F5] border-r border-gray-300 flex-col justify-start  overflow-y-auto z-50">
+                class="fixed hidden md:flex w-[18rem] shadow-[5px_5px_rgba(128,128,128,0.4),10px_10px_rgba(128,128,128,0.3),15px_15px_rgba(128,128,128,0.2),20px_20px_rgba(128,128,128,0.1),25px_25px_rgba(128,128,128,0.05)] h-screen bg-[#F5F5F5] border-r border-gray-300 flex-col justify-start  overflow-y-auto z-50 custom-scrollbar">
                 <div class="p-4 border-b border-b-gray-300 flex justify-center items-center">
                     <a href="index.php" class="text-2xl font-bold text-primary">
-                        <span class="text-secondary">
+                        <span class="text-secondary flex flex-col">
                             <img alt="logo"
                                 src="https://w.ladicdn.com/668665e58fb7e80020232e3b/rbg/logo-1-20250711021846-tbevw.png"
                                 style=" width: 60px; " class="mx-auto">
-                            <span class="text-[30px] mt-[14px]">Autolook</span>
-                            <div class="absolute top-3 right-4 md:right-8">
-
-                            </div>
+                            <span style=" font-family: Anton, sans-serif;
+  font-weight: 400;
+  font-style: normal;" class="text-[40px] mt-[14px]">Autolook</span>
 
                         </span>
                     </a>

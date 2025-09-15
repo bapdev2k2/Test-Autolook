@@ -10,6 +10,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -19,6 +22,14 @@
             font-family: "Montserrat", sans-serif;
             font-optical-sizing: auto;
         }
+/* Ẩn scrollbar nhưng vẫn cho cuộn */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;  /* IE & Edge */
+  scrollbar-width: none;     /* Firefox */
+}
 
         @layer utilities {
             .bg-grid {
@@ -339,7 +350,7 @@
   pointer-events:none;
   display:none;
   mix-blend-mode:difference; /* dễ nhìn trên mọi nền */
-  z-index: 40;
+  z-index: 9999;
 } 
 .brush-cursor-square {
   position: absolute;
@@ -349,8 +360,9 @@
   pointer-events: none;
   display: none;
   mix-blend-mode: difference;
-  z-index: 40;
+  z-index: 9999;
 }
+
 
 </style>
 </head>
@@ -431,7 +443,50 @@
 
 <body class="min-h-screen !bg-[#F5F5F5] bg-grid ">
     <header class="bg-white shadow-md">
-        <nav style="z-index: 10;" class="container !w-full !max-w-full md:hidden mx-auto px-4 bg-white shadow-md fixed">
+        <!-- FIXED MODE HEADER -->
+<div id="mode-fixed-header"
+     class="fixed xs:bottom-0 md:top-0 inset-x-0 z-[50] h-fit">
+  <div class="relative w-full">
+    <!-- nền dưới (gradient + viền sáng xoay) -->
+    <div class="absolute inset-0 h-10">
+      <div class="absolute inset-0 rounded-none bg-[linear-gradient(to_bottom,#d9ded8_0%,#ebc0fd_100%)]"></div>
+      <div class="absolute inset-0 p-[3px] bg-[conic-gradient(var(--angle),#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee,#ff9a9e)] animate-spin-slow">
+        <div class="w-full bg-[#fff5] backdrop-blur-sm"></div>
+      </div>
+    </div>
+
+    <!-- nội dung header -->
+    <div class="relative h-10 flex items-center justify-center gap-2 px-4
+                md:pl-[calc(18rem+1rem)]">
+                 <svg width="24px" height="24px" viewBox="0 0 16 16" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="opacity-[90%] relative">
+                                        <rect width="16" height="16" rx="8" fill="url(#paint0_linear_1_1999)"></rect>
+                                        <path
+                                            d="M8.66725 4.80043C8.66725 4.30571 8.02563 4.11145 7.75121 4.52307L5.0626 8.55599C4.84108 8.88827 5.07928 9.33335 5.47863 9.33335H7.3339V11.1996C7.3339 11.6943 7.97552 11.8886 8.24994 11.4769L10.9385 7.44401C11.1601 7.11173 10.9219 6.66665 10.5225 6.66665H8.66725V4.80043Z"
+                                            fill="white"></path>
+                                        <defs>
+                                            <linearGradient id="paint0_linear_1_1999" x1="8" y1="0" x2="8" y2="16"
+                                                gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#6B7280"></stop>
+                                                <stop offset="1"></stop>
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+        <span style="color:#000; -webkit-text-stroke:3px white; paint-order:stroke fill;" class="xs:text-xs sm:text-base lg:text-xl font-bold whitespace-nowrap">Đừng bỏ lỡ! Nhận ngay giảm giá <span class="text-xl sm:text-3xl text-gradient-to-r from-pink-500 via-red-500 to-yellow-500">30%</span> cho toàn bộ gói</span>
+
+      <!-- Nút SALE 24H -->
+      <button id="gift24h-fab"
+              class="ml-2 relative z-9 flex items-center gap-2 px-2 py-2 sm:py-0 sm:px-6 md:px-3 rounded-full 
+                     bg-gradient-to-r from-pink-500 to-red-400 text-white font-bold 
+                     text-base md:text-lg uppercase shadow-lg hover:scale-105 active:scale-95 transition">
+        <i class="fa-solid fa-gift animate-bounce"></i>
+        <span class="hidden sm:block">SALE 24H</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+        <nav style="z-index: 20;" class="container !w-full !max-w-full md:hidden mx-auto px-4 bg-white shadow-md fixed">
             <div class="flex justify-between items-center py-4">
                 <!-- Logo -->
                 <a href="index.php" class="text-2xl font-bold text-primary" onclickx="event.preventDefault()">
@@ -451,14 +506,16 @@
         <div class="flex">
             <!-- Desltop-sidebar -->
             <nav
-                class="fixed hidden md:flex w-[18rem] shadow-[5px_5px_rgba(128,128,128,0.4),10px_10px_rgba(128,128,128,0.3),15px_15px_rgba(128,128,128,0.2),20px_20px_rgba(128,128,128,0.1),25px_25px_rgba(128,128,128,0.05)] h-screen bg-[#F5F5F5] border-r border-gray-300 flex-col justify-start  overflow-y-auto z-50">
+                class="fixed hidden md:flex w-[18rem] shadow-[5px_5px_rgba(128,128,128,0.4),10px_10px_rgba(128,128,128,0.3),15px_15px_rgba(128,128,128,0.2),20px_20px_rgba(128,128,128,0.1),25px_25px_rgba(128,128,128,0.05)] h-screen bg-[#F5F5F5] border-r border-gray-300 flex-col justify-start  overflow-y-auto z-50 custom-scrollbar">
                 <div class="p-4 border-b border-b-gray-300 flex justify-center items-center">
                     <a href="index.php" class="text-2xl font-bold text-primary">
-                        <span class="text-secondary">
+                        <span class="text-secondary flex flex-col">
                             <img alt="logo"
                                 src="https://w.ladicdn.com/668665e58fb7e80020232e3b/rbg/logo-1-20250711021846-tbevw.png"
                                 style=" width: 60px; " class="mx-auto">
-                            <span class="text-[30px] mt-[14px]">Autolook</span>
+                            <span style=" font-family: Anton, sans-serif;
+  font-weight: 400;
+  font-style: normal;" class="text-[40px] mt-[14px]">Autolook</span>
 
                         </span>
                     </a>
@@ -878,13 +935,13 @@
             </nav>
     </header>
     <main
-        class="container mx-auto px-4 py-8 md:pl-64 md:mt-0 sm:mt-[80px] xs:mt-20 md:!max-w-[888px] lg:!max-w-[1080px] xl:!max-w-[1440px]">
+        class=" container mx-auto px-4 py-8 md:pl-64 md:mt-10 sm:mt-[80px] xs:mt-20 md:!max-w-[888px] lg:!max-w-[1080px] xl:!max-w-[1440px]">
 
         <!-- <main class="container mx-auto w-full md:ml-64 px-4 py-8  inline-flex md:pt-24 md:pl-4 md:pr-4"> -->
-        <div class="absolute md:top-8 md:right-7 flex items-center gap-2 xs:right-[45px] xs:top-3">
+        <div class="absolute md:top-16 md:right-7 flex items-center gap-2 xs:right-[45px] xs:top-3">
 
             <div style="z-index: 49;"
-                class=" flex flex-col justify-center items-center gap-3 xs:fixed lg:static md:top-8 md:right-[-2rem] lg:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
+                class=" flex flex-col justify-center items-center gap-3 xs:fixed lg:static md:top-16 lg:top-8 md:right-[-2rem] lg:right-7 xs:top-3 xs:right-14 sm:right-20 top-[1rem]">
                 <!-- Toggle Switch Dark/Light -->
                 <div class="flex items-center gap-2">
                     <b class="sm:block md:hidden lg:block xs:hidden">Dark</b>
@@ -932,79 +989,26 @@
                 </div>
             </div>
         </div>
-        <!-- CHẾ ĐỘ (custom dropdown, không dùng <select>) -->
-        <div class="relative">
-            <div class="absolute xs:left-[5.7rem] md:left-[31.5rem] w-fit top-16 px-4 mt-4 z-[50] hidden">
-                <div class="flex justify-center items-center">
-
-                    <label class="block text-center font-medium mb-1 bg-white w-fit px-2 rounded-full font-semibold">Chế
-                        độ</label>
-                </div>
-
-                <!-- Nút hiển thị, dùng đúng gradient 'select-custom' sẵn có -->
-                <button id="modeBtn"
-                    class="select-custom w-[130px] h-10 px-4 rounded-full flex items-center justify-between">
-                    <span id="modeLabel" class="font-bold">Chọn model</span>
-                    <i class="fa-solid fa-chevron-down ml-3 text-white/90"></i>
-                </button>
-
-                <!-- Menu dropdown có nền gradient -->
-                <div id="modeMenu" class="hidden absolute mt-2 w-[220px]">
-                    <div class="p-[3px] rounded-2xl
-         bg-[linear-gradient(-45deg,#ee7752,#e73c7e,#23a6d5,#23d5ab)]
-         animate-[gradient_3s_ease_infinite] [background-size:400%_400%]">
-                        <div class="rounded-xl bg-white/10 backdrop-blur">
-                            <button type="button" data-target="ghep-anhv2.html"
-                                class="w-full text-left px-4 py-2.5 font-semibold text-white hover:bg-white/10 rounded-t-xl">
-                                Thủ công
-                            </button>
-                            <button type="button" data-target="ghep-anh.html"
-                                class="w-full text-left px-4 py-2.5 font-semibold text-white hover:bg-white/10 rounded-b-xl">
-                                Tự động
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="relative w-full h-16 mb-6 flex justify-center items-center">
-                <!-- Nền chính -->
-                <div
-                    class="absolute inset-0 rounded-full bg-[linear-gradient(-225deg,#FFE29F_0%,#FFA99F_48%,#FF719A_100%)] shadow-[0px_10px_20px_rgba(0,0,0,0.25)]">
-                </div>
-
-                <!-- Viền sáng xoay -->
-                <div
-                    class="absolute inset-0 rounded-full p-[3px] bg-[conic-gradient(var(--angle),#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee,#ff9a9e)] animate-spin-slow">
-                    <div class="w-full h-full rounded-full bg-[#fff5] backdrop-blur-sm"></div>
-                </div>
-
-                <!-- Nút bấm -->
-                <button id="gift24h-fab" class="relative z-9 flex items-center gap-2 px-8 py-2 rounded-full 
-           bg-gradient-to-r from-pink-500 to-red-400 text-white font-bold 
-           text-lg uppercase shadow-lg hover:scale-105 active:scale-95 transition">
-                    <i class="fa-solid fa-gift animate-bounce"></i>
-                    <span>SALE 24H</span>
-                </button>
-            </div>
+       
+            
         </div>
 
         <!-- TAB BUTTONS -->
         <div class="w-full flex gap-4 bg-gray-300 p-3 rounded-full">
+            
+            <!-- Phải (mặc định): AI Prompt -->
+            <button id="btnPrompt" class="w-full px-6 h-12 rounded-full font-semibold shadow
+           bg-[#30475E] text-white hover:brightness-95
+           flex items-center justify-center gap-2">
+                <i class="fa-solid fa-robot"></i>
+                <span>Ghép ảnh Prompt</span>
+            </button>
             <!-- Trái: Tải ảnh lên -->
             <button id="btnUpload" class="w-full px-6 h-12 rounded-full font-semibold shadow
            bg-[#F1F5F9] text-gray-800 hover:brightness-95
            flex items-center justify-center gap-2">
                 <i class="fa-solid fa-pen-to-square"></i>
                 <span>Ghép ảnh thủ công</span>
-            </button>
-
-            <!-- Phải (mặc định): AI Prompt -->
-            <button id="btnPrompt" class="w-full px-6 h-12 rounded-full font-semibold shadow
-           bg-[#F05454] text-white hover:brightness-95
-           flex items-center justify-center gap-2">
-                <i class="fa-solid fa-robot"></i>
-                <span>Ghép ảnh Prompt</span>
             </button>
         </div>
 
@@ -1015,24 +1019,14 @@
                     <!-- <h1 class="text-2xl font-bold text-gray-800 mb-6 bg-[#30475E] text-white p-2 text-center rounded-full">Chọn ảnh đầu vào</h1> -->
                     <div>
                         <h1
-                            class="text-2xl font-bold text-gray-800 mb-6 bg-[#30475E] text-white p-2 text-center rounded-full">
+                            class="text-2xl font-bold text-white mb-6 bg-gray-600 text-white p-2 text-center rounded-full">
                             Trình ghép ảnh Prompt</h1>
 
                     </div>
-   <!-- Nút -->
-<div class="flex justify-center mb-2">
-    <button id="noteToggle" type="button"
-  class="inline-flex items-center gap-2 px-3 h-8 rounded-full
-         bg-[#0cc0df] text-black text-xs font-semibold
-         hover:brightness-95 active:scale-95 transition"
-  aria-expanded="false">
-  <i class="fa-regular fa-circle-question"></i>
-  <span>Chú thích</span>
-</button>
-</div>
+
 
 <!-- Box: KHÔNG dùng class hidden -->
-<div id="noteBox" class="note-collapsible rounded-2xl mb-5  bg-[#F5F5F5] shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)]">
+<div class=" rounded-2xl mb-5  bg-[#F5F5F5] shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)]">
   <div class="grid note-surface rounded-2xl
              
               bg-gray-300 p-4 xs:text-[12px] sm:text-[14px] font-semibold leading-relaxed
@@ -1134,7 +1128,7 @@
                                                 sản phẩm để ra kết quả tốt nhất</span>
                                         </div>
                                         <div
-                                            class="text-[11.5px] text-center text-white bg-[#F05454] transition-all duration-300 ease-in-out p-2 rounded-2xl  mt-5 grid">
+                                            class="text-[11.5px] text-center text-white bg-gradient-to-r from-pink-500 to-red-400 transition-all duration-300 ease-in-out p-2 rounded-2xl  mt-5 grid">
                                             <span>Nếu bạn chưa có ảnh người mẫu, hãy truy cập:
 
                                             </span>
@@ -1175,7 +1169,7 @@
                                                     </div>
                                                     <div class="sm:flex xs:grid gap-3 my-[7px] sm:items-center"><a
                                                             href="https://chatgpt.com/g/g-686e13b19f1c8191a09978185f7bd5c5-chuyen-gia-tao-promt-ghep-anh-autolook"
-                                                            class="bg-[#F05454] transition-all duration-300 ease-in-out text-white border
+                                                            class="bg-gradient-to-r from-pink-500 to-red-400 transition-all duration-300 ease-in-out text-white border
                                                         rounded-full shadow-sm text-sm font-medium text-white 
                                                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 p-2 uppercase font-semibold"
                                                             target="_blank">Chatbot tạo prompt ghép ảnh</a>
@@ -1408,7 +1402,7 @@
 
                                 </div>
                             </div>
-                            <div class="flex xs:flex-col sm:flex-row gap-3 items-center mx-auto">
+                            <div class="flex xs:flex-col sm:flex-row gap-3 items-center justify-end mr-0 xs:ml-0 md:ml-auto">
                                 <div class="text-center rounded-2xl flex justify-center items-center gap-2">
                                     <!-- <div class="relative inline-block"> -->
                                     <!-- Nút kích hoạt -->
@@ -1544,20 +1538,11 @@
 
                 <div>
                     <h1
-                        class="text-2xl font-bold text-gray-800 mb-6 bg-[#30475E] text-white p-2 text-center rounded-full">
+                        class="text-2xl font-bold text-gray-800 mb-6 bg-gray-600 text-white p-2 text-center rounded-full">
                         Trình ghép ảnh thủ công</h1>
 
                 </div>
-                <div class="flex justify-center mb-4">
-    <button id="guideBtn" type="button"
-  class="inline-flex items-center gap-2 px-3 h-8 rounded-full
-         bg-[#0cc0df] text-black text-xs font-semibold
-         hover:brightness-95 active:scale-95 transition"
-  aria-expanded="false">
-  <i class="fa-regular fa-circle-question"></i>
-  <span>Hướng dẫn</span>
-</button>
-</div>
+                
                 <div class="flex md:flex-row xs: flex-col gap-10 xs:mx-0 md:mx-14">
                     <div class="w-full">
                         <h1
@@ -1605,8 +1590,19 @@
                         </label>
                     </div>
                 </div>
-                <div class="flex md:flex-row xs:flex-col justify-center xs:mt-[20px] md:mt-0">
-                    <div class="xs:block md:hidden mx-auto">
+                <div class="flex xs:flex-col sm:flex-row md:flex-col lg:flex-row justify-between xs:mt-5 lg:mt-0 lg:px-[60px]">
+                    <div class="flex justify-center items-end">
+    <button id="guideBtn" type="button"
+  class="inline-flex items-center gap-2 px-3 h-8 rounded-full
+         bg-[#0cc0df] text-black text-xs font-semibold
+         hover:brightness-95 active:scale-95 transition"
+  aria-expanded="false">
+  <i class="fa-regular fa-circle-question"></i>
+  <span>Hướng dẫn</span>
+</button>
+</div>
+                <div class="flex sm:flex-row xs:flex-col justify-center xs:mt-[20px] md:mt-0">
+                    <div class="xs:block md:hidden mx-auto sm:mt-5 md:mt-0 sm:mr-5 md:mr-0">
                         <div class="">
                             <button type="submit" id="submitBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
                                         rounded-full shadow-sm text-sm font-bold text-white
@@ -1616,7 +1612,7 @@
                         </div>
                     </div>
                     <div class="flex justify-center mt-5 gap-5">
-                        <div class="xs:hidden md:block">
+                        <div class="xs:hidden md:block ">
                             <div class="">
                                 <button type="submit" id="submitBtn" class="bg-[#F05454] transition-all duration-300 ease-in-out text-white sm:w-[10rem] xs:w-[150px] xs:h-[36px] flex items-center justify-around py-2 px-4
                                         rounded-full shadow-sm text-sm font-bold text-white
@@ -1657,6 +1653,7 @@
                         </div>
                     </div>
                 </div>
+                </div>
 
                 <!-- 4. Loading icon -->
                 <div id="loading" class="loading text-center py-4">
@@ -1680,7 +1677,7 @@
                 <div
                     class="bg-[#F5F5F5] md:rounded-3xl shadow-[0px_14px_28px_rgba(0,0,0,0.25),_0px_10px_10px_rgba(0,0,0,0.22)] p-6 sm:w-full xs:w-[375px] xs:rounded-2xl max-w-mdx text-center break-after-column">
                     <h1
-                        class="text-2xl font-bold text-gray-800 mb-6 bg-[#30475E] text-white p-2 text-center rounded-full">
+                        class="text-2xl font-bold text-gray-800 mb-6 bg-gray-600 text-white p-2 text-center rounded-full">
                         Kết quả xử lý</h1>
                     <form id="uploadFormx" class="space-y-4">
                         <!-- 4. Loading icon -->
@@ -1715,7 +1712,7 @@
                     <!-- Nút chỉ hiện ở Autolook V2 -->
                     <div id="editAgainWrap" class="mt-3 hidden">
                         <button id="editAgainBtn" type="button"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#30475e] text-white font-semibold">
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F05454] text-white font-semibold">
                             <!-- icon tùy ý, có thể bỏ -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -3143,7 +3140,7 @@
                 const boxPrompt = document.getElementById('boxPrompt'); // Prompt
                 if (!btnUpload || !btnPrompt || !boxUpload || !boxPrompt) return;
 
-                const ACTIVE = ['bg-[#F05454]', 'text-white'];
+                const ACTIVE = ['bg-[#30475E]', 'text-white'];
                 const INACTIVE = ['bg-[#F1F5F9]', 'text-gray-800'];
 
                 const setBtn = (el, add, remove) => {
@@ -3220,6 +3217,9 @@
                             </button>
                             <button id="btnEraser" class="h-[55px] w-[55px] rounded-lg" title="Eraser">
                                 <i class="fa-solid fa-eraser text-3xl opacity-70"></i>
+                            </button>
+                            <button id="btnFill" class="h-[55px] w-[55px] rounded-lg" title="Fill">
+                                <i class="fa-solid fa-fill-drip text-3xl opacity-70"></i>
                             </button>
                         </div>
                     </div>
@@ -3722,6 +3722,14 @@
                     btnEraser.classList.add("sidebar-active");
                     btnPencil.classList.remove("sidebar-active");
                 });
+btnFill?.addEventListener("click", () => {
+  tool = "fill";
+  setCursorActive(false);                 // fill theo click, không cần brush cursor
+  // đổi style nút đang chọn
+  btnBrush?.classList.remove("sidebar-active");
+  btnEraser?.classList.remove("sidebar-active");
+  btnFill?.classList.add("sidebar-active");
+});
 
                 // Tính toạ độ vẽ trong hệ toạ độ ảnh (stage space)
                 function pointerToImageCoord(e) {
@@ -3793,40 +3801,30 @@
             });
         </script>
 
-        <script>
-            (() => {
-                const btn = document.getElementById('modeBtn');
-                const menu = document.getElementById('modeMenu');
-                const label = document.getElementById('modeLabel');
+       <script>
+(() => {
+  const btn = document.getElementById('modeBtn');
+  const menu = document.getElementById('modeMenu');
+  const label = document.getElementById('modeLabel');
 
-                // Toggle mở/đóng
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    menu.classList.toggle('hidden');
-                });
+  btn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.toggle('hidden'); });
+  document.addEventListener('click', () => menu.classList.add('hidden'));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') menu.classList.add('hidden'); });
 
-                // Đóng khi click ra ngoài hoặc nhấn Esc
-                document.addEventListener('click', () => menu.classList.add('hidden'));
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') menu.classList.add('hidden');
-                });
+  menu.querySelectorAll('[data-target]').forEach(item => {
+    item.addEventListener('click', () => {
+      const href = item.getAttribute('data-target');
+      label.textContent = item.textContent.trim();
+      window.location.href = href;
+    });
+  });
 
-                // Chọn mục -> đổi label + điều hướng
-                menu.querySelectorAll('[data-target]').forEach(item => {
-                    item.addEventListener('click', () => {
-                        const href = item.getAttribute('data-target');
-                        label.textContent = item.textContent.trim();
-                        window.location.href = href;
-                    });
-                });
+  const path = location.pathname;
+  if (path.includes('ghep-anhv2.html')) label.textContent = 'Thủ công';
+  else if (path.includes('ghep-anh.html')) label.textContent = 'Tự động';
+})();
+</script>
 
-                // Khởi tạo label theo trang hiện tại
-                const path = location.pathname;
-                if (path.includes('ghep-anhv2.html')) label.textContent = 'Thủ công';
-                else if (path.includes('ghep-anh.html')) label.textContent = 'Tự động';
-            })();
-        </script>
-        
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   // ===== DOM =====
@@ -3843,6 +3841,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const toolbar = popup.querySelector('header .flex.gap-3');
   const btnUndo = toolbar?.querySelector('i.fa-reply')?.closest('button') || null;
   const btnRedo = toolbar?.querySelector('i.fa-share')?.closest('button') || null;
+  const btnFill = document.getElementById("btnFill");
   const btnByText = (label) => {
     if (!toolbar) return null;
     return Array.from(toolbar.querySelectorAll('button'))
@@ -3878,7 +3877,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const w = parseFloat(paint.style.width)  || paint.width;
       const h = parseFloat(paint.style.height) || paint.height;
       pctx.save();
-      // context đã setTransform(dpr,...), nên dùng đơn vị CSS px
       pctx.globalCompositeOperation = 'source-over';
       pctx.globalAlpha = 1;
       pctx.clearRect(0, 0, w, h);
@@ -3902,7 +3900,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===== STATE =====
-  let tool = null;          // 'paint' | 'erase' | null
+  // tool: 'paint' | 'erase' | 'fill' | null
+  let tool = null;
   let drawing = false;
   let brushSize    = +sizeSlider?.value || 24;
   let brushOpacity = +opacitySlider?.value ?? 1;
@@ -3912,82 +3911,66 @@ document.addEventListener("DOMContentLoaded", () => {
   if (colorSelect) colorSelect.value = "black";
   let brushColor = (colorSelect?.value || "black").toLowerCase();
 
-  // ===== Cursor CSS (inject) =====
+  // ===== Cursor overlay (global, fixed) =====
+  // CSS cho con trỏ: dùng position:fixed để bám tuyệt đối vào clientX/clientY
   const styleTag = document.createElement('style');
   styleTag.textContent = `
-    .brush-cursor{
-      position:absolute;
-      width:20px;height:20px;
-      border:1.5px solid #ffffff;
-      pointer-events:none;
-      display:none;
-      mix-blend-mode:difference;
-      z-index:40;
-      transform:translate(-50%,-50%);
-    }
+    .brush-cursor{position:fixed;width:20px;height:20px;border:1.5px solid #ffffff;pointer-events:none;display:none;mix-blend-mode:difference;z-index:2147483647;transform:translate(-50%,-50%)}
     .brush-cursor.circle{ border-radius:50%; }
     .brush-cursor.square{ border-radius:0; }
     .shape-active{ outline:2px solid #111; outline-offset:2px; }
+    .sidebar-active{ background-color:#30475e; }
+    .sidebar-active i, .sidebar-active span{ color:#fff !important; }
   `;
   document.head.appendChild(styleTag);
 
-  // ===== Cursor layer dính theo paint =====
-  const cursorLayer = document.createElement('div');
-  Object.assign(cursorLayer.style, {
-    position: 'absolute',
-    left: '0px', top: '0px', width: '0px', height: '0px',
-    pointerEvents: 'none', zIndex: 40
-  });
-  const cursorCircle = document.createElement('div');
-  cursorCircle.className = 'brush-cursor circle';
-  const cursorSquare = document.createElement('div');
-  cursorSquare.className = 'brush-cursor square';
-  cursorLayer.appendChild(cursorCircle);
-  cursorLayer.appendChild(cursorSquare);
-  stage.appendChild(cursorLayer);
+  // Tạo 2 con trỏ đặt trực tiếp vào body (không phụ thuộc stage/viewport)
+  let cursorCircle = document.getElementById('__brushCircle');
+  let cursorSquare = document.getElementById('__brushSquare');
+  if (!cursorCircle) {
+    cursorCircle = document.createElement('div');
+    cursorCircle.id = '__brushCircle';
+    cursorCircle.className = 'brush-cursor circle';
+    document.body.appendChild(cursorCircle);
+  }
+  if (!cursorSquare) {
+    cursorSquare = document.createElement('div');
+    cursorSquare.id = '__brushSquare';
+    cursorSquare.className = 'brush-cursor square';
+    document.body.appendChild(cursorSquare);
+  }
 
   // shape hiện tại
   let cursorShape = 'circle';
 
   function setCursorActive(active){
-    const show = (el) => el.style.display = active ? 'block' : 'none';
-    if (cursorShape === 'circle') { show(cursorCircle); cursorSquare.style.display = 'none'; }
-    else { show(cursorSquare); cursorCircle.style.display = 'none'; }
-    paint.style.cursor = active ? 'none' : 'default';
+    const show = (el, on) => el.style.display = on ? 'block' : 'none';
+    if (!active || tool === 'fill' || !tool) {
+      show(cursorCircle, false); show(cursorSquare, false);
+      paint.style.cursor = 'default';
+      return;
+    }
+    paint.style.cursor = 'none';
     const borderColor = (tool === 'erase') ? '#00e5ff' : '#ffffff';
     cursorCircle.style.borderColor = borderColor;
     cursorSquare.style.borderColor = borderColor;
+    show(cursorCircle, cursorShape === 'circle');
+    show(cursorSquare, cursorShape === 'square');
   }
   function updateCursorSize(){
     const s = brushSize + 'px';
     cursorCircle.style.width = s; cursorCircle.style.height = s;
     cursorSquare.style.width = s; cursorSquare.style.height = s;
   }
-  // === Tính theo ĐƠN VỊ CSS PX (không nhân tỉ lệ gì thêm)
- function updateCursorPositionFromEvent(e){
-  const rect = paint.getBoundingClientRect();
-  const cx = e.touches ? e.touches[0].clientX : e.clientX;
-  const cy = e.touches ? e.touches[0].clientY : e.clientY;
-
-  // Kích thước gốc (trước transform)
-  const cssW = parseFloat(paint.style.width);
-  const cssH = parseFloat(paint.style.height);
-
-  // Tỉ lệ zoom
-  const scaleX = rect.width / cssW;
-  const scaleY = rect.height / cssH;
-
-  // Toạ độ "trước zoom"
-  const xPre = (cx - rect.left) / scaleX;
-  const yPre = (cy - rect.top)  / scaleY;
-
-  // Đặt vào cursor (cursor là child của stage, không scale)
-  cursorCircle.style.left = (parseFloat(paint.style.left) + xPre) + 'px';
-  cursorCircle.style.top  = (parseFloat(paint.style.top)  + yPre) + 'px';
-  cursorSquare.style.left = (parseFloat(paint.style.left) + xPre) + 'px';
-  cursorSquare.style.top  = (parseFloat(paint.style.top)  + yPre) + 'px';
-}
-
+  function updateCursorPositionFromEvent(e){
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    // Bám thẳng theo tọa độ viewport → KHÔNG bao giờ lệch
+    cursorCircle.style.left = cx + "px";
+    cursorCircle.style.top  = cy + "px";
+    cursorSquare.style.left = cx + "px";
+    cursorSquare.style.top  = cy + "px";
+  }
   function pointerInsidePaint(e){
     const rp = paint.getBoundingClientRect();
     const cx = e.touches ? e.touches[0].clientX : e.clientX;
@@ -4011,16 +3994,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ===== Bật công cụ =====
-  btnBrush?.addEventListener("click", () => { tool = "paint"; setCursorActive(true); });
-  btnEraser?.addEventListener("click", () => { tool = "erase"; setCursorActive(true); });
+  // ===== Chọn tool (độc quyền active) =====
+  function setActiveTool(next){
+    tool = next;
+    [btnBrush, btnEraser, btnFill].forEach(b => b?.classList.remove("sidebar-active"));
+    if (next === 'paint') btnBrush?.classList.add("sidebar-active");
+    if (next === 'erase') btnEraser?.classList.add("sidebar-active");
+    if (next === 'fill')  btnFill?.classList.add("sidebar-active");
+    setCursorActive(next === 'paint' || next === 'erase');
+  }
+  btnBrush?.addEventListener("click", () => setActiveTool("paint"));
+  btnEraser?.addEventListener("click", () => setActiveTool("erase"));
+  btnFill ?.addEventListener("click", ()  => setActiveTool("fill"));
 
-  // ===== Chuyển shape con trỏ =====
+  // ===== Shape switch =====
   function setShape(shape){
     cursorShape = shape;
     btnShapeCircle?.classList.toggle('shape-active', shape === 'circle');
     btnShapeSquare?.classList.toggle('shape-active', shape === 'square');
-    setCursorActive(!!tool);
+    setCursorActive(tool === 'paint' || tool === 'erase');
   }
   btnShapeCircle?.addEventListener('click', () => setShape('circle'));
   btnShapeSquare?.addEventListener('click', () => setShape('square'));
@@ -4031,14 +4023,17 @@ document.addEventListener("DOMContentLoaded", () => {
     imgTag.src = URL.createObjectURL(f);
   });
 
-  // ===== Đồng bộ layer (CÓ DPR, nhưng vẽ bằng CSS PX) =====
+  // ===== Đồng bộ layer (ổn định sau đóng/mở) =====
   function syncAndDraw() {
     const dpr  = window.devicePixelRatio || 1;
     const rImg = imgTag.getBoundingClientRect();
     const rView= viewport.getBoundingClientRect();
 
+    if (getComputedStyle(stage).position === 'static') {
+      stage.style.position = 'relative';
+    }
+
     for (const c of [imgLayer, paint]) {
-      // CSS size/pos
       Object.assign(c.style, {
         position: "absolute",
         left:   (rImg.left - rView.left) + "px",
@@ -4048,27 +4043,13 @@ document.addEventListener("DOMContentLoaded", () => {
         pointerEvents: "auto",
         zIndex: c === imgLayer ? 20 : 30
       });
-      // Device pixels
       c.width  = Math.max(1, Math.round(rImg.width  * dpr));
       c.height = Math.max(1, Math.round(rImg.height * dpr));
-      // Scale context → ta sẽ vẽ bằng đơn vị CSS px
       const ctx = (c === imgLayer ? ictx : pctx);
-      const rect = paint.getBoundingClientRect();
-const scaleX = paint.width / rect.width;
-const scaleY = paint.height / rect.height;
-ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
-
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    // cursor layer trùng paint (CSS px)
-    Object.assign(cursorLayer.style, {
-      left: paint.style.left,
-      top: paint.style.top,
-      width: paint.style.width,
-      height: paint.style.height
-    });
-
-    // Vẽ ảnh nền (dùng CSS px)
+    // Nền
     const cssW = parseFloat(imgLayer.style.width);
     const cssH = parseFloat(imgLayer.style.height);
     ictx.clearRect(0, 0, cssW, cssH);
@@ -4077,48 +4058,114 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     ensureHistoryInit();
     imgTag.style.visibility = "hidden";
 
-    // Reset trạng thái vẽ khi popup mở/resize
-    if (tool) setCursorActive(true);
+    setCursorActive(tool === 'paint' || tool === 'erase');
   }
 
-  imgTag.addEventListener("load", () => {
-    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
-  });
-  window.addEventListener("resize", () => {
-    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
-  });
+  function onPopupOpen(){ requestAnimationFrame(() => requestAnimationFrame(syncAndDraw)); }
+  imgTag.addEventListener("load", () => { if (!popup.classList.contains("hidden")) onPopupOpen(); });
+  window.addEventListener("resize", () => { if (!popup.classList.contains("hidden")) onPopupOpen(); });
+
   new MutationObserver(() => {
     if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
   }).observe(popup, { attributes: true, attributeFilter: ["class"] });
 
-  // Theo dõi style/class ảnh (zoom/pan) để resync
   new MutationObserver(() => {
-    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+    if (!popup.classList.contains("hidden")) onPopupOpen();
   }).observe(imgTag, { attributes: true, attributeFilter: ["style","class"] });
 
-  // ===== VẼ (TẤT CẢ THEO CSS PX) =====
+  // ===== VẼ (CSS px) =====
   paint.addEventListener("contextmenu", e => e.preventDefault());
 
- function getPos(evt) {
-  const rect = paint.getBoundingClientRect();
-  const cx = evt.touches ? evt.touches[0].clientX : evt.clientX;
-  const cy = evt.touches ? evt.touches[0].clientY : evt.clientY;
+  function getPos(evt) {
+    const rect = paint.getBoundingClientRect();
+    const cx = evt.touches ? evt.touches[0].clientX : evt.clientX;
+    const cy = evt.touches ? evt.touches[0].clientY : evt.clientY;
+    const cssW = parseFloat(paint.style.width)  || rect.width;
+    const cssH = parseFloat(paint.style.height) || rect.height;
+    const scaleX = rect.width  / cssW;
+    const scaleY = rect.height / cssH;
+    return { x: (cx - rect.left) / scaleX, y: (cy - rect.top) / scaleY };
+  }
 
-  // Kích thước gốc (CSS px chưa zoom)
-  const cssW = parseFloat(paint.style.width);
-  const cssH = parseFloat(paint.style.height);
+  function cssToCanvasPixel(xCss, yCss){
+    const rect = paint.getBoundingClientRect();
+    const cssW = parseFloat(paint.style.width)  || rect.width;
+    const cssH = parseFloat(paint.style.height) || rect.height;
+    const scaleX = paint.width  / cssW;
+    const scaleY = paint.height / cssH;
+    let x = Math.floor(xCss * scaleX);
+    let y = Math.floor(yCss * scaleY);
+    if (x < 0) x = 0; if (y < 0) y = 0;
+    if (x >= paint.width)  x = paint.width - 1;
+    if (y >= paint.height) y = paint.height - 1;
+    return {x, y};
+  }
 
-  // Tỉ lệ zoom hiện tại
-  const scaleX = rect.width  / cssW;
-  const scaleY = rect.height / cssH;
+  // Màu brush / fill
+  function colorFromBrush(){
+    const a = Math.max(0, Math.min(1, brushOpacity));
+    const A = Math.round(a * 255);
+    if (brushColor === "white") return {r:255,g:255,b:255,a:A};
+    return {r:0,g:0,b:0,a:A};
+  }
+  function colorForFill(){
+    if (brushColor === "white") return {r:255,g:255,b:255,a:255};
+    return {r:0,g:0,b:0,a:255};
+  }
 
-  // Toạ độ chuẩn theo canvas (CSS px)
-  return {
-    x: (cx - rect.left) / scaleX,
-    y: (cy - rect.top)  / scaleY
-  };
-}
+  // FILL: chỉ lấp alpha==0; chặn rò mép và vùng quá lớn
+  function floodFillAt(xCss, yCss){
+    const {x:sx, y:sy} = cssToCanvasPixel(xCss, yCss);
+    const w = paint.width, h = paint.height;
+    const img = pctx.getImageData(0, 0, w, h);
+    const data = img.data;
 
+    const idx0 = (sy * w + sx) * 4;
+    if (data[idx0+3] !== 0) return false;
+
+    const MAX_RATIO = 0.75;
+    const maxCount = Math.floor(w * h * MAX_RATIO);
+    let touchedBorder = false;
+    let count = 0;
+
+    const {r, g, b, a} = colorForFill();
+    const stack = [[sx, sy]];
+    const mark = new Uint8Array(w * h);
+
+    const can = (px, py) => {
+      if (px < 0 || px >= w || py < 0 || py >= h) return false;
+      const i = (py * w + px);
+      if (mark[i]) return false;
+      const di = i * 4;
+      return (data[di+3] === 0);
+    };
+
+    while (stack.length){
+      let [x, y] = stack.pop();
+      let xl = x; while (can(xl-1, y)) xl--;
+      let xr = x; while (can(xr+1, y)) xr++;
+
+      for (let xi = xl; xi <= xr; xi++){
+        const i = (y * w + xi);
+        mark[i] = 1; count++;
+        if (xi === 0 || xi === w-1 || y === 0 || y === h-1) touchedBorder = true;
+        if (can(xi, y-1)) stack.push([xi, y-1]);
+        if (can(xi, y+1)) stack.push([xi, y+1]);
+      }
+      if (count > maxCount) { touchedBorder = true; break; }
+    }
+
+    if (touchedBorder) return false;
+
+    for (let i = 0; i < mark.length; i++){
+      if (mark[i]){
+        const di = i * 4;
+        data[di]   = r; data[di+1] = g; data[di+2] = b; data[di+3] = a;
+      }
+    }
+    pctx.putImageData(img, 0, 0);
+    return true;
+  }
 
   function applyStrokeStyle(){
     if (tool === "erase") {
@@ -4129,10 +4176,8 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
       pctx.globalAlpha = brushOpacity;
       pctx.strokeStyle = (brushColor === "white") ? "#fff" : "#000";
     }
-    // Kiểu nét
     if (cursorShape === 'square') { pctx.lineCap = "square"; pctx.lineJoin = "miter"; }
     else                          { pctx.lineCap = "round";  pctx.lineJoin = "round"; }
-    // lineWidth theo CSS px (context đã scale theo dpr)
     pctx.lineWidth = brushSize;
   }
 
@@ -4140,11 +4185,18 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     if (e.button !== undefined && e.button !== 0) return;
     const cssW = parseFloat(paint.style.width || 0);
     if (cssW < 2) return;
-    if (!tool) return;
 
+    if (tool === "fill") {
+      const p = getPos(e);
+      const ok = floodFillAt(p.x, p.y);
+      if (ok) pushHistory();
+      e.preventDefault();
+      return;
+    }
+
+    if (!tool) return;
     const p = getPos(e);
     drawing = true;
-
     pctx.save();
     applyStrokeStyle();
     pctx.beginPath();
@@ -4158,12 +4210,13 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
   }
 
   function move(e){
-    // cập nhật vị trí con trỏ theo CSS px
+    // Cập nhật con trỏ theo clientX/Y (chính xác tuyệt đối)
     updateCursorPositionFromEvent(e);
+
     if (!pointerInsidePaint(e)) {
       cursorCircle.style.display = 'none';
       cursorSquare.style.display = 'none';
-    } else if (tool) {
+    } else if (tool && tool!=='fill') {
       setCursorActive(true);
     }
 
@@ -4184,21 +4237,21 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     pushHistory();
   }
 
-  // Rê chuột: cập nhật cursor kể cả khi không vẽ
+  // Hover cursor (trong vùng paint)
   paint.addEventListener("mousemove", (e) => {
-    if (!tool) return;
+    if (!tool || tool==='fill') return;
     updateCursorPositionFromEvent(e);
     if (pointerInsidePaint(e)) setCursorActive(true);
     else { cursorCircle.style.display = 'none'; cursorSquare.style.display = 'none'; }
   });
   paint.addEventListener("mouseleave", () => { cursorCircle.style.display = 'none'; cursorSquare.style.display = 'none'; });
   paint.addEventListener("mouseenter", (e) => {
-    if (!tool) return;
+    if (!tool || tool==='fill') return;
     setCursorActive(true);
     updateCursorPositionFromEvent(e);
   });
 
-  // Touch
+  // Mouse / Touch
   paint.addEventListener("mousedown", begin);
   paint.addEventListener("touchstart", (e) => { begin(e); }, { passive: false });
   paint.addEventListener("touchmove",  (e) => { move(e);  }, { passive: false });
@@ -4219,7 +4272,6 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     drawStateFromURL(next);
   });
 
-  // Invert paint layer (CSS px)
   btnInvert?.addEventListener('click', () => {
     const w = parseFloat(paint.style.width)  || paint.width;
     const h = parseFloat(paint.style.height) || paint.height;
@@ -4231,7 +4283,6 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     pushHistory();
   });
 
-  // Xoá hết lớp tô
   btnClear?.addEventListener('click', () => {
     const w = parseFloat(paint.style.width)  || paint.width;
     const h = parseFloat(paint.style.height) || paint.height;
@@ -4239,7 +4290,6 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     pushHistory();
   });
 
-  // Lưu (xuất theo DPR chuẩn)
   btnSave?.addEventListener('click', () => {
     const dpr  = window.devicePixelRatio || 1;
     const cssW = parseFloat(imgLayer.style.width);
@@ -4249,7 +4299,7 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     out.width  = Math.max(1, Math.round(cssW * dpr));
     out.height = Math.max(1, Math.round(cssH * dpr));
     const octx = out.getContext('2d');
-    octx.setTransform(dpr,0,0,dpr,0,0); // vẽ bằng CSS px
+    octx.setTransform(dpr,0,0,dpr,0,0);
 
     octx.drawImage(imgLayer, 0, 0, cssW, cssH);
     octx.drawImage(paint,    0, 0, cssW, cssH);
@@ -4265,18 +4315,20 @@ ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     }
 
     imgTag.src = dataURL;
-    pctx.clearRect(0, 0, cssW, cssH);
+    const w = parseFloat(paint.style.width)  || paint.width;
+    const h = parseFloat(paint.style.height) || paint.height;
+    pctx.clearRect(0, 0, w, h);
     undoStack = []; redoStack = []; historyInitialized = false; ensureHistoryInit();
 
     popup.classList.add('hidden');
-    tool = null;
-    setCursorActive(false);
+    setActiveTool(null);
   });
 
-  // Nếu popup đang mở sẵn thì sync ngay
-  if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
+  if (!popup.classList.contains("hidden")) onPopupOpen();
 });
 </script>
+
+
 
 
 
