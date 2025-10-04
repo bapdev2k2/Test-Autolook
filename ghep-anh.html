@@ -18,6 +18,21 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <style>
+        canvas { 
+    border:1px dashed #999; 
+    border-radius:8px; 
+    touch-action: none; 
+    display:block; 
+    max-width:80%; 
+    width:500px; 
+    height:auto; 
+  }
+  #mask { 
+    position:absolute; 
+    top:0; 
+    left:0; 
+    pointer-events:none; 
+  }
         * {
             font-family: "Montserrat", sans-serif;
             font-optical-sizing: auto;
@@ -341,27 +356,20 @@
 </style>
 
 <style>
-    /* Brush/Eraser circle cursor */
-.brush-cursor{
-  position:absolute;
+.brush-cursor,
+.brush-cursor-square{
+  position: fixed;          /* was absolute */
   width:20px;height:20px;
   border:1.5px solid #ffffff;
   border-radius:50%;
   pointer-events:none;
   display:none;
-  mix-blend-mode:difference; /* dễ nhìn trên mọi nền */
-  z-index: 9999;
-} 
-.brush-cursor-square {
-  position: absolute;
-  width: 20px; height: 20px;
-  border: 1.5px solid #ffffff;
-  border-radius: 0; /* vuông */
-  pointer-events: none;
-  display: none;
-  mix-blend-mode: difference;
-  z-index: 9999;
+  mix-blend-mode:difference;
+  z-index: 99999;
+  transform: translate(-50%, -50%); /* tâm trùng điểm chuột */
 }
+.brush-cursor-square{ border-radius:0; }
+
 
 
 </style>
@@ -1548,23 +1556,34 @@
                         <h1
                             class="text-lg font-bold text-gray-800 mb-4 bg-gradient-to-r from-pink-500 to-red-400 text-white p-1 text-center rounded-full">
                             Ảnh người mẫu</h1>
-                        <label for="imageInput"
-                            class="relative w-full h-[30vh] border-2 border-dashed border-gray-300 rounded-xl cursor-pointer flex items-center justify-center overflow-hidden group">
-                            <!-- Ảnh xem trước -->
-                            <img id="previewImage"
-                                class="absolute top-0 left-0 w-full h-full object-contain hidden z-10 flex">
+                        
+                                <style>
+                                    #wrap { position: relative; display: inline-block; }
+  
+                                </style>
+                                
+<div class="toolbar">
 
-                            <!-- Icon + Text nếu chưa có ảnh -->
-                            <div id="placeholderContent"
-                                class="text-center text-gray-400 flex flex-col items-center justify-center z-0 group-hover:text-gray-700">
-                                <i class="fas fa-cloud-upload-alt text-4xl mb-2"></i>
-                                <span class="text-sm">Nhấn hoặc kéo ảnh vào đây</span>
-                            </div>
-
-                            <!-- Input ẩn -->
-                            <input type="file" id="imageInput" accept="image/*"
-                                class="absolute inset-0 opacity-0 cursor-pointer z-20">
-                        </label>
+    <label
+                              class="relative w-full h-[30vh] border-2 border-dashed border-gray-300 rounded-xl cursor-pointer flex items-center justify-center overflow-hidden group">
+                              <!-- Ảnh xem trước -->
+                              <img id="previewImage"
+                                  class="absolute top-0 left-0 w-full h-full object-contain hidden z-10">
+  
+                              <!-- Icon + Text nếu chưa có ảnh -->
+                              <div id="placeholderContent"
+                                  class="text-center text-gray-400 flex flex-col items-center justify-center z-0 group-hover:text-gray-700">
+                                  <i class="fas fa-cloud-upload-alt text-4xl mb-2"></i>
+                                  <span class="text-sm">Nhấn hoặc kéo ảnh vào đây</span>
+                              </div>
+  
+                              <!-- Input ẩn -->
+                              <input type="file" id="file" accept="image/*"
+                                  class="absolute inset-0 opacity-0 cursor-pointer z-20">
+                          </label>
+</div>
+  
+                        
                     </div>
 
                     <div class="w-full">
@@ -3187,18 +3206,18 @@
                 <header class="h-16 flex items-center px-6 gap-10 bg-white rounded-t-xl">
                     <h1 class="text-3xl font-bold xs:hidden sm:block">Autolook</h1>
                     <div class="flex gap-3">
-                        <button
+                        <button id="undo"
                             class="bg-[#F05454] hover:bg-[#30475E] text-white px-2 rounded-lg sm:w-[40px] xs:w[66px]"><i
                                 class="fas fa-reply"></i></button>
-                        <button
-                            class="bg-[#F05454] hover:bg-[#30475E] text-white px-2 rounded-lg sm:w-[40px] xs:w[66px]"><i
-                                class="fas fa-share"></i></button>
                         
-                        <button 
+                        
+                        <button id="reset"
                             class="bg-[#F05454] hover:bg-[#30475E] text-white px-2 rounded-lg sm:w-[100px] xs:w[66px]">Xoá
                             hết</button>
                         <button
                             class="bg-[#F05454] hover:bg-[#30475E] text-white px-2 rounded-lg sm:w-[100px] xs:w[66px]">Lưu</button>
+                            <button id="download"
+                            class="bg-[#F05454] hover:bg-[#30475E] text-white px-2 rounded-lg sm:w-[100px] xs:w[66px]"> Tải ảnh mask</button>
                     </div>
 
                     <!-- Đóng popup -->
@@ -3222,6 +3241,7 @@
                                 <i class="fa-solid fa-fill-drip text-3xl opacity-70"></i>
                             </button>
                         </div>
+                        <div id="cursor" class="brush-cursor"></div>
                     </div>
 
                     <!-- Khu vực viewport giữa -->
@@ -3231,8 +3251,10 @@
                             <div id="stage" class="absolute inset-0 will-change-transform">
                                 <img id="zoomableImage" src=""
                                     class="block max-w-none pointer-events-none select-none" />
-                                <canvas id="imgLayer" class="absolute inset-0 block max-w-none"></canvas>
-                                <canvas id="paintLayer" class="absolute inset-0 block max-w-none"></canvas>
+                                <div id="wrap">
+    <canvas id="main"></canvas>
+    <canvas id="mask"></canvas>
+  </div>
                             </div>
                         </div>
 
@@ -3257,46 +3279,22 @@
                         <div class="flex flex-col justify-center gap-7 pt-4">
                             <h1 class="text-lg mt-2 text-center">Điều chỉnh con trỏ</h1>
                             <button class="bg-gray-400 rounded-lg py-2">Con trỏ mặc định</button>
-
-                            <div>
-  <h2 class="text-sm">Hình dạng con trỏ</h2>
-  <div class="flex gap-3 p-2 bg-gray-200 rounded-lg">
-    <button id="btnShapeCircle" class="w-[35px] h-[35px] rounded-full bg-gray-400" title="Nét tròn"></button>
-    <button id="btnShapeSquare" class="w-[35px] h-[35px] bg-gray-400" title="Nét vuông"></button>
-  </div>
-</div>
-<div id="stage" class="relative">
-  <!-- ... zoomableImage, canvases ... -->
-  <div id="cursorCircle" class="brush-cursor circle"></div>
-  <div id="cursorSquare" class="brush-cursor square"></div>
-</div>
-
-
                             <div class="space-y-3">
                                 <label class="grid">
-                                    <span class="text-sm">Kích thước con trỏ</span>
-                                    <input type="range" id="brushSize" min="1" max="100" step="1" value="23">
-                                </label>
-                                <label class="grid">
-                                    <span class="text-sm">Độ trong suốt</span>
-                                    <input type="range" id="brushAlpha" min="0" max="1" step="0.01" value="0.7">
-                                </label>
-                                <label class="grid">
-                                    <span class="text-sm">Độ cứng</span>
-                                    <input type="range" id="brushHardness" min="0" max="1" step="0.01" value="1">
-                                </label>
-                                <label class="grid">
-                                    <span class="text-sm">Làm mịn độ chính xác</span>
-                                    <input type="range" id="brushSmooth" min="1" max="100" step="1" value="10">
-                                </label>
+                                    <span class="text-sm">Kích cỡ cọ</span>
+                                    <input id="size" type="range" min="5" max="150" value="40" />
+                                </label> 
                             </div>
 
                             <div>
                                 <h2 class="text-sm">Màu con trỏ</h2>
-                                <select id="brushColorSelect" class="p-2 bg-gray-200 rounded-lg">
-                                    <option value="black" selected>black</option>
-                                    <option value="white">white</option>
-                                </select>
+                                <select id="markColor">
+        <option value="red">Đỏ</option>
+        <option value="black" selected>Đen</option>
+        <option value="white">Trắng</option>
+        <option value="blue">Xanh</option>
+        <option value="brown">Nâu</option>
+      </select>
                             </div>
                         </div>
                     </div>
@@ -3680,126 +3678,7 @@
                 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
             });
         </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const viewport = document.getElementById("viewport");
-                const img = document.getElementById("zoomableImage");
-                const canvas = document.getElementById("paintLayer");
-                const ctx = canvas.getContext("2d");
-
-                const btnPencil = document.getElementById("btnPencil");
-                const btnEraser = document.getElementById("btnEraser");
-
-                // ---- brush settings (có thể nối với UI slider sau) ----
-                let tool = "brush";                 // "brush" | "eraser"
-                let brushSize = 14;                 // px
-                let brushOpacity = 1.0;             // 0..1
-                let brushColor = "#000000";         // mặc định đen
-                let isDrawing = false;
-
-                // Fit canvas theo kích thước ảnh gốc
-                function sizeCanvasToImage() {
-                    const iw = img.naturalWidth || img.width;
-                    const ih = img.naturalHeight || img.height;
-                    if (!iw || !ih) return;
-                    // Canvas vẽ theo pixel thật của ảnh
-                    canvas.width = iw;
-                    canvas.height = ih;
-                }
-
-                // Gọi khi ảnh load & khi fitToView()
-                img.addEventListener("load", sizeCanvasToImage);
-                if (img.complete) sizeCanvasToImage();
-
-                // Đổi tool
-                btnPencil.addEventListener("click", () => {
-                    tool = "brush";
-                    btnPencil.classList.add("sidebar-active");
-                    btnEraser.classList.remove("sidebar-active");
-                });
-                btnEraser.addEventListener("click", () => {
-                    tool = "eraser";
-                    btnEraser.classList.add("sidebar-active");
-                    btnPencil.classList.remove("sidebar-active");
-                });
-btnFill?.addEventListener("click", () => {
-  tool = "fill";
-  setCursorActive(false);                 // fill theo click, không cần brush cursor
-  // đổi style nút đang chọn
-  btnBrush?.classList.remove("sidebar-active");
-  btnEraser?.classList.remove("sidebar-active");
-  btnFill?.classList.add("sidebar-active");
-});
-
-                // Tính toạ độ vẽ trong hệ toạ độ ảnh (stage space)
-                function pointerToImageCoord(e) {
-                    const rect = viewport.getBoundingClientRect();
-                    const px = e.clientX - rect.left; // toạ độ trong viewport
-                    const py = e.clientY - rect.top;
-                    // chuyển về stage/ảnh: trừ pan rồi chia scale
-                    const x = (px - window.originX) / window.scale;
-                    const y = (py - window.originY) / window.scale;
-                    return { x, y };
-                }
-
-                // Bắt đầu vẽ
-                viewport.addEventListener("pointerdown", (e) => {
-                    // Không vẽ khi đang pan bằng Space hoặc khi bấm nút giữa/ phải
-                    if (window.spaceDown || e.button !== 0) return;
-
-                    isDrawing = true;
-                    viewport.setPointerCapture(e.pointerId);
-
-                    const p = pointerToImageCoord(e);
-                    ctx.lineCap = "round";
-                    ctx.lineJoin = "round";
-                    ctx.lineWidth = brushSize;
-
-                    if (tool === "brush") {
-                        ctx.globalCompositeOperation = "source-over";
-                        ctx.strokeStyle = hexWithAlpha(brushColor, brushOpacity);
-                    } else {
-                        // Eraser: xoá nét vẽ
-                        ctx.globalCompositeOperation = "destination-out";
-                        ctx.strokeStyle = "rgba(0,0,0,1)";
-                    }
-
-                    ctx.beginPath();
-                    ctx.moveTo(p.x, p.y);
-                });
-
-                viewport.addEventListener("pointermove", (e) => {
-                    if (!isDrawing) return;
-                    const p = pointerToImageCoord(e);
-                    ctx.lineTo(p.x, p.y);
-                    ctx.stroke();
-                });
-
-                function endDraw(e) {
-                    if (!isDrawing) return;
-                    isDrawing = false;
-                    try { viewport.releasePointerCapture(e.pointerId); } catch { }
-                    ctx.closePath();
-                }
-                viewport.addEventListener("pointerup", endDraw);
-                viewport.addEventListener("pointerleave", endDraw);
-                viewport.addEventListener("pointercancel", endDraw);
-
-                // Helper thêm alpha cho màu hex
-                function hexWithAlpha(hex, alpha) {
-                    // hex "#RRGGBB"
-                    const r = parseInt(hex.slice(1, 3), 16);
-                    const g = parseInt(hex.slice(3, 5), 16);
-                    const b = parseInt(hex.slice(5, 7), 16);
-                    return `rgba(${r},${g},${b},${alpha})`;
-                }
-
-                // Nếu bạn có hàm fitToView() đã viết trước đó, hãy gọi lại sizeCanvasToImage() ngay sau khi fit
-                // ví dụ:
-                // const oldFit = window.fitToView;
-                // window.fitToView = function() { oldFit(); sizeCanvasToImage(); };
-            });
-        </script>
+       
 
        <script>
 (() => {
@@ -3825,512 +3704,8 @@ btnFill?.addEventListener("click", () => {
 })();
 </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // ===== DOM =====
-  const popup    = document.getElementById("popupOverlay");
-  const viewport = popup.querySelector("#viewport");
-  const stage    = popup.querySelector("#stage");
-  const imgTag   = stage.querySelector("#zoomableImage");
-  const imgLayer = stage.querySelector("#imgLayer");   // nền ảnh
-  const paint    = stage.querySelector("#paintLayer"); // lớp tô
-  const ictx = imgLayer.getContext("2d");
-  const pctx = paint.getContext("2d");
 
-  // ===== TOOLBAR BUTTONS =====
-  const toolbar = popup.querySelector('header .flex.gap-3');
-  const btnUndo = toolbar?.querySelector('i.fa-reply')?.closest('button') || null;
-  const btnRedo = toolbar?.querySelector('i.fa-share')?.closest('button') || null;
-  const btnFill = document.getElementById("btnFill");
-  const btnByText = (label) => {
-    if (!toolbar) return null;
-    return Array.from(toolbar.querySelectorAll('button'))
-      .find(b => (b.textContent || "").trim().includes(label)) || null;
-  };
-  const btnInvert = btnByText('Đảo');
-  const btnClear  = btnByText('Xoá');
-  const btnSave   = btnByText('Lưu');
-
-  // ===== Input ảnh =====
-  const firstModelInput = document.querySelectorAll("#imageInput")[0];
-
-  // ===== Panel =====
-  const [sizeSlider, opacitySlider, hardnessSlider, smoothSlider] =
-    popup.querySelectorAll('input[type="range"]');
-  const colorSelect = document.getElementById("brushColorSelect");
-  const btnBrush = document.getElementById("btnPencil");
-  const btnEraser = document.getElementById("btnEraser");
-
-  // ===== SHAPE SWITCH BUTTONS =====
-  const btnShapeCircle = popup.querySelector('button.w-\\[35px\\].h-\\[35px\\].bg-gray-400.rounded-full');
-  const btnShapeSquare = btnShapeCircle?.parentElement?.querySelector('button.w-\\[35px\\].h-\\[35px\\].bg-gray-400:not(.rounded-full)');
-
-  // ===== HISTORY =====
-  const MAX_HISTORY = 80;
-  let undoStack = [];
-  let redoStack = [];
-  let historyInitialized = false;
-
-  function drawStateFromURL(url) {
-    const im = new Image();
-    im.onload = () => {
-      const w = parseFloat(paint.style.width)  || paint.width;
-      const h = parseFloat(paint.style.height) || paint.height;
-      pctx.save();
-      pctx.globalCompositeOperation = 'source-over';
-      pctx.globalAlpha = 1;
-      pctx.clearRect(0, 0, w, h);
-      pctx.drawImage(im, 0, 0, w, h);
-      pctx.restore();
-    };
-    im.src = url;
-  }
-  function pushHistory() {
-    try {
-      const url = paint.toDataURL('image/png');
-      undoStack.push(url);
-      if (undoStack.length > MAX_HISTORY) undoStack.shift();
-      redoStack.length = 0;
-    } catch (e) {}
-  }
-  function ensureHistoryInit() {
-    if (historyInitialized) return;
-    pushHistory();
-    historyInitialized = true;
-  }
-
-  // ===== STATE =====
-  // tool: 'paint' | 'erase' | 'fill' | null
-  let tool = null;
-  let drawing = false;
-  let brushSize    = +sizeSlider?.value || 24;
-  let brushOpacity = +opacitySlider?.value ?? 1;
-  let hardness     = +hardnessSlider?.value ?? 1;
-  let smoothSteps  = +smoothSlider?.value || 10;
-
-  if (colorSelect) colorSelect.value = "black";
-  let brushColor = (colorSelect?.value || "black").toLowerCase();
-
-  // ===== Cursor overlay (global, fixed) =====
-  // CSS cho con trỏ: dùng position:fixed để bám tuyệt đối vào clientX/clientY
-  const styleTag = document.createElement('style');
-  styleTag.textContent = `
-    .brush-cursor{position:fixed;width:20px;height:20px;border:1.5px solid #ffffff;pointer-events:none;display:none;mix-blend-mode:difference;z-index:2147483647;transform:translate(-50%,-50%)}
-    .brush-cursor.circle{ border-radius:50%; }
-    .brush-cursor.square{ border-radius:0; }
-    .shape-active{ outline:2px solid #111; outline-offset:2px; }
-    .sidebar-active{ background-color:#30475e; }
-    .sidebar-active i, .sidebar-active span{ color:#fff !important; }
-  `;
-  document.head.appendChild(styleTag);
-
-  // Tạo 2 con trỏ đặt trực tiếp vào body (không phụ thuộc stage/viewport)
-  let cursorCircle = document.getElementById('__brushCircle');
-  let cursorSquare = document.getElementById('__brushSquare');
-  if (!cursorCircle) {
-    cursorCircle = document.createElement('div');
-    cursorCircle.id = '__brushCircle';
-    cursorCircle.className = 'brush-cursor circle';
-    document.body.appendChild(cursorCircle);
-  }
-  if (!cursorSquare) {
-    cursorSquare = document.createElement('div');
-    cursorSquare.id = '__brushSquare';
-    cursorSquare.className = 'brush-cursor square';
-    document.body.appendChild(cursorSquare);
-  }
-
-  // shape hiện tại
-  let cursorShape = 'circle';
-
-  function setCursorActive(active){
-    const show = (el, on) => el.style.display = on ? 'block' : 'none';
-    if (!active || tool === 'fill' || !tool) {
-      show(cursorCircle, false); show(cursorSquare, false);
-      paint.style.cursor = 'default';
-      return;
-    }
-    paint.style.cursor = 'none';
-    const borderColor = (tool === 'erase') ? '#00e5ff' : '#ffffff';
-    cursorCircle.style.borderColor = borderColor;
-    cursorSquare.style.borderColor = borderColor;
-    show(cursorCircle, cursorShape === 'circle');
-    show(cursorSquare, cursorShape === 'square');
-  }
-  function updateCursorSize(){
-    const s = brushSize + 'px';
-    cursorCircle.style.width = s; cursorCircle.style.height = s;
-    cursorSquare.style.width = s; cursorSquare.style.height = s;
-  }
-  function updateCursorPositionFromEvent(e){
-    const cx = e.touches ? e.touches[0].clientX : e.clientX;
-    const cy = e.touches ? e.touches[0].clientY : e.clientY;
-    // Bám thẳng theo tọa độ viewport → KHÔNG bao giờ lệch
-    cursorCircle.style.left = cx + "px";
-    cursorCircle.style.top  = cy + "px";
-    cursorSquare.style.left = cx + "px";
-    cursorSquare.style.top  = cy + "px";
-  }
-  function pointerInsidePaint(e){
-    const rp = paint.getBoundingClientRect();
-    const cx = e.touches ? e.touches[0].clientX : e.clientX;
-    const cy = e.touches ? e.touches[0].clientY : e.clientY;
-    return (cx >= rp.left && cx <= rp.right && cy >= rp.top && cy <= rp.bottom);
-  }
-  updateCursorSize();
-  setCursorActive(false);
-
-  // ===== Handlers panel =====
-  sizeSlider?.addEventListener("input", e => { brushSize = +e.target.value; updateCursorSize(); });
-  opacitySlider?.addEventListener("input", e => brushOpacity = +e.target.value);
-  hardnessSlider?.addEventListener("input", e => hardness = +e.target.value);
-  smoothSlider?.addEventListener("input", e => smoothSteps = +e.target.value);
-
-  colorSelect?.addEventListener("change", e => {
-    brushColor = (e.target.value || "black").toLowerCase();
-    if (brushColor === "white") {
-      brushOpacity = 1; if (opacitySlider) opacitySlider.value = "1";
-      hardness = 1; if (hardnessSlider) hardnessSlider.value = "1";
-    }
-  });
-
-  // ===== Chọn tool (độc quyền active) =====
-  function setActiveTool(next){
-    tool = next;
-    [btnBrush, btnEraser, btnFill].forEach(b => b?.classList.remove("sidebar-active"));
-    if (next === 'paint') btnBrush?.classList.add("sidebar-active");
-    if (next === 'erase') btnEraser?.classList.add("sidebar-active");
-    if (next === 'fill')  btnFill?.classList.add("sidebar-active");
-    setCursorActive(next === 'paint' || next === 'erase');
-  }
-  btnBrush?.addEventListener("click", () => setActiveTool("paint"));
-  btnEraser?.addEventListener("click", () => setActiveTool("erase"));
-  btnFill ?.addEventListener("click", ()  => setActiveTool("fill"));
-
-  // ===== Shape switch =====
-  function setShape(shape){
-    cursorShape = shape;
-    btnShapeCircle?.classList.toggle('shape-active', shape === 'circle');
-    btnShapeSquare?.classList.toggle('shape-active', shape === 'square');
-    setCursorActive(tool === 'paint' || tool === 'erase');
-  }
-  btnShapeCircle?.addEventListener('click', () => setShape('circle'));
-  btnShapeSquare?.addEventListener('click', () => setShape('square'));
-
-  // ===== Upload ảnh =====
-  firstModelInput?.addEventListener("change", e => {
-    const f = e.target.files?.[0]; if (!f) return;
-    imgTag.src = URL.createObjectURL(f);
-  });
-
-  // ===== Đồng bộ layer (ổn định sau đóng/mở) =====
-  function syncAndDraw() {
-    const dpr  = window.devicePixelRatio || 1;
-    const rImg = imgTag.getBoundingClientRect();
-    const rView= viewport.getBoundingClientRect();
-
-    if (getComputedStyle(stage).position === 'static') {
-      stage.style.position = 'relative';
-    }
-
-    for (const c of [imgLayer, paint]) {
-      Object.assign(c.style, {
-        position: "absolute",
-        left:   (rImg.left - rView.left) + "px",
-        top:    (rImg.top  - rView.top ) + "px",
-        width:  rImg.width + "px",
-        height: rImg.height+ "px",
-        pointerEvents: "auto",
-        zIndex: c === imgLayer ? 20 : 30
-      });
-      c.width  = Math.max(1, Math.round(rImg.width  * dpr));
-      c.height = Math.max(1, Math.round(rImg.height * dpr));
-      const ctx = (c === imgLayer ? ictx : pctx);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-
-    // Nền
-    const cssW = parseFloat(imgLayer.style.width);
-    const cssH = parseFloat(imgLayer.style.height);
-    ictx.clearRect(0, 0, cssW, cssH);
-    if (imgTag.naturalWidth) ictx.drawImage(imgTag, 0, 0, cssW, cssH);
-
-    ensureHistoryInit();
-    imgTag.style.visibility = "hidden";
-
-    setCursorActive(tool === 'paint' || tool === 'erase');
-  }
-
-  function onPopupOpen(){ requestAnimationFrame(() => requestAnimationFrame(syncAndDraw)); }
-  imgTag.addEventListener("load", () => { if (!popup.classList.contains("hidden")) onPopupOpen(); });
-  window.addEventListener("resize", () => { if (!popup.classList.contains("hidden")) onPopupOpen(); });
-
-  new MutationObserver(() => {
-    if (!popup.classList.contains("hidden")) requestAnimationFrame(syncAndDraw);
-  }).observe(popup, { attributes: true, attributeFilter: ["class"] });
-
-  new MutationObserver(() => {
-    if (!popup.classList.contains("hidden")) onPopupOpen();
-  }).observe(imgTag, { attributes: true, attributeFilter: ["style","class"] });
-
-  // ===== VẼ (CSS px) =====
-  paint.addEventListener("contextmenu", e => e.preventDefault());
-
-  function getPos(evt) {
-    const rect = paint.getBoundingClientRect();
-    const cx = evt.touches ? evt.touches[0].clientX : evt.clientX;
-    const cy = evt.touches ? evt.touches[0].clientY : evt.clientY;
-    const cssW = parseFloat(paint.style.width)  || rect.width;
-    const cssH = parseFloat(paint.style.height) || rect.height;
-    const scaleX = rect.width  / cssW;
-    const scaleY = rect.height / cssH;
-    return { x: (cx - rect.left) / scaleX, y: (cy - rect.top) / scaleY };
-  }
-
-  function cssToCanvasPixel(xCss, yCss){
-    const rect = paint.getBoundingClientRect();
-    const cssW = parseFloat(paint.style.width)  || rect.width;
-    const cssH = parseFloat(paint.style.height) || rect.height;
-    const scaleX = paint.width  / cssW;
-    const scaleY = paint.height / cssH;
-    let x = Math.floor(xCss * scaleX);
-    let y = Math.floor(yCss * scaleY);
-    if (x < 0) x = 0; if (y < 0) y = 0;
-    if (x >= paint.width)  x = paint.width - 1;
-    if (y >= paint.height) y = paint.height - 1;
-    return {x, y};
-  }
-
-  // Màu brush / fill
-  function colorFromBrush(){
-    const a = Math.max(0, Math.min(1, brushOpacity));
-    const A = Math.round(a * 255);
-    if (brushColor === "white") return {r:255,g:255,b:255,a:A};
-    return {r:0,g:0,b:0,a:A};
-  }
-  function colorForFill(){
-    if (brushColor === "white") return {r:255,g:255,b:255,a:255};
-    return {r:0,g:0,b:0,a:255};
-  }
-
-  // FILL: chỉ lấp alpha==0; chặn rò mép và vùng quá lớn
-  function floodFillAt(xCss, yCss){
-    const {x:sx, y:sy} = cssToCanvasPixel(xCss, yCss);
-    const w = paint.width, h = paint.height;
-    const img = pctx.getImageData(0, 0, w, h);
-    const data = img.data;
-
-    const idx0 = (sy * w + sx) * 4;
-    if (data[idx0+3] !== 0) return false;
-
-    const MAX_RATIO = 0.75;
-    const maxCount = Math.floor(w * h * MAX_RATIO);
-    let touchedBorder = false;
-    let count = 0;
-
-    const {r, g, b, a} = colorForFill();
-    const stack = [[sx, sy]];
-    const mark = new Uint8Array(w * h);
-
-    const can = (px, py) => {
-      if (px < 0 || px >= w || py < 0 || py >= h) return false;
-      const i = (py * w + px);
-      if (mark[i]) return false;
-      const di = i * 4;
-      return (data[di+3] === 0);
-    };
-
-    while (stack.length){
-      let [x, y] = stack.pop();
-      let xl = x; while (can(xl-1, y)) xl--;
-      let xr = x; while (can(xr+1, y)) xr++;
-
-      for (let xi = xl; xi <= xr; xi++){
-        const i = (y * w + xi);
-        mark[i] = 1; count++;
-        if (xi === 0 || xi === w-1 || y === 0 || y === h-1) touchedBorder = true;
-        if (can(xi, y-1)) stack.push([xi, y-1]);
-        if (can(xi, y+1)) stack.push([xi, y+1]);
-      }
-      if (count > maxCount) { touchedBorder = true; break; }
-    }
-
-    if (touchedBorder) return false;
-
-    for (let i = 0; i < mark.length; i++){
-      if (mark[i]){
-        const di = i * 4;
-        data[di]   = r; data[di+1] = g; data[di+2] = b; data[di+3] = a;
-      }
-    }
-    pctx.putImageData(img, 0, 0);
-    return true;
-  }
-
-  function applyStrokeStyle(){
-    if (tool === "erase") {
-      pctx.globalCompositeOperation = "destination-out";
-      pctx.globalAlpha = 1;
-    } else {
-      pctx.globalCompositeOperation = "source-over";
-      pctx.globalAlpha = brushOpacity;
-      pctx.strokeStyle = (brushColor === "white") ? "#fff" : "#000";
-    }
-    if (cursorShape === 'square') { pctx.lineCap = "square"; pctx.lineJoin = "miter"; }
-    else                          { pctx.lineCap = "round";  pctx.lineJoin = "round"; }
-    pctx.lineWidth = brushSize;
-  }
-
-  function begin(e) {
-    if (e.button !== undefined && e.button !== 0) return;
-    const cssW = parseFloat(paint.style.width || 0);
-    if (cssW < 2) return;
-
-    if (tool === "fill") {
-      const p = getPos(e);
-      const ok = floodFillAt(p.x, p.y);
-      if (ok) pushHistory();
-      e.preventDefault();
-      return;
-    }
-
-    if (!tool) return;
-    const p = getPos(e);
-    drawing = true;
-    pctx.save();
-    applyStrokeStyle();
-    pctx.beginPath();
-    pctx.moveTo(p.x, p.y);
-
-    window.addEventListener("mousemove", move, { passive: false });
-    window.addEventListener("mouseup", end);
-    setCursorActive(true);
-    updateCursorPositionFromEvent(e);
-    e.preventDefault();
-  }
-
-  function move(e){
-    // Cập nhật con trỏ theo clientX/Y (chính xác tuyệt đối)
-    updateCursorPositionFromEvent(e);
-
-    if (!pointerInsidePaint(e)) {
-      cursorCircle.style.display = 'none';
-      cursorSquare.style.display = 'none';
-    } else if (tool && tool!=='fill') {
-      setCursorActive(true);
-    }
-
-    if (!drawing) return;
-    const p = getPos(e);
-    pctx.lineTo(p.x, p.y);
-    pctx.stroke();
-    e.preventDefault();
-  }
-
-  function end() {
-    if (!drawing) return;
-    drawing = false;
-    pctx.closePath();
-    pctx.restore();
-    window.removeEventListener("mousemove", move);
-    window.removeEventListener("mouseup", end);
-    pushHistory();
-  }
-
-  // Hover cursor (trong vùng paint)
-  paint.addEventListener("mousemove", (e) => {
-    if (!tool || tool==='fill') return;
-    updateCursorPositionFromEvent(e);
-    if (pointerInsidePaint(e)) setCursorActive(true);
-    else { cursorCircle.style.display = 'none'; cursorSquare.style.display = 'none'; }
-  });
-  paint.addEventListener("mouseleave", () => { cursorCircle.style.display = 'none'; cursorSquare.style.display = 'none'; });
-  paint.addEventListener("mouseenter", (e) => {
-    if (!tool || tool==='fill') return;
-    setCursorActive(true);
-    updateCursorPositionFromEvent(e);
-  });
-
-  // Mouse / Touch
-  paint.addEventListener("mousedown", begin);
-  paint.addEventListener("touchstart", (e) => { begin(e); }, { passive: false });
-  paint.addEventListener("touchmove",  (e) => { move(e);  }, { passive: false });
-  window.addEventListener("touchend", end);
-
-  // ====== BUTTON HANDLERS ======
-  btnUndo?.addEventListener('click', () => {
-    if (undoStack.length <= 1) return;
-    const curr = undoStack.pop();
-    redoStack.push(curr);
-    drawStateFromURL(undoStack[undoStack.length - 1]);
-  });
-
-  btnRedo?.addEventListener('click', () => {
-    const next = redoStack.pop();
-    if (!next) return;
-    undoStack.push(next);
-    drawStateFromURL(next);
-  });
-
-  btnInvert?.addEventListener('click', () => {
-    const w = parseFloat(paint.style.width)  || paint.width;
-    const h = parseFloat(paint.style.height) || paint.height;
-    pctx.save();
-    pctx.globalCompositeOperation = 'difference';
-    pctx.fillStyle = '#fff';
-    pctx.fillRect(0, 0, w, h);
-    pctx.restore();
-    pushHistory();
-  });
-
-  btnClear?.addEventListener('click', () => {
-    const w = parseFloat(paint.style.width)  || paint.width;
-    const h = parseFloat(paint.style.height) || paint.height;
-    pctx.clearRect(0, 0, w, h);
-    pushHistory();
-  });
-
-  btnSave?.addEventListener('click', () => {
-    const dpr  = window.devicePixelRatio || 1;
-    const cssW = parseFloat(imgLayer.style.width);
-    const cssH = parseFloat(imgLayer.style.height);
-
-    const out  = document.createElement('canvas');
-    out.width  = Math.max(1, Math.round(cssW * dpr));
-    out.height = Math.max(1, Math.round(cssH * dpr));
-    const octx = out.getContext('2d');
-    octx.setTransform(dpr,0,0,dpr,0,0);
-
-    octx.drawImage(imgLayer, 0, 0, cssW, cssH);
-    octx.drawImage(paint,    0, 0, cssW, cssH);
-
-    const dataURL = out.toDataURL('image/png');
-
-    const firstPreview = document.querySelectorAll('#previewImage')[0];
-    if (firstPreview) {
-      firstPreview.src = dataURL;
-      firstPreview.style.display = 'block';
-      const placeholder = firstPreview.parentElement.querySelector('#placeholderContent');
-      if (placeholder) placeholder.style.display = 'none';
-    }
-
-    imgTag.src = dataURL;
-    const w = parseFloat(paint.style.width)  || paint.width;
-    const h = parseFloat(paint.style.height) || paint.height;
-    pctx.clearRect(0, 0, w, h);
-    undoStack = []; redoStack = []; historyInitialized = false; ensureHistoryInit();
-
-    popup.classList.add('hidden');
-    setActiveTool(null);
-  });
-
-  if (!popup.classList.contains("hidden")) onPopupOpen();
-});
-</script>
-
-
-
-
+<script src="./nordy.js" ></script>
 
    <!-- JS: mở thì bỏ hidden → animate; đóng thì animate xong mới gán hidden -->
 <script>
